@@ -1,5 +1,32 @@
 import { NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabaseServer";
+import { z } from "zod";
+
+// Validation schemas
+const ExerciseCreateSchema = z.object({
+  name: z.string().min(1, "Name is required").max(100, "Name too long"),
+  muscle_primary: z.string().min(1, "Primary muscle group is required").max(50, "Muscle group name too long"),
+  muscle_secondary: z.array(z.string()).optional(),
+  equipment: z.array(z.string()).optional(),
+  favorite_variant: z.string().max(50, "Variant name too long").optional(),
+  technique_notes: z.string().max(1000, "Technique notes too long").optional(),
+  variants: z.array(z.string().min(1, "Variant cannot be empty").max(50, "Variant name too long")).optional()
+});
+
+const ExerciseQuerySchema = z.object({
+  muscle_group: z.string().min(1).max(50).optional(),
+  equipment: z.string().min(1).max(50).optional()
+});
+
+function logError(operation, error, userId = null) {
+  console.error(`API Error [${operation}]:`, {
+    message: error.message,
+    code: error.code,
+    details: error.details,
+    userId,
+    timestamp: new Date().toISOString()
+  });
+}
 
 // GET /api/exercises - Get exercises (global + user-specific)
 export async function GET(request) {
@@ -12,8 +39,21 @@ export async function GET(request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const muscleGroup = searchParams.get("muscle_group");
-    const equipment = searchParams.get("equipment");
+    const queryParams = Object.fromEntries(searchParams.entries());
+
+    // Validate query parameters
+    const validation = ExerciseQuerySchema.safeParse(queryParams);
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: "Invalid query parameters",
+        details: validation.error.errors.map(err => ({
+          field: err.path.join('.'),
+          message: err.message
+        }))
+      }, { status: 400 });
+    }
+
+    const { muscle_group, equipment } = validation.data;
 
     let query = supabase
       .from("exercises")
@@ -27,8 +67,8 @@ export async function GET(request) {
       .or(`user_id.is.null,user_id.eq.${user.id}`)
       .order("name", { ascending: true });
 
-    if (muscleGroup) {
-      query = query.eq("muscle_primary", muscleGroup);
+    if (muscle_group) {
+      query = query.eq("muscle_primary", muscle_group);
     }
 
     if (equipment) {
@@ -38,12 +78,23 @@ export async function GET(request) {
     const { data: exercises, error } = await query;
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      logError("GET /api/exercises", error, user.id);
+      return NextResponse.json({ 
+        error: "Failed to fetch exercises",
+        details: error.message 
+      }, { status: 500 });
     }
 
-    return NextResponse.json({ exercises });
+    return NextResponse.json({ 
+      exercises: exercises || [],
+      count: exercises?.length || 0 
+    });
   } catch (error) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    logError("GET /api/exercises", error);
+    return NextResponse.json({ 
+      error: "Internal server error",
+      code: "UNKNOWN_ERROR"
+    }, { status: 500 });
   }
 }
 
@@ -58,6 +109,19 @@ export async function POST(request) {
     }
 
     const body = await request.json();
+    
+    // Validate input
+    const validation = ExerciseCreateSchema.safeParse(body);
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: "Validation failed",
+        details: validation.error.errors.map(err => ({
+          field: err.path.join('.'),
+          message: err.message
+        }))
+      }, { status: 400 });
+    }
+
     const { 
       name, 
       muscle_primary, 
@@ -66,11 +130,7 @@ export async function POST(request) {
       favorite_variant, 
       technique_notes,
       variants 
-    } = body;
-
-    if (!name) {
-      return NextResponse.json({ error: "Name is required" }, { status: 400 });
-    }
+    } = validation.data;
 
     // Create exercise
     const { data: exercise, error: exerciseError } = await supabase
@@ -88,7 +148,11 @@ export async function POST(request) {
       .single();
 
     if (exerciseError) {
-      return NextResponse.json({ error: exerciseError.message }, { status: 500 });
+      logError("POST /api/exercises", exerciseError, user.id);
+      return NextResponse.json({ 
+        error: "Failed to create exercise",
+        details: exerciseError.message 
+      }, { status: 500 });
     }
 
     // Create variants if provided
@@ -103,7 +167,7 @@ export async function POST(request) {
         .insert(variantData);
 
       if (variantError) {
-        console.error("Error creating variants:", variantError);
+        logError("POST /api/exercises - variants", variantError, user.id);
         // Don't fail the request, just log the error
       }
     }
@@ -122,12 +186,19 @@ export async function POST(request) {
       .single();
 
     if (fetchError) {
-      return NextResponse.json({ error: fetchError.message }, { status: 500 });
+      logError("POST /api/exercises - fetch", fetchError, user.id);
+      return NextResponse.json({ 
+        error: "Failed to fetch created exercise",
+        details: fetchError.message 
+      }, { status: 500 });
     }
 
     return NextResponse.json({ exercise: exerciseWithVariants }, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    logError("POST /api/exercises", error);
+    return NextResponse.json({ 
+      error: "Internal server error",
+      code: "UNKNOWN_ERROR"
+    }, { status: 500 });
   }
 }
-

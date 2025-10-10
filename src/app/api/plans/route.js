@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabaseServer";
 import { z } from "zod";
+import { 
+  logApiError, 
+  createErrorResponse, 
+  handleValidationError, 
+  createApiResponse 
+} from "@/lib/api-utils";
 
 // Validation schemas
 const PlanCreateSchema = z.object({
@@ -14,16 +20,6 @@ const PlanUpdateSchema = z.object({
   goal: z.string().max(500, "Goal description too long").optional(),
   active: z.boolean().optional()
 });
-
-function logError(operation, error, userId = null) {
-  console.error(`API Error [${operation}]:`, {
-    message: error.message,
-    code: error.code,
-    details: error.details,
-    userId,
-    timestamp: new Date().toISOString()
-  });
-}
 
 // GET /api/plans - Get all plans for user
 export async function GET() {
@@ -52,23 +48,22 @@ export async function GET() {
       .order("created_at", { ascending: false });
 
     if (error) {
-      logError("GET /api/plans", error, user.id);
-      return NextResponse.json({ 
-        error: "Failed to fetch plans",
-        details: error.message 
-      }, { status: 500 });
+      logApiError("GET /api/plans", error, user.id);
+      return createErrorResponse(
+        "Failed to fetch plans",
+        500,
+        error.code || "DATABASE_ERROR",
+        error.message
+      );
     }
 
-    return NextResponse.json({ 
-      plans,
-      count: plans.length 
-    });
+    return NextResponse.json(createApiResponse(
+      plans || [],
+      { count: plans?.length || 0 }
+    ));
   } catch (error) {
-    logError("GET /api/plans", error);
-    return NextResponse.json({ 
-      error: "Internal server error",
-      code: "UNKNOWN_ERROR"
-    }, { status: 500 });
+    logApiError("GET /api/plans", error);
+    return createErrorResponse("Internal server error", 500, "UNKNOWN_ERROR");
   }
 }
 
@@ -87,13 +82,7 @@ export async function POST(request) {
     // Validate input
     const validation = PlanCreateSchema.safeParse(body);
     if (!validation.success) {
-      return NextResponse.json({ 
-        error: "Validation failed",
-        details: validation.error.errors.map(err => ({
-          field: err.path.join('.'),
-          message: err.message
-        }))
-      }, { status: 400 });
+      return handleValidationError(validation.error);
     }
 
     const { name, goal, active } = validation.data;
@@ -110,19 +99,18 @@ export async function POST(request) {
       .single();
 
     if (error) {
-      logError("POST /api/plans", error, user.id);
-      return NextResponse.json({ 
-        error: "Failed to create plan",
-        details: error.message 
-      }, { status: 500 });
+      logApiError("POST /api/plans", error, user.id);
+      return createErrorResponse(
+        "Failed to create plan",
+        500,
+        error.code || "DATABASE_ERROR",
+        error.message
+      );
     }
 
-    return NextResponse.json({ plan }, { status: 201 });
+    return NextResponse.json(createApiResponse(plan), { status: 201 });
   } catch (error) {
-    logError("POST /api/plans", error);
-    return NextResponse.json({ 
-      error: "Internal server error",
-      code: "UNKNOWN_ERROR"
-    }, { status: 500 });
+    logApiError("POST /api/plans", error);
+    return createErrorResponse("Internal server error", 500, "UNKNOWN_ERROR");
   }
 }

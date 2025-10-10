@@ -1,5 +1,22 @@
 import { NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabaseServer";
+import { z } from "zod";
+
+// Validation schemas
+const LiveSessionCreateSchema = z.object({
+  session_id: z.string().uuid("Invalid session ID").optional(),
+  type: z.enum(["strength", "cardio"], "Invalid session type")
+});
+
+function logError(operation, error, userId = null) {
+  console.error(`API Error [${operation}]:`, {
+    message: error.message,
+    code: error.code,
+    details: error.details,
+    userId,
+    timestamp: new Date().toISOString()
+  });
+}
 
 // GET /api/live-sessions - Get active live sessions
 export async function GET(request) {
@@ -26,12 +43,23 @@ export async function GET(request) {
       .order("started_at", { ascending: false });
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      logError("GET /api/live-sessions", error, user.id);
+      return NextResponse.json({ 
+        error: "Failed to fetch live sessions",
+        details: error.message 
+      }, { status: 500 });
     }
 
-    return NextResponse.json({ liveSessions });
+    return NextResponse.json({ 
+      liveSessions: liveSessions || [],
+      count: liveSessions?.length || 0 
+    });
   } catch (error) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    logError("GET /api/live-sessions", error);
+    return NextResponse.json({ 
+      error: "Internal server error",
+      code: "UNKNOWN_ERROR"
+    }, { status: 500 });
   }
 }
 
@@ -46,11 +74,20 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { session_id, type } = body;
-
-    if (!type) {
-      return NextResponse.json({ error: "Type is required" }, { status: 400 });
+    
+    // Validate input
+    const validation = LiveSessionCreateSchema.safeParse(body);
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: "Validation failed",
+        details: validation.error.errors.map(err => ({
+          field: err.path.join('.'),
+          message: err.message
+        }))
+      }, { status: 400 });
     }
+
+    const { session_id, type } = validation.data;
 
     // If session_id provided, verify it belongs to user
     if (session_id) {
@@ -65,7 +102,9 @@ export async function POST(request) {
         .single();
 
       if (sessionError || !session) {
-        return NextResponse.json({ error: "Session not found" }, { status: 404 });
+        return NextResponse.json({ 
+          error: "Session not found or access denied" 
+        }, { status: 404 });
       }
     }
 
@@ -109,12 +148,19 @@ export async function POST(request) {
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      logError("POST /api/live-sessions", error, user.id);
+      return NextResponse.json({ 
+        error: "Failed to start live session",
+        details: error.message 
+      }, { status: 500 });
     }
 
     return NextResponse.json({ liveSession }, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    logError("POST /api/live-sessions", error);
+    return NextResponse.json({ 
+      error: "Internal server error",
+      code: "UNKNOWN_ERROR"
+    }, { status: 500 });
   }
 }
-
