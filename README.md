@@ -54,12 +54,43 @@ Kopiere `env.example` zu `.env.local` und fülle die Werte aus:
 cp env.example .env.local
 ```
 
-Bearbeite `.env.local`:
+#### Erforderliche Variablen
 
 ```env
+# Supabase Configuration (ERFORDERLICH)
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_KEY=your-service-role-key
 ```
+
+#### Optionale Variablen
+
+```env
+# Garmin Integration
+GARMIN_CLIENT_ID=your-garmin-client-id
+GARMIN_CLIENT_SECRET=your-garmin-client-secret
+GARMIN_REDIRECT_URI=http://localhost:3001/api/auth/garmin/callback
+
+# Monitoring & Error Tracking
+SENTRY_DSN=your-sentry-dsn
+SENTRY_AUTH_TOKEN=your-sentry-auth-token
+
+# Map Services
+MAPBOX_ACCESS_TOKEN=your-mapbox-token
+NEXT_PUBLIC_MAP_TILE_URL=https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png
+
+# Feature Flags
+NEXT_PUBLIC_ENABLE_GARMIN_INTEGRATION=true
+NEXT_PUBLIC_ENABLE_ANALYTICS=false
+NEXT_PUBLIC_ENABLE_DEBUG_LOGS=true
+
+# Development
+NODE_ENV=development
+NEXT_PUBLIC_APP_URL=http://localhost:3001
+NEXT_PUBLIC_APP_NAME=Trainr App
+```
+
+**Hinweis**: Alle Variablen außer den Supabase-Keys sind optional. Siehe `env.example` für eine vollständige Liste mit Beschreibungen.
 
 ### 4. Supabase Setup
 
@@ -113,7 +144,9 @@ src/
 │       └── profile/       # Profil & Einstellungen
 ├── lib/                   # Utilities
 │   ├── supabaseClient.js  # Browser Supabase Client
-│   └── supabaseServer.js  # Server Supabase Client
+│   ├── supabaseServer.js  # Server Supabase Client mit Cookie-Handling
+│   ├── api-utils.js       # API-Utilities (Validierung, Fehlerbehandlung)
+│   └── env-validation.js  # Environment-Validierung mit Zod
 └── components/            # UI Komponenten (geplant)
 
 database/
@@ -150,6 +183,24 @@ text-text-muted   /* Gedämpfter Text */
 3. **Middleware**: Überwacht alle Routen und setzt Cookies korrekt
 4. **Server Components**: Verwenden `supabaseServer()` für SSR
 5. **Client Components**: Verwenden `supabaseBrowser()` für Client-Side
+
+### Supabase Helper
+
+```javascript
+// Server Components (nur lesen)
+import { supabaseServer } from '@/lib/supabaseServer';
+const supabase = await supabaseServer();
+
+// Server Actions (Cookie-Management)
+import { supabaseServerWithCookies } from '@/lib/supabaseServer';
+const supabase = await supabaseServerWithCookies();
+
+// Context-aware Client
+import { getSupabaseClient } from '@/lib/supabaseServer';
+const supabase = await getSupabaseClient('serverActions');
+```
+
+**Cookie-Sicherheit**: Automatische sichere Defaults (httpOnly, secure, sameSite: 'lax') in allen Kontexten.
 
 ## 📊 Datenbank-Schema
 
