@@ -8,7 +8,8 @@ Dieses Verzeichnis enthält die SQL-Migrationen und Seeds für die Trainings-App
 database/
 ├── migrations/
 │   ├── 001_initial_schema.sql    # Alle Tabellen und Indizes
-│   └── 002_rls_policies.sql      # Row Level Security Policies
+│   ├── 002_rls_policies.sql      # Row Level Security Policies
+│   └── 003_analytics_and_webhooks.sql  # Analytics Views & Webhook Events
 ├── seeds/
 │   └── demo_data.sql             # Demo-Daten für Entwicklung
 └── README.md                     # Diese Datei
@@ -22,6 +23,7 @@ Führe die SQL-Dateien in dieser Reihenfolge in der Supabase SQL Console aus:
 
 1. `001_initial_schema.sql` - Erstellt alle Tabellen, Indizes und aktiviert RLS
 2. `002_rls_policies.sql` - Setzt alle RLS-Policies für Datenschutz
+3. `003_analytics_and_webhooks.sql` - Analytics Views, Webhook Events und Helper-Functions
 
 ### 2. Demo-Daten laden
 
@@ -79,10 +81,12 @@ sed "s/demo-user-uuid/$USER_ID/g" database/seeds/demo_data.sql > temp_seed.sql
 - **nutrition_logs** - Ernährungs-Tracking
 - **calendar_items** - Kalender-Integration
 
-### System
+### System & Analytics
 
 - **sync_jobs** - Hintergrund-Sync-Jobs
+- **webhook_events** - Externe Service-Webhooks (Garmin, Strava, etc.)
 - **feedback** - User-Feedback
+- **muscle_volume_agg** - Materialized View für Muskelgruppen-Analyse
 
 ## RLS (Row Level Security)
 
@@ -100,6 +104,34 @@ Performance-Indizes sind auf häufig abgefragte Spalten gesetzt:
 - `date` auf Logs und Metrics
 - `start_ts` auf Calendar Items
 
+## Analytics & Materialized Views
+
+### muscle_volume_agg
+
+Die Materialized View `muscle_volume_agg` aggregiert Trainingsvolumen nach Muskelgruppen:
+
+```sql
+-- Manuelle Aktualisierung (nach neuen Trainings)
+SELECT refresh_muscle_volume_agg();
+
+-- Muskelgruppen-Status abfragen
+SELECT get_muscle_group_status('user-uuid', 'chest'); -- 'optimal', 'under', 'over', 'untrained'
+
+-- Training-Streak abfragen
+SELECT get_training_streak('user-uuid'); -- Anzahl Tage
+```
+
+**Wichtig:** Die View sollte regelmäßig aktualisiert werden (z.B. täglich via Cron).
+
+### Webhook Events
+
+Die `webhook_events` Tabelle trackt externe Service-Events:
+
+- **Provider**: Garmin, Strava, Apple Health, etc.
+- **Event Types**: activity.created, activity.updated, user.signup
+- **Status**: received, processing, processed, failed, ignored
+- **Deduplication**: Über `provider` + `event_id`
+
 ## Nächste Schritte
 
 Nach dem Schema-Setup:
@@ -108,4 +140,5 @@ Nach dem Schema-Setup:
 2. Frontend-Komponenten mit echten Daten verbinden
 3. Seed-Script für Produktions-Daten anpassen
 4. Backup-Strategie einrichten
+5. Cron-Jobs für Materialized View Refresh einrichten
 

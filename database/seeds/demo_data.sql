@@ -156,3 +156,71 @@ VALUES
   ('demo-calendar-2-uuid', 'demo-user-uuid', 'Cardio Lauf', 'session', '2024-01-23 19:00:00', '2024-01-23 19:30:00', 'demo-session-2-uuid'),
   ('demo-calendar-3-uuid', 'demo-user-uuid', 'Krafttraining Beine', 'session', '2024-01-24 18:00:00', '2024-01-24 19:00:00', 'demo-session-3-uuid');
 
+-- Create demo live sessions
+INSERT INTO live_sessions (id, user_id, session_id, type, started_at, finished_at, duration_sec, status)
+VALUES 
+  ('demo-live-session-1-uuid', 'demo-user-uuid', 'demo-session-1-uuid', 'strength', '2024-01-15 18:00:00', '2024-01-15 19:15:00', 4500, 'completed'),
+  ('demo-live-session-2-uuid', 'demo-user-uuid', 'demo-session-2-uuid', 'cardio', '2024-01-16 19:00:00', '2024-01-16 19:32:00', 1920, 'completed'),
+  ('demo-live-session-3-uuid', 'demo-user-uuid', 'demo-session-3-uuid', 'strength', '2024-01-17 18:00:00', '2024-01-17 19:05:00', 3900, 'completed'),
+  ('demo-live-session-4-uuid', 'demo-user-uuid', 'demo-session-1-uuid', 'strength', '2024-01-22 18:00:00', '2024-01-22 19:10:00', 4200, 'completed'),
+  ('demo-live-session-5-uuid', 'demo-user-uuid', NULL, 'strength', '2024-01-25 18:30:00', NULL, NULL, 'active');
+
+-- Create demo set logs (actual performed sets)
+INSERT INTO set_logs (id, live_session_id, session_exercise_id, variant, set_index, actual_reps, actual_weight, rpe, notes, auto_progression_applied)
+VALUES 
+  -- Live Session 1 (Krafttraining Oberkörper - 15.01.2024)
+  ('demo-set-log-1-uuid', 'demo-live-session-1-uuid', 'demo-session-exercise-1-uuid', 'barbell', 1, 12, 60.0, 8, 'Warm-up Set', false),
+  ('demo-set-log-2-uuid', 'demo-live-session-1-uuid', 'demo-session-exercise-1-uuid', 'barbell', 2, 10, 70.0, 8, 'Gut gefühlt', false),
+  ('demo-set-log-3-uuid', 'demo-live-session-1-uuid', 'demo-session-exercise-1-uuid', 'barbell', 3, 8, 80.0, 7, 'Letzter Satz schwer', false),
+  ('demo-set-log-4-uuid', 'demo-live-session-1-uuid', 'demo-session-exercise-1-uuid', 'barbell', 4, 6, 85.0, 7, 'Maximal', false),
+  
+  ('demo-set-log-5-uuid', 'demo-live-session-1-uuid', 'demo-session-exercise-2-uuid', 'dumbbell', 1, 15, 25.0, 8, 'Gute Dehnung', false),
+  ('demo-set-log-6-uuid', 'demo-live-session-1-uuid', 'demo-session-exercise-2-uuid', 'dumbbell', 2, 12, 30.0, 7, 'Schwerer als erwartet', false),
+  ('demo-set-log-7-uuid', 'demo-live-session-1-uuid', 'demo-session-exercise-2-uuid', 'dumbbell', 3, 10, 35.0, 7, 'Letzter Satz', false),
+  
+  ('demo-set-log-8-uuid', 'demo-live-session-1-uuid', 'demo-session-exercise-3-uuid', 'dumbbell', 1, 12, 20.0, 8, 'Warm-up', false),
+  ('demo-set-log-9-uuid', 'demo-live-session-1-uuid', 'demo-session-exercise-3-uuid', 'dumbbell', 2, 10, 25.0, 7, 'Gut', false),
+  ('demo-set-log-10-uuid', 'demo-live-session-1-uuid', 'demo-session-exercise-3-uuid', 'dumbbell', 3, 8, 30.0, 7, 'Maximal', false),
+  
+  -- Live Session 3 (Krafttraining Beine - 17.01.2024)
+  ('demo-set-log-11-uuid', 'demo-live-session-3-uuid', 'demo-session-exercise-4-uuid', 'barbell', 1, 15, 60.0, 8, 'Warm-up', false),
+  ('demo-set-log-12-uuid', 'demo-live-session-3-uuid', 'demo-session-exercise-4-uuid', 'barbell', 2, 12, 80.0, 7, 'Gut', false),
+  ('demo-set-log-13-uuid', 'demo-live-session-3-uuid', 'demo-session-exercise-4-uuid', 'barbell', 3, 10, 100.0, 7, 'Schwer', false),
+  ('demo-set-log-14-uuid', 'demo-live-session-3-uuid', 'demo-session-exercise-4-uuid', 'barbell', 4, 8, 110.0, 6, 'Maximal', false),
+  
+  ('demo-set-log-15-uuid', 'demo-live-session-3-uuid', 'demo-session-exercise-5-uuid', 'barbell', 1, 12, 80.0, 8, 'Warm-up', false),
+  ('demo-set-log-16-uuid', 'demo-live-session-3-uuid', 'demo-session-exercise-5-uuid', 'barbell', 2, 10, 100.0, 7, 'Gut', false),
+  ('demo-set-log-17-uuid', 'demo-live-session-3-uuid', 'demo-session-exercise-5-uuid', 'barbell', 3, 8, 120.0, 7, 'Maximal', false),
+  
+  -- Live Session 4 (Wiederholung Oberkörper - 22.01.2024) mit Progression
+  ('demo-set-log-18-uuid', 'demo-live-session-4-uuid', 'demo-session-exercise-1-uuid', 'barbell', 1, 12, 62.5, 8, 'Progression angewendet', true),
+  ('demo-set-log-19-uuid', 'demo-live-session-4-uuid', 'demo-session-exercise-1-uuid', 'barbell', 2, 10, 72.5, 8, 'Progression angewendet', true),
+  ('demo-set-log-20-uuid', 'demo-live-session-4-uuid', 'demo-session-exercise-1-uuid', 'barbell', 3, 8, 82.5, 7, 'Progression angewendet', true),
+  ('demo-set-log-21-uuid', 'demo-live-session-4-uuid', 'demo-session-exercise-1-uuid', 'barbell', 4, 6, 87.5, 7, 'Progression angewendet', true);
+
+-- Create demo cardio logs
+INSERT INTO cardio_logs (id, live_session_id, distance_m, duration_sec, avg_hr, avg_pace, calories)
+VALUES 
+  ('demo-cardio-log-1-uuid', 'demo-live-session-2-uuid', 5000, 1920, 165, 6.4, 420);
+
+-- Create demo integrations
+INSERT INTO integrations (id, user_id, provider, access_token, refresh_token, expires_at, scopes)
+VALUES 
+  ('demo-integration-1-uuid', 'demo-user-uuid', 'garmin', 'encrypted_access_token_123', 'encrypted_refresh_token_456', '2024-02-15 12:00:00', ARRAY['activity:read', 'profile:read']);
+
+-- Create demo sync jobs
+INSERT INTO sync_jobs (id, user_id, provider, status, payload, created_at, finished_at)
+VALUES 
+  ('demo-sync-job-1-uuid', 'demo-user-uuid', 'garmin', 'completed', '{"type": "activities_import", "date_range": "2024-01-01 to 2024-01-31"}', '2024-01-31 23:00:00', '2024-01-31 23:05:00'),
+  ('demo-sync-job-2-uuid', 'demo-user-uuid', 'garmin', 'running', '{"type": "activities_import", "date_range": "2024-02-01 to 2024-02-15"}', '2024-02-15 12:00:00', NULL),
+  ('demo-sync-job-3-uuid', 'demo-user-uuid', 'garmin', 'failed', '{"type": "activities_import", "date_range": "2024-02-10 to 2024-02-10", "error": "Rate limit exceeded"}', '2024-02-10 18:00:00', '2024-02-10 18:01:00');
+
+-- Create demo webhook events
+INSERT INTO webhook_events (id, user_id, provider, event_type, event_id, payload, status, processed_at, retry_count)
+VALUES 
+  ('demo-webhook-1-uuid', 'demo-user-uuid', 'garmin', 'activity.created', 'garmin_activity_123456', '{"activity_id": "123456", "activity_type": "running", "start_time": "2024-01-15T19:00:00Z", "duration": 1920, "distance": 5000}', 'processed', '2024-01-15 19:05:00', 0),
+  ('demo-webhook-2-uuid', 'demo-user-uuid', 'garmin', 'activity.updated', 'garmin_activity_123457', '{"activity_id": "123457", "activity_type": "cycling", "start_time": "2024-01-16T10:00:00Z", "duration": 3600, "distance": 20000}', 'processed', '2024-01-16 10:05:00', 0),
+  ('demo-webhook-3-uuid', 'demo-user-uuid', 'garmin', 'activity.created', 'garmin_activity_123458', '{"activity_id": "123458", "activity_type": "running", "start_time": "2024-02-15T19:30:00Z", "duration": 1800, "distance": 4500}', 'processing', NULL, 0),
+  ('demo-webhook-4-uuid', 'demo-user-uuid', 'garmin', 'activity.created', 'garmin_activity_123459', '{"activity_id": "123459", "activity_type": "strength_training", "start_time": "2024-02-15T18:00:00Z", "duration": 3600}', 'failed', NULL, 2),
+  ('demo-webhook-5-uuid', NULL, 'system', 'user.signup', 'system_event_001', '{"user_id": "new-user-uuid", "email": "newuser@example.com", "signup_method": "email"}', 'processed', '2024-02-15 14:30:00', 0);
+
