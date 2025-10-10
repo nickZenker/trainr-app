@@ -155,3 +155,4 @@ VALUES
   ('demo-calendar-1-uuid', 'demo-user-uuid', 'Krafttraining Oberkörper', 'session', '2024-01-22 18:00:00', '2024-01-22 19:00:00', 'demo-session-1-uuid'),
   ('demo-calendar-2-uuid', 'demo-user-uuid', 'Cardio Lauf', 'session', '2024-01-23 19:00:00', '2024-01-23 19:30:00', 'demo-session-2-uuid'),
   ('demo-calendar-3-uuid', 'demo-user-uuid', 'Krafttraining Beine', 'session', '2024-01-24 18:00:00', '2024-01-24 19:00:00', 'demo-session-3-uuid');
+

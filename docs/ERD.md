@@ -511,3 +511,4 @@ GROUP BY user_id, muscle_group, week;
 ### Read Replicas
 - Separate Read-Replicas für Analytics-Queries
 - Caching für häufige Abfragen (Übungen, Pläne)
+

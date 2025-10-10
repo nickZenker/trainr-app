@@ -131,3 +131,4 @@ test.describe('App Navigation (requires authentication)', () => {
     // Should redirect to login
   });
 });
+

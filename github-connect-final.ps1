@@ -71,3 +71,4 @@ Write-Host "🔧 Manuelle Befehle falls nötig:" -ForegroundColor Cyan
 Write-Host "git remote remove origin"
 Write-Host "git remote add origin https://github.com/nickZenker/REPOSITORY_NAME.git"
 Write-Host "git push -u origin main"
+

@@ -64,3 +64,4 @@ Write-Host "1. Überprüfe, ob das Repository 'traint-app' existiert"
 Write-Host "2. Überprüfe deinen GitHub Username"
 Write-Host "3. Stelle sicher, dass du die richtigen Berechtigungen hast"
 Write-Host ""
+

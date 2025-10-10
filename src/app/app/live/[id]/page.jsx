@@ -154,3 +154,4 @@ export default async function LiveSessionPage({ params }) {
     </div>
   );
 }
+

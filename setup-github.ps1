@@ -52,3 +52,4 @@ Write-Host "   git commit -m 'Beschreibung der Änderungen'"
 Write-Host "   git push"
 Write-Host ""
 Write-Host "🎉 Fertig! Dein Projekt ist jetzt mit GitHub verbunden." -ForegroundColor Green
+

@@ -47,3 +47,4 @@ git push -u origin main
 - **"Repository not found"**: Falscher Username oder Repository existiert nicht
 - **"Authentication failed"**: Falsches Passwort oder Token
 - **"Permission denied"**: Keine Berechtigung für das Repository
+

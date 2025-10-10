@@ -452,3 +452,4 @@ const { data: session } = await supabase
 - Live Sessions für Training
 - Routes für GPS-Tracking
 - Row Level Security implementiert
+

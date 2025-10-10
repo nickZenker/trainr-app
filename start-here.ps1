@@ -79,3 +79,4 @@ Write-Host "Dev: bun run dev"
 Write-Host "Test: bun run test:e2e"
 Write-Host ""
 Write-Host "💡 Tipp: PATH ist jetzt in dieser Session gesetzt!" -ForegroundColor Yellow
+

@@ -108,3 +108,4 @@ Nach dem Schema-Setup:
 2. Frontend-Komponenten mit echten Daten verbinden
 3. Seed-Script für Produktions-Daten anpassen
 4. Backup-Strategie einrichten
+

@@ -84,3 +84,4 @@ Write-Host "git status          - Status anzeigen" -ForegroundColor White
 Write-Host "git add .           - Alle Änderungen hinzufügen" -ForegroundColor White
 Write-Host "git commit -m 'msg' - Änderungen committen" -ForegroundColor White
 Write-Host "git push            - Auf GitHub hochladen" -ForegroundColor White
+

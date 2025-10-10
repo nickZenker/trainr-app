@@ -156,3 +156,4 @@ test.describe('Error Handling', () => {
     await expect(page.locator('h1')).toBeVisible();
   });
 });
+
