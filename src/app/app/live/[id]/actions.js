@@ -3,7 +3,7 @@
 import { startLiveSession, stopLiveSession, logSet, deleteLastSet } from "../../../../services/liveSessions";
 import { revalidatePath } from "next/cache";
 
-export async function startLive(prevState, formData) {
+export async function startLive(formData) {
   try {
     const sessionId = formData.get('sessionId');
     
@@ -23,7 +23,7 @@ export async function startLive(prevState, formData) {
   }
 }
 
-export async function stopLive(prevState, formData) {
+export async function stopLive(formData) {
   try {
     const liveId = formData.get('liveId');
     
@@ -43,7 +43,7 @@ export async function stopLive(prevState, formData) {
   }
 }
 
-export async function logSetAction(prevState, formData) {
+export async function logSetAction(formData) {
   const liveId = formData.get("liveId");
   const sessionExerciseId = formData.get("sessionExerciseId") || null;
   const setIndex = Number(formData.get("setIndex") ?? 0);
@@ -61,7 +61,7 @@ export async function logSetAction(prevState, formData) {
   }
 }
 
-export async function undoLastSet(prevState, formData) {
+export async function undoLastSet(formData) {
   const liveId = formData.get('liveId');
   
   try {
