@@ -58,83 +58,57 @@ async function PlansStats({ filter }) {
 
 // Plans list component
 async function PlansList({ filter }) {
-  const supabase = await supabaseServer();
-  const { data } = await supabase.auth.getUser();
-  
-  if (!data.user) {
-    redirect("/auth/login");
-  }
+  try {
+    const { listPlans } = await import("../../../services/plans");
+    const plans = await listPlans(filter);
 
-  // Build query based on filter
-  let query = supabase
-    .from("plans")
-    .select(`
-      *,
-      sessions (
-        id,
-        name,
-        type
-      )
-    `)
-    .eq("user_id", data.user.id);
+    if (!plans || plans.length === 0) {
+      return (
+        <div className="text-center py-12">
+          <p className="text-text-muted text-lg mb-4">
+            {filter === "active" && "Keine aktiven Pläne gefunden"}
+            {filter === "archived" && "Keine archivierten Pläne gefunden"}
+            {filter === "all" && "Keine Pläne gefunden"}
+          </p>
+          <Link 
+            href="/app/plans/new"
+            className="bg-brand text-black px-6 py-3 rounded-lg font-medium hover:bg-brand-hover transition-colors"
+          >
+            Ersten Plan erstellen
+          </Link>
+        </div>
+      );
+    }
 
-  // Apply filter
-  if (filter === "active") {
-    query = query.eq("active", true);
-  } else if (filter === "archived") {
-    query = query.eq("active", false);
-  }
-
-  const { data: plans, error } = await query.order("created_at", { ascending: false });
-
-  if (error) {
+    return (
+      <div className="space-y-4">
+        {plans.map((plan) => (
+          <div key={plan.id} className="bg-surface rounded-lg p-6 border border-border hover:border-brand transition-colors">
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
+                <p className="text-text-muted mb-2">{plan.goal || "Kein Ziel definiert"}</p>
+                <div className="flex gap-4 text-sm text-text-muted">
+                  <span>{plan.sessions?.length || 0} Sessions</span>
+                  <span>Erstellt: {new Date(plan.created_at).toLocaleDateString('de-DE')}</span>
+                  {plan.archived_at && (
+                    <span>Archiviert: {new Date(plan.archived_at).toLocaleDateString('de-DE')}</span>
+                  )}
+                </div>
+              </div>
+              <PlanActions plan={plan} filter={filter} />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  } catch (error) {
     return (
       <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">
         <p className="text-red-400">Fehler beim Laden der Pläne: {error.message}</p>
       </div>
     );
   }
-
-  if (!plans || plans.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-text-muted text-lg mb-4">
-          {filter === "active" && "Keine aktiven Pläne gefunden"}
-          {filter === "archived" && "Keine archivierten Pläne gefunden"}
-          {filter === "all" && "Keine Pläne gefunden"}
-        </p>
-        <Link 
-          href="/app/plans/new"
-          className="bg-brand text-black px-6 py-3 rounded-lg font-medium hover:bg-brand-hover transition-colors"
-        >
-          Ersten Plan erstellen
-        </Link>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-4">
-      {plans.map((plan) => (
-        <div key={plan.id} className="bg-surface rounded-lg p-6 border border-border hover:border-brand transition-colors">
-          <div className="flex justify-between items-start">
-            <div>
-              <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
-              <p className="text-text-muted mb-2">{plan.goal || "Kein Ziel definiert"}</p>
-              <div className="flex gap-4 text-sm text-text-muted">
-                <span>{plan.sessions?.length || 0} Sessions</span>
-                <span>Erstellt: {new Date(plan.created_at).toLocaleDateString('de-DE')}</span>
-                {plan.archived_at && (
-                  <span>Archiviert: {new Date(plan.archived_at).toLocaleDateString('de-DE')}</span>
-                )}
-              </div>
-            </div>
-            <PlanActions plan={plan} filter={filter} />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
 }
 
 // Main page component

@@ -31,38 +31,25 @@ export default async function NewPlanPage() {
         <form action={async (formData) => {
           "use server";
           
-          const supabase = await supabaseServer();
-          const { data: { user } } = await supabase.auth.getUser();
+          const { createPlan } = await import("../../../../services/plans");
           
-          if (!user) {
-            redirect("/auth/login");
-          }
-
           const name = formData.get("name");
           const goal = formData.get("goal");
 
-          if (!name) {
+          if (!name || name.trim().length === 0) {
             return;
           }
 
-          try {
-            const { error } = await supabase
-              .from("plans")
-              .insert({
-                user_id: user.id,
-                name,
-                goal: goal || null,
-                active: true
-              });
+          const result = await createPlan({
+            name: name.trim(),
+            goal: goal?.trim() || null
+          });
 
-            if (error) {
-              console.error("Error creating plan:", error);
-              return;
-            }
-
+          if (result.success) {
             redirect("/app/plans");
-          } catch (err) {
-            console.error("Error in form submission:", err);
+          } else {
+            // TODO: Show error message to user
+            console.error("Plan creation failed:", result.message);
           }
         }} className="space-y-6">
           <div className="bg-surface rounded-lg p-6 border border-border">
