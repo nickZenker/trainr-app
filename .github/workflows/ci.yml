@@ -1,0 +1,45 @@
+name: CI - Lint & Build Check
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  check:
+    name: Code Quality & Build Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run ESLint
+        run: npm run lint
+        
+      - name: Build application
+        run: npm run build
+        
+      # TODO: Add E2E tests when Playwright is configured
+      # - name: Run E2E tests
+      #   run: npm run test:e2e
+      #   env:
+      #     NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      #     NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      
+      - name: Build summary
+        run: |
+          echo "✅ Lint: PASSED"
+          echo "✅ Build: PASSED"
+          echo "📝 E2E Tests: TODO (Playwright setup required)"
+          echo "🚀 Ready for deployment!"

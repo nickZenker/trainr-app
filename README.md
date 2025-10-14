@@ -245,50 +245,29 @@ Alle Tabellen haben RLS aktiviert - User können nur ihre eigenen Daten sehen/be
 
 ## 🚀 Deployment
 
-### Vercel (empfohlen)
+Für eine detaillierte Deployment-Anleitung siehe: [**docs/DEPLOYMENT.md**](docs/DEPLOYMENT.md)
 
-**1. Vercel Setup:**
+### Quick Start
+
+1. **Vercel Projekt erstellen** und GitHub Repository verbinden
+2. **Environment Variables setzen** (siehe [DEPLOYMENT.md](docs/DEPLOYMENT.md#environment-variables))
+3. **Supabase CORS konfigurieren** für deine Domain
+4. **RLS-Policies aktivieren** (Owner-basiert)
+5. **Deploy & Test** - Health Check unter `/api/health`
+
+### Health Check
+
 ```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel --prod
+curl https://your-domain.vercel.app/api/health
+# Erwartete Antwort: {"ok": true, "time": "...", "buildHash": "..."}
 ```
 
-**2. Environment Variables in Vercel:**
-```bash
-# Required ENV Variables (set in Vercel Dashboard)
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_KEY=your_service_role_key
-NODE_ENV=production
-NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
-NEXT_PUBLIC_APP_NAME=Trainr App
-```
+### Post-Deploy Testing
 
-**3. Supabase RLS/Policies Checklist:**
-- ✅ Owner-basierte Policies aktiv
-- ✅ `auth.users` RLS aktiviert
-- ✅ Alle Tabellen haben RLS-Policies
-- ✅ Service Key nur für Server-Side Operations
-
-**4. Domain Setup:**
-- Set `NEXT_PUBLIC_APP_URL` to your production domain
-- Configure custom domain in Vercel (optional)
-- Update Supabase Auth settings with production URL
-
-### Alternative: Netlify, Railway, etc.
-
-1. Verbinde Repository mit Vercel
-2. Setze Umgebungsvariablen in Vercel Dashboard
-3. Deploy automatisch bei Git Push
-
-### Andere Plattformen
-
-- **Railway**: `railway add` für Supabase Integration
-- **Netlify**: Statische Generierung möglich
-- **Docker**: `Dockerfile` verfügbar (geplant)
+- [ ] Authentication (Login/Register)
+- [ ] Core Features (Plans, Sessions, Live Training)
+- [ ] Calendar (Monats-/Wochenansicht)
+- [ ] Zeit-Zeitzone Konvertierung (UTC ↔ Lokal)
 
 ## 🧪 Testing
 
