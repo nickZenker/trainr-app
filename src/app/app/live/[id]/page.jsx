@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getLiveSession, getLiveStats } from "../../../../services/liveSessions";
+import { getLiveSession, getLiveStats, getRecentSets } from "../../../../services/liveSessions";
 import { startLive, stopLive, logSetAction } from "./actions";
 
 export default async function LiveSessionPage({ params }) {
@@ -9,6 +9,7 @@ export default async function LiveSessionPage({ params }) {
     // Load real live session data from service layer
     const session = await getLiveSession(id);
     const stats = await getLiveStats(id);
+    const recentSets = await getRecentSets(id, 10);
     
     return (
       <div className="min-h-screen bg-background text-foreground">
@@ -141,6 +142,45 @@ export default async function LiveSessionPage({ params }) {
                 </button>
               </div>
             </form>
+          </div>
+
+          {/* Recent Sets */}
+          <div className="bg-surface rounded-lg p-6 border border-border mb-6">
+            <h3 className="text-lg font-semibold mb-4">Letzte geloggte Sets ({recentSets.length})</h3>
+            {recentSets.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="text-left py-2">#</th>
+                      <th className="text-left py-2">Set</th>
+                      <th className="text-left py-2">Reps</th>
+                      <th className="text-left py-2">Weight</th>
+                      <th className="text-left py-2">RPE</th>
+                      <th className="text-left py-2">Notes</th>
+                      <th className="text-left py-2">Time</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recentSets.map((set, index) => (
+                      <tr key={set.id} className="border-b border-border/50">
+                        <td className="py-2 text-text-muted">{index + 1}</td>
+                        <td className="py-2 font-medium">{set.set_index}</td>
+                        <td className="py-2">{set.actual_reps || '-'}</td>
+                        <td className="py-2">{set.actual_weight ? `${set.actual_weight}kg` : '-'}</td>
+                        <td className="py-2">{set.rpe || '-'}</td>
+                        <td className="py-2 text-text-muted max-w-32 truncate">{set.notes || '-'}</td>
+                        <td className="py-2 text-text-muted text-xs">
+                          {new Date(set.created_at).toLocaleTimeString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="text-text-muted">Noch keine Sets geloggt.</p>
+            )}
           </div>
 
           {/* Placeholder for future exercise UI */}

@@ -94,3 +94,16 @@ export async function getLiveStats(id) {
     setCount: sets?.length ?? 0,
   };
 }
+
+/** Get recent set logs for verification */
+export async function getRecentSets(liveSessionId, limit = 10) {
+  const { supabase } = await getClientAndUser();
+  const { data, error } = await supabase
+    .from('set_logs')
+    .select('id, set_index, session_exercise_id, actual_reps, actual_weight, rpe, notes, created_at')
+    .eq('live_session_id', liveSessionId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) throw new Error('set_logs:list failed');
+  return data ?? [];
+}
