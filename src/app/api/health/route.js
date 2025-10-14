@@ -9,10 +9,14 @@ function getBuildHash() {
       return process.env.VERCEL_GIT_COMMIT_SHA.substring(0, 8);
     }
     
-    // Try git command as fallback (may not be available in all environments)
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { execSync } = require('child_process');
-    return execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim().substring(0, 8);
+    // Try git command as fallback (development only)
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { execSync } = require('child_process');
+      return execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
+    }
+    
+    return null;
   } catch {
     // If all fails, return null (not an error)
     return null;

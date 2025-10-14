@@ -1,11 +1,32 @@
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
+import { logError } from "./logger";
+
+/**
+ * Custom error class for Supabase initialization failures
+ */
+class SupabaseInitError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'SupabaseInitError';
+  }
+}
 
 export const supabaseServer = async () => {
-  const cookieStore = await cookies();
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  try {
+    // Validate environment variables
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      throw new SupabaseInitError('NEXT_PUBLIC_SUPABASE_URL is not configured');
+    }
+    
+    if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      throw new SupabaseInitError('NEXT_PUBLIC_SUPABASE_ANON_KEY is not configured');
+    }
+
+    const cookieStore = await cookies();
+    return createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
         get(name) {
@@ -58,14 +79,40 @@ export const supabaseServer = async () => {
       },
     }
   );
+  } catch (error) {
+    if (error instanceof SupabaseInitError) {
+      logError(error, { context: 'supabaseServer', operation: 'init' });
+      throw error;
+    }
+    
+    // Handle cookie access errors
+    if (error.message?.includes('cookies')) {
+      logError(error, { context: 'supabaseServer', operation: 'cookieAccess' });
+      throw new SupabaseInitError('Cookie access failed - check server context');
+    }
+    
+    // Re-throw other errors
+    logError(error, { context: 'supabaseServer', operation: 'unknown' });
+    throw new SupabaseInitError('Supabase client initialization failed');
+  }
 };
 
 // Helper for Server Actions that need to set cookies
 export const supabaseServerWithCookies = async () => {
-  const cookieStore = await cookies();
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  try {
+    // Validate environment variables
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      throw new SupabaseInitError('NEXT_PUBLIC_SUPABASE_URL is not configured');
+    }
+    
+    if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      throw new SupabaseInitError('NEXT_PUBLIC_SUPABASE_ANON_KEY is not configured');
+    }
+
+    const cookieStore = await cookies();
+    return createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
         get(name) {
@@ -108,6 +155,22 @@ export const supabaseServerWithCookies = async () => {
       },
     }
   );
+  } catch (error) {
+    if (error instanceof SupabaseInitError) {
+      logError(error, { context: 'supabaseServerWithCookies', operation: 'init' });
+      throw error;
+    }
+    
+    // Handle cookie access errors
+    if (error.message?.includes('cookies')) {
+      logError(error, { context: 'supabaseServerWithCookies', operation: 'cookieAccess' });
+      throw new SupabaseInitError('Cookie access failed - check server context');
+    }
+    
+    // Re-throw other errors
+    logError(error, { context: 'supabaseServerWithCookies', operation: 'unknown' });
+    throw new SupabaseInitError('Supabase client initialization failed');
+  }
 };
 
 /**

@@ -3,6 +3,8 @@ import { supabaseServer } from "../../../lib/supabaseServer";
 import Link from "next/link";
 import Map from "../../../components/Map";
 
+export const dynamic = 'force-dynamic';
+
 export default async function RoutesPage() {
   const supabase = await supabaseServer();
   const { data } = await supabase.auth.getUser();

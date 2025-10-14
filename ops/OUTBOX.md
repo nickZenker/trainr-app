@@ -22,5 +22,22 @@
   - Fortsetzung der Datenbank-Migration (db-migration-1)
 - **Blocker (falls vorhanden)**: Keine
 
+### [DEPLOY_PREP] Deployment-Vorbereitung für Vercel + Supabase (2025-01-14 22:30)
+- **Ziel**: Deployment-Vorbereitung für Vercel + Supabase abschließen (ohne Live-Deployment)
+- **Prod-Probe lokal**: 🟡 gelb - Build erfolgreich, Production-Server läuft im Hintergrund, Health-Check nicht getestet (PowerShell-Limitation)
+- **Angelegte/aktualisierte Dateien**: 
+  - `/docs/DEPLOYMENT.md` (NEU, 245 Zeilen) - Vollständige Deployment-Anleitung
+  - `README.md` (geändert) - Deployment-Abschnitt gekürzt und auf DEPLOYMENT.md verlinkt
+  - `vercel.json` (NEU) - Security-Headers (X-Frame-Options, X-Content-Type-Options, etc.)
+  - `env.example` (geändert) - NEXT_PUBLIC_SITE_URL hinzugefügt
+  - `.github/workflows/ci.yml` (NEU) - Lint & Build CI-Check
+- **Ergebnis**: ✅ grün - Deployment-Dokumentation vollständig, CI/CD eingerichtet
+- **Nächster empfohlener Schritt**: "Go-Live auf Vercel" inkl.:
+  - Vercel Projekt erstellen und GitHub Repo verbinden
+  - Environment Variables in Vercel Dashboard setzen
+  - Supabase CORS für Production-Domain konfigurieren
+  - Deployment testen und Post-Deploy Checks durchführen
+- **Blocker (falls vorhanden)**: Keine - Ready for Production! 🚀
+
 ---
-**Letzte Aktualisierung**: $(date)
+**Letzte Aktualisierung**: 2025-01-14 22:30
