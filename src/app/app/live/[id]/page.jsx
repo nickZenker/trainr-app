@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getLiveSession, getLiveStats, getRecentSets } from "../../../../services/liveSessions";
+import { getLiveSession, getLiveStats, getRecentSets, getSessionExercisesForLive } from "../../../../services/liveSessions";
 import { startLive, stopLive, logSetAction } from "./actions";
 
 export default async function LiveSessionPage({ params }) {
@@ -10,6 +10,7 @@ export default async function LiveSessionPage({ params }) {
     const session = await getLiveSession(id);
     const stats = await getLiveStats(id);
     const recentSets = await getRecentSets(id, 10);
+    const sessionExercises = await getSessionExercisesForLive(id);
     
     return (
       <div className="min-h-screen bg-background text-foreground">
@@ -77,7 +78,21 @@ export default async function LiveSessionPage({ params }) {
             <h3 className="text-lg font-semibold mb-4">Set Logging</h3>
             <form action={logSetAction} className="grid grid-cols-2 gap-4">
               <input type="hidden" name="liveId" value={id} />
-              <input type="hidden" name="sessionExerciseId" value="" />
+              
+              <div className="col-span-2">
+                <label className="block text-sm font-medium mb-1">Exercise</label>
+                <select 
+                  name="sessionExerciseId"
+                  className="w-full bg-background text-foreground px-3 py-2 rounded border border-border focus:border-brand"
+                >
+                  <option value="">— Exercise wählen —</option>
+                  {sessionExercises.map((exercise) => (
+                    <option key={exercise.id} value={exercise.id}>
+                      {exercise.exercises?.name || `Exercise #${exercise.id}`}
+                    </option>
+                  ))}
+                </select>
+              </div>
               
               <div>
                 <label className="block text-sm font-medium mb-1">Set Index</label>
@@ -142,6 +157,14 @@ export default async function LiveSessionPage({ params }) {
                 </button>
               </div>
             </form>
+            
+            {sessionExercises.length === 0 && (
+              <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                <p className="text-yellow-400 text-sm">
+                  Keine Exercises in dieser Session – Set wird ohne Exercise-ID geloggt.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Recent Sets */}

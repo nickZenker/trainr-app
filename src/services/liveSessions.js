@@ -107,3 +107,34 @@ export async function getRecentSets(liveSessionId, limit = 10) {
   if (error) throw new Error('set_logs:list failed');
   return data ?? [];
 }
+
+/** Get session exercises for live session */
+export async function getSessionExercisesForLive(liveId) {
+  const { supabase } = await getClientAndUser();
+  
+  // First get the session_id from live_sessions
+  const { data: liveSession, error: liveError } = await supabase
+    .from('live_sessions')
+    .select('session_id')
+    .eq('id', liveId)
+    .single();
+    
+  if (liveError) throw new Error('live_sessions:get session_id failed');
+  if (!liveSession?.session_id) return [];
+  
+  // Then get session_exercises with exercise names
+  const { data, error } = await supabase
+    .from('session_exercises')
+    .select(`
+      id,
+      exercise_id,
+      exercises (
+        name
+      )
+    `)
+    .eq('session_id', liveSession.session_id)
+    .order('id', { ascending: true });
+    
+  if (error) throw new Error('session_exercises:list failed');
+  return data ?? [];
+}
