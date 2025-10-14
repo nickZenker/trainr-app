@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getLiveSession, getLiveStats, getRecentSets, getSessionExercisesForLive } from "../../../../services/liveSessions";
-import { startLive, stopLive, logSetAction } from "./actions";
+import { startLive, stopLive, logSetAction, undoLastSet } from "./actions";
 
 export default async function LiveSessionPage({ params }) {
   const { id } = params;
@@ -169,7 +169,20 @@ export default async function LiveSessionPage({ params }) {
 
           {/* Recent Sets */}
           <div className="bg-surface rounded-lg p-6 border border-border mb-6">
-            <h3 className="text-lg font-semibold mb-4">Letzte geloggte Sets ({recentSets.length})</h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Letzte geloggte Sets ({recentSets.length})</h3>
+              {recentSets.length > 0 && (
+                <form action={undoLastSet}>
+                  <input type="hidden" name="liveId" value={id} />
+                  <button 
+                    type="submit"
+                    className="bg-red-500/20 text-red-400 px-3 py-1 rounded text-sm hover:bg-red-500/30 transition-colors"
+                  >
+                    Undo last set
+                  </button>
+                </form>
+              )}
+            </div>
             {recentSets.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -202,7 +215,10 @@ export default async function LiveSessionPage({ params }) {
                 </table>
               </div>
             ) : (
-              <p className="text-text-muted">Noch keine Sets geloggt.</p>
+              <div>
+                <p className="text-text-muted">Noch keine Sets geloggt.</p>
+                <p className="text-text-muted text-sm mt-2">Kein Set zum Rückgängig machen.</p>
+              </div>
             )}
           </div>
 

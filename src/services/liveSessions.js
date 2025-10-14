@@ -138,3 +138,27 @@ export async function getSessionExercisesForLive(liveId) {
   if (error) throw new Error('session_exercises:list failed');
   return data ?? [];
 }
+
+/** Delete the most recent set from a live session */
+export async function deleteLastSet(liveSessionId) {
+  const { supabase } = await getClientAndUser();
+  
+  // Find newest set of the session (user-scope via RLS)
+  const { data: last, error: e1 } = await supabase
+    .from('set_logs')
+    .select('id')
+    .eq('live_session_id', liveSessionId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+    
+  if (e1 || !last) throw new Error('set_logs:last not found');
+  
+  const { error: e2 } = await supabase
+    .from('set_logs')
+    .delete()
+    .eq('id', last.id);
+    
+  if (e2) throw new Error('set_logs:delete failed');
+  return { ok: true, id: last.id };
+}

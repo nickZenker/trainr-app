@@ -1,6 +1,6 @@
 "use server";
 
-import { startLiveSession, stopLiveSession, logSet } from "../../../../services/liveSessions";
+import { startLiveSession, stopLiveSession, logSet, deleteLastSet } from "../../../../services/liveSessions";
 import { revalidatePath } from "next/cache";
 
 export async function startLive(prevState, formData) {
@@ -58,5 +58,17 @@ export async function logSetAction(prevState, formData) {
     return { ok: true };
   } catch (e) {
     return { ok: false, error: e?.message || "logSet failed" };
+  }
+}
+
+export async function undoLastSet(prevState, formData) {
+  const liveId = formData.get('liveId');
+  
+  try {
+    await deleteLastSet(liveId);
+    revalidatePath(`/app/live/${liveId}`);
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e?.message || 'undo failed' };
   }
 }
