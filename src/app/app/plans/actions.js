@@ -165,7 +165,7 @@ export async function deletePlan(formData) {
 
 /**
  * Create a new plan
- * @param {FormData} formData - Form data containing name and goal
+ * @param {FormData} formData - Form data containing name, description, and type
  */
 export async function createPlan(formData) {
   try {
@@ -219,6 +219,34 @@ export async function createPlan(formData) {
       success: false, 
       message: error.message || "An error occurred while creating the plan" 
     };
+  }
+}
+
+/**
+ * Create a new plan via service layer
+ * @param {Object} prevState - Previous state for form handling
+ * @param {FormData} formData - Form data containing name, description, and type
+ */
+export async function createPlanAction(prevState, formData) {
+  try {
+    const { createPlan } = await import("../../../services/plans");
+    
+    const input = {
+      name: (formData.get('name') || '').toString().trim(),
+      description: (formData.get('description') || '').toString().trim() || null,
+      type: (formData.get('type') || 'strength').toString()
+    };
+
+    const result = await createPlan(input);
+    
+    if (result.success) {
+      revalidatePath('/app/plans');
+      return { ok: true, id: result.plan?.id };
+    } else {
+      return { ok: false, error: result.message || 'createPlan failed' };
+    }
+  } catch (e) {
+    return { ok: false, error: e?.message || 'createPlan failed' };
   }
 }
 

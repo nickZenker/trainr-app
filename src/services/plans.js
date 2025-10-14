@@ -104,8 +104,8 @@ export async function listPlans(filter = 'all') {
 
 /**
  * Create a new plan
- * @param {Object} input - Plan data (name, goal)
- * @returns {Promise<Object>} Result object
+ * @param {Object} input - Plan data (name, description?, type)
+ * @returns {Promise<Object>} Result object with plan data
  */
 export async function createPlan(input) {
   try {
@@ -116,7 +116,7 @@ export async function createPlan(input) {
       throw new Error('User not authenticated');
     }
 
-    // Basic validation
+    // Validation
     if (!input.name || input.name.trim().length === 0) {
       throw new Error('Plan name is required');
     }
@@ -125,16 +125,22 @@ export async function createPlan(input) {
       throw new Error('Plan name is too long (max 120 characters)');
     }
 
+    if (!input.type || !['strength', 'endurance'].includes(input.type)) {
+      throw new Error('Plan type must be strength or endurance');
+    }
+
     // Create plan
     const { data: newPlan, error } = await supabase
       .from("plans")
       .insert({
         user_id: user.id,
         name: input.name.trim(),
-        goal: input.goal?.trim() || null,
+        goal: input.description?.trim() || null,
+        type: input.type,
+        visibility: 'private',
         active: true
       })
-      .select()
+      .select('id, name, type, created_at')
       .single();
 
     if (error) {

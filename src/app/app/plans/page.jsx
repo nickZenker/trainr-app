@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import PlanActions from "./PlanActions";
 import FilterToggle from "./FilterToggle";
+import { createPlanAction } from "./actions";
 
 
 // Loading component for stats
@@ -86,7 +87,18 @@ async function PlansList({ filter }) {
           <div key={plan.id} className="bg-surface rounded-lg p-6 border border-border hover:border-brand transition-colors">
             <div className="flex justify-between items-start">
               <div>
-                <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
+                <div className="flex items-center gap-3 mb-2">
+                  <h3 className="text-xl font-semibold">{plan.name}</h3>
+                  {plan.type && (
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                      plan.type === 'strength' 
+                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' 
+                        : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                    }`}>
+                      {plan.type === 'strength' ? 'Strength' : 'Endurance'}
+                    </span>
+                  )}
+                </div>
                 <p className="text-text-muted mb-2">{plan.goal || "Kein Ziel definiert"}</p>
                 <div className="flex gap-4 text-sm text-text-muted">
                   <span>{plan.sessions?.length || 0} Sessions</span>
@@ -145,6 +157,66 @@ export default async function PlansPage({ searchParams }) {
         <Suspense fallback={<StatsLoading />}>
           <PlansStats filter={filter} />
         </Suspense>
+
+        {/* Create Plan Form */}
+        <div className="bg-surface rounded-lg p-6 border border-border mb-6">
+          <h2 className="text-xl font-semibold mb-4">Neuen Plan erstellen</h2>
+          <form action={createPlanAction} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
+                  Name *
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  required
+                  minLength={1}
+                  maxLength={120}
+                  className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
+                  placeholder="z.B. Kraft – Push/Pull/Legs"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="type" className="block text-sm font-medium text-foreground mb-2">
+                  Typ *
+                </label>
+                <select
+                  id="type"
+                  name="type"
+                  defaultValue="strength"
+                  required
+                  className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
+                >
+                  <option value="strength">Strength</option>
+                  <option value="endurance">Endurance</option>
+                </select>
+              </div>
+            </div>
+            
+            <div>
+              <label htmlFor="description" className="block text-sm font-medium text-foreground mb-2">
+                Beschreibung
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                rows={2}
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
+                placeholder="z.B. 3-Tage Split für Kraftaufbau"
+              />
+            </div>
+            
+            <button
+              type="submit"
+              className="bg-brand text-black px-6 py-3 rounded-lg font-medium hover:bg-brand-hover transition-colors"
+            >
+              Plan erstellen
+            </button>
+          </form>
+        </div>
 
         {/* Filter Toggle */}
         <FilterToggle currentFilter={filter} />
