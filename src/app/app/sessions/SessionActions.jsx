@@ -15,12 +15,16 @@ export default function SessionActions({ session }) {
     }
 
     startTransition(async () => {
-      const formData = new FormData();
-      formData.append("sessionId", session.id);
-      
-      const result = await deleteSession(formData);
-      if (!result.success) {
-        alert(`Fehler: ${result.message}`);
+      try {
+        const formData = new FormData();
+        formData.append("sessionId", session.id);
+        
+        const result = await deleteSession(formData);
+        if (!result.success) {
+          alert(`Fehler: ${result.message}`);
+        }
+      } catch (error) {
+        alert(`Fehler: ${error.message}`);
       }
     });
   };

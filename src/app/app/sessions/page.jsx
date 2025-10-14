@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { supabaseServer } from "../../../lib/supabaseServer";
-import { getSessionsStats } from "./actions";
+import { getSessionsStats } from "../../../services/sessions";
 import Link from "next/link";
 import { Suspense } from "react";
 import SessionActions from "./SessionActions";
@@ -42,25 +42,33 @@ function StatsLoading() {
 
 // Stats component
 async function SessionsStats({ filter }) {
-  const stats = await getSessionsStats();
-  
-  const statsData = [
-    { label: "Gesamt", value: stats.totalSessions },
-    { label: "Kraft", value: stats.strengthSessions },
-    { label: "Cardio", value: stats.cardioSessions },
-    { label: "Übungen", value: stats.totalExercises },
-  ];
+  try {
+    const stats = await getSessionsStats();
+    
+    const statsData = [
+      { label: "Gesamt", value: stats.totalSessions },
+      { label: "Kraft", value: stats.strengthSessions },
+      { label: "Cardio", value: stats.cardioSessions },
+      { label: "Übungen", value: stats.totalExercises },
+    ];
 
-  return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-      {statsData.map((stat, index) => (
-        <div key={index} className="bg-surface rounded-lg p-6 border border-border">
-          <h3 className="text-lg font-semibold mb-2">{stat.label}</h3>
-          <p className="text-3xl font-bold text-brand">{stat.value}</p>
-        </div>
-      ))}
-    </div>
-  );
+    return (
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+        {statsData.map((stat, index) => (
+          <div key={index} className="bg-surface rounded-lg p-6 border border-border">
+            <h3 className="text-lg font-semibold mb-2">{stat.label}</h3>
+            <p className="text-3xl font-bold text-brand">{stat.value}</p>
+          </div>
+        ))}
+      </div>
+    );
+  } catch (error) {
+    return (
+      <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">
+        <p className="text-red-400">Fehler beim Laden der Statistiken: {error.message}</p>
+      </div>
+    );
+  }
 }
 
 // Sessions list component
