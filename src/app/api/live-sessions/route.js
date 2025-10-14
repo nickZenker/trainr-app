@@ -19,7 +19,8 @@ function logError(operation, error, userId = null) {
 }
 
 // GET /api/live-sessions - Get active live sessions
-export async function GET(request) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function GET(_request) {
   try {
     const supabase = await supabaseServer();
     const { data: { user } } = await supabase.auth.getUser();

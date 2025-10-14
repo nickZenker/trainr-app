@@ -138,7 +138,8 @@ export const canModifyCookies = () => {
     // Try to access cookies() to see if we're in the right context
     const cookieStore = cookies();
     return cookieStore && typeof cookieStore.set === 'function';
-  } catch (error) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (_error) {
     return false;
   }
 };

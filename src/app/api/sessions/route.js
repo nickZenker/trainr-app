@@ -12,14 +12,15 @@ const SessionCreateSchema = z.object({
   order_index: z.number().int().min(0).optional()
 });
 
-const SessionUpdateSchema = z.object({
-  type: z.enum(["strength", "cardio", "flexibility"], "Invalid session type").optional(),
-  name: z.string().min(1, "Name is required").max(100, "Name too long").optional(),
-  weekday: z.number().min(0, "Invalid weekday").max(6, "Invalid weekday").optional(),
-  time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format").optional(),
-  order_index: z.number().int().min(0).optional(),
-  active: z.boolean().optional()
-});
+// TODO: Implement SessionUpdateSchema when PUT endpoint is added
+// const SessionUpdateSchema = z.object({
+//   type: z.enum(["strength", "cardio", "flexibility"], "Invalid session type").optional(),
+//   name: z.string().min(1, "Name is required").max(100, "Name too long").optional(),
+//   weekday: z.number().min(0, "Invalid weekday").max(6, "Invalid weekday").optional(),
+//   time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format").optional(),
+//   order_index: z.number().int().min(0).optional(),
+//   active: z.boolean().optional()
+// });
 
 function logError(operation, error, userId = null) {
   console.error(`API Error [${operation}]:`, {

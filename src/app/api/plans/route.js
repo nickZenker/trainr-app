@@ -15,11 +15,12 @@ const PlanCreateSchema = z.object({
   active: z.boolean().optional()
 });
 
-const PlanUpdateSchema = z.object({
-  name: z.string().min(1, "Name is required").max(100, "Name too long").optional(),
-  goal: z.string().max(500, "Goal description too long").optional(),
-  active: z.boolean().optional()
-});
+// TODO: Implement PlanUpdateSchema when PUT endpoint is added
+// const PlanUpdateSchema = z.object({
+//   name: z.string().min(1, "Name is required").max(100, "Name too long").optional(),
+//   goal: z.string().max(500, "Goal description too long").optional(),
+//   active: z.boolean().optional()
+// });
 
 // GET /api/plans - Get all plans for user
 export async function GET() {

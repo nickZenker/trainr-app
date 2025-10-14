@@ -150,11 +150,13 @@ export function createApiResponse(data, meta = {}) {
  * @param {number} windowMs - Time window in milliseconds
  * @returns {boolean} Whether request is allowed
  */
-export function checkRateLimit(identifier, limit = 100, windowMs = 60000) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function checkRateLimit(identifier, _limit = 100, _windowMs = 60000) {
   // This is a basic implementation
   // In production, use Redis or a proper rate limiting service
-  const key = `rate_limit_${identifier}`;
-  const now = Date.now();
+  // TODO: Implement actual rate limiting logic
+  // const key = `rate_limit_${identifier}`;
+  // const now = Date.now();
   
   // This would typically be stored in Redis
   // For now, we'll just return true
