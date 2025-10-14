@@ -172,7 +172,7 @@ async function SessionsList({ filter }) {
                   </button>
                 </form>
                 <p className="text-xs text-text-muted mt-2">
-                  Zeiten werden in UTC gespeichert; Anzeige lokal im Kalender.
+                  Wird in UTC gespeichert; Anzeige in deiner lokalen Zeit.
                 </p>
               </div>
             </div>

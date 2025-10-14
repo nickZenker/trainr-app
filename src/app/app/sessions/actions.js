@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { supabaseServerWithCookies } from "@/lib/supabaseServer";
 import { z } from "zod";
 import { logApiError, handleValidationError } from "@/lib/api-utils";
+import { localDatetimeToUtcIso } from "../../../lib/datetime";
 
 // Validation schemas
 const SessionIdSchema = z.string().uuid("Invalid Session ID format");
@@ -162,19 +163,17 @@ export async function scheduleSessionAction(prevState, formData) {
     const { scheduleSession } = await import("../../../services/sessions");
     
     const sessionId = formData.get('sessionId');
-    const scheduledAtIso = formData.get('scheduledAtIso');
+    const localVal = formData.get('scheduledAtIso'); // comes from datetime-local
     const durationMin = formData.get('durationMin') ? Number(formData.get('durationMin')) : null;
 
-    // Convert datetime-local to UTC ISO string if needed
-    let utcIsoString = scheduledAtIso;
-    if (scheduledAtIso && !scheduledAtIso.endsWith('Z')) {
-      // Convert local datetime to UTC ISO string
-      const localDate = new Date(scheduledAtIso);
-      utcIsoString = localDate.toISOString();
+    // Convert local datetime to UTC ISO string
+    const scheduledAtIso = localDatetimeToUtcIso(localVal);
+    if (!scheduledAtIso) {
+      return { ok: false, error: 'Invalid datetime format' };
     }
 
     const result = await scheduleSession(sessionId, { 
-      scheduledAtIso: utcIsoString, 
+      scheduledAtIso, 
       durationMin 
     });
     

@@ -375,7 +375,13 @@ export async function listScheduledSessions(rangeStartIso, rangeEndIso) {
       throw new Error(`Failed to fetch scheduled sessions: ${error.message}`);
     }
 
-    return sessions || [];
+    // Enhance sessions with plan type information
+    const enhancedSessions = (sessions || []).map(session => ({
+      ...session,
+      plan_type: session.plans?.type || 'unknown'
+    }));
+
+    return enhancedSessions;
 
   } catch (error) {
     console.error('listScheduledSessions error:', error);

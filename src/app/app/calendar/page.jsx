@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { supabaseServer } from "../../../lib/supabaseServer";
 import { listScheduledSessions } from "../../../services/sessions";
+import { isoToLocalTimeOnly } from "../../../lib/datetime";
 
 // Helper function to get date range for month view
 function getMonthRange(date) {
@@ -44,12 +45,7 @@ function getWeekDescription(startDate, endDate) {
 
 // Helper function to format time for display
 function formatTime(isoString) {
-  const date = new Date(isoString);
-  return date.toLocaleTimeString('de-DE', { 
-    hour: '2-digit', 
-    minute: '2-digit',
-    timeZone: 'Europe/Berlin' // Local timezone
-  });
+  return isoToLocalTimeOnly(isoString);
 }
 
 // Helper function to get day of month
@@ -138,7 +134,19 @@ function MonthGrid({ sessions, currentDate }) {
                   }`}
                   title={`${session.name} - ${formatTime(session.scheduled_at)}`}
                 >
-                  {formatTime(session.scheduled_at)} {session.name}
+                  <div className="flex items-center gap-1">
+                    <span>{formatTime(session.scheduled_at)}</span>
+                    <span>{session.name}</span>
+                    {session.plan_type && (
+                      <span className={`inline-block rounded px-1 py-0.5 text-xs border ${
+                        session.plan_type === 'strength' 
+                          ? 'bg-blue-200 text-blue-900 border-blue-300 dark:bg-blue-800 dark:text-blue-100 dark:border-blue-600'
+                          : 'bg-green-200 text-green-900 border-green-300 dark:bg-green-800 dark:text-green-100 dark:border-green-600'
+                      }`}>
+                        {session.plan_type === 'strength' ? 'Strength' : 'Endurance'}
+                      </span>
+                    )}
+                  </div>
                 </div>
               ))}
               {daySessions.length > 3 && (
@@ -215,8 +223,19 @@ function WeekGrid({ sessions, currentDate }) {
                 >
                   <div className="font-medium">{formatTime(session.scheduled_at)}</div>
                   <div className="truncate">{session.name}</div>
+                  {session.plan_type && (
+                    <div className="mt-1">
+                      <span className={`inline-block rounded px-1 py-0.5 text-xs border ${
+                        session.plan_type === 'strength' 
+                          ? 'bg-blue-200 text-blue-900 border-blue-300 dark:bg-blue-800 dark:text-blue-100 dark:border-blue-600'
+                          : 'bg-green-200 text-green-900 border-green-300 dark:bg-green-800 dark:text-green-100 dark:border-green-600'
+                      }`}>
+                        {session.plan_type === 'strength' ? 'Strength' : 'Endurance'}
+                      </span>
+                    </div>
+                  )}
                   {session.duration_min && (
-                    <div className="text-xs opacity-75">{session.duration_min}min</div>
+                    <div className="text-xs opacity-75 mt-1">{session.duration_min}min</div>
                   )}
                 </div>
               ))}
