@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getLiveSession, getLiveStats } from "../../../../services/liveSessions";
-import { startLive, stopLive } from "./actions";
+import { startLive, stopLive, logSetAction } from "./actions";
 
 export default async function LiveSessionPage({ params }) {
   const { id } = params;
@@ -69,6 +69,78 @@ export default async function LiveSessionPage({ params }) {
                 <span className="ml-2 font-medium">{stats.setCount}</span>
               </div>
             </div>
+          </div>
+
+          {/* Set Logging Form */}
+          <div className="bg-surface rounded-lg p-6 border border-border mb-6">
+            <h3 className="text-lg font-semibold mb-4">Set Logging</h3>
+            <form action={logSetAction} className="grid grid-cols-2 gap-4">
+              <input type="hidden" name="liveId" value={id} />
+              <input type="hidden" name="sessionExerciseId" value="" />
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Set Index</label>
+                <input 
+                  name="setIndex" 
+                  type="number" 
+                  min="0" 
+                  defaultValue="1"
+                  className="w-full bg-background text-foreground px-3 py-2 rounded border border-border focus:border-brand"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Reps *</label>
+                <input 
+                  name="reps" 
+                  type="number" 
+                  min="0" 
+                  required
+                  className="w-full bg-background text-foreground px-3 py-2 rounded border border-border focus:border-brand"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Weight (kg)</label>
+                <input 
+                  name="weight" 
+                  type="number" 
+                  step="0.5" 
+                  min="0"
+                  className="w-full bg-background text-foreground px-3 py-2 rounded border border-border focus:border-brand"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">RPE (1-10)</label>
+                <input 
+                  name="rpe" 
+                  type="number" 
+                  min="1" 
+                  max="10"
+                  className="w-full bg-background text-foreground px-3 py-2 rounded border border-border focus:border-brand"
+                />
+              </div>
+              
+              <div className="col-span-2">
+                <label className="block text-sm font-medium mb-1">Notes</label>
+                <input 
+                  name="notes" 
+                  type="text"
+                  placeholder="Optional notes..."
+                  className="w-full bg-background text-foreground px-3 py-2 rounded border border-border focus:border-brand"
+                />
+              </div>
+              
+              <div className="col-span-2">
+                <button 
+                  type="submit"
+                  className="bg-brand text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-hover transition-colors"
+                >
+                  Log Set
+                </button>
+              </div>
+            </form>
           </div>
 
           {/* Placeholder for future exercise UI */}
