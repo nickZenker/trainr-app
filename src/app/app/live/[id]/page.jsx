@@ -262,6 +262,12 @@ export default async function LiveSessionPage({ params }) {
                   Neue Live-Session starten
                 </button>
               </form>
+              
+              <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                <p className="text-blue-400 text-sm">
+                  <strong>Debug:</strong> Session ID: {id}
+                </p>
+              </div>
             </div>
 
             <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">

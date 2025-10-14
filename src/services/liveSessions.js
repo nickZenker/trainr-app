@@ -8,8 +8,15 @@ import { supabaseServerWithCookies } from '../lib/supabaseServer.js';
 async function getClientAndUser() {
   const supabase = await supabaseServerWithCookies();
   const { data: { user }, error } = await supabase.auth.getUser();
-  if (error) throw new Error('auth:getUser failed');
-  if (!user) throw new Error('auth:unauthenticated');
+  if (error) {
+    console.error('Auth getUser error:', error);
+    throw new Error(`auth:getUser failed - ${error.message}`);
+  }
+  if (!user) {
+    console.error('No authenticated user found');
+    throw new Error('auth:unauthenticated');
+  }
+  console.log('Authenticated user:', user.id);
   return { supabase, user };
 }
 
@@ -36,8 +43,12 @@ export async function startLiveSession(payload) {
     started_at: new Date().toISOString(),
     status: 'active',
   };
+  console.log('Creating live session with input:', input);
   const { data, error } = await supabase.from('live_sessions').insert(input).select('id').single();
-  if (error) throw new Error('live_sessions:start failed');
+  if (error) {
+    console.error('Live session creation error:', error);
+    throw new Error(`live_sessions:start failed - ${error.message}`);
+  }
   return data; // { id }
 }
 

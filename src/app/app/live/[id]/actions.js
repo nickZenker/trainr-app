@@ -6,12 +6,14 @@ import { revalidatePath } from "next/cache";
 export async function startLive(formData) {
   try {
     const sessionId = formData.get('sessionId');
+    console.log('startLive called with sessionId:', sessionId);
     
     if (!sessionId) {
       return { ok: false, error: "Session ID fehlt" };
     }
 
     const result = await startLiveSession({ sessionId });
+    console.log('Live session created successfully:', result);
     
     // Revalidate the page to show updated status
     revalidatePath(`/app/live/${result.id}`);
