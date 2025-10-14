@@ -126,11 +126,11 @@ test.describe('Session Scheduling & Calendar', () => {
       const datetimeValue = `${year}-${month}-${day}T18:00`;
       
       // Fill scheduling form
-      await scheduleForm.fill('input[type="datetime-local"]', datetimeValue);
-      await scheduleForm.fill('input[name="durationMin"]', '60');
+      await scheduleForm.fill('[data-testid="session-datetime"]', datetimeValue);
+      await scheduleForm.fill('[data-testid="session-duration"]', '60');
       
       // Submit scheduling
-      await scheduleForm.click('button[type="submit"]');
+      await scheduleForm.click('[data-testid="session-schedule"]');
       
       // Wait for form submission
       await page.waitForTimeout(2000);

@@ -38,6 +38,7 @@ export default async function LiveSessionPage({ params }) {
                            <button 
                              type="submit"
                              className="bg-red-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-600 transition-colors"
+                             data-testid="live-stop"
                            >
                              Stop
                            </button>
@@ -59,6 +60,7 @@ export default async function LiveSessionPage({ params }) {
                            <button 
                              type="submit"
                              className="bg-red-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-600 transition-colors"
+                             data-testid="live-stop"
                            >
                              Stop
                            </button>
@@ -70,6 +72,7 @@ export default async function LiveSessionPage({ params }) {
                          <button 
                            type="submit"
                            className="bg-brand text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-hover transition-colors"
+                           data-testid="live-start"
                          >
                            Start
                          </button>
@@ -184,6 +187,7 @@ export default async function LiveSessionPage({ params }) {
                 <button 
                   type="submit"
                   className="bg-brand text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-hover transition-colors"
+                  data-testid="live-logset"
                 >
                   Log Set
                 </button>
@@ -209,6 +213,7 @@ export default async function LiveSessionPage({ params }) {
                   <button 
                     type="submit"
                     className="bg-red-500/20 text-red-400 px-3 py-1 rounded text-sm hover:bg-red-500/30 transition-colors"
+                    data-testid="live-undo"
                   >
                     Undo last set
                   </button>

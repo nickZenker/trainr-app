@@ -38,6 +38,7 @@ export default function LoginPage() {
             className="w-full border rounded px-3 py-2"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            data-testid="auth-email"
             required
           />
         </label>
@@ -49,6 +50,7 @@ export default function LoginPage() {
             className="w-full border rounded px-3 py-2"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            data-testid="auth-password"
             required
           />
         </label>
@@ -56,11 +58,12 @@ export default function LoginPage() {
           type="submit"
           className="w-full bg-black text-white py-2 rounded disabled:opacity-50"
           disabled={loading}
+          data-testid="auth-submit"
         >
           {loading ? "Bitte warten..." : "Einloggen"}
         </button>
         <div className="text-sm">
-          <a href="/auth/signup" className="underline">Noch kein Konto? Registrieren</a>
+          <a href="/auth/signup" className="underline" data-testid="link-signup">Noch kein Konto? Registrieren</a>
         </div>
         <div className="text-sm">
           <a href="/auth/reset-password" className="underline">Passwort vergessen?</a>

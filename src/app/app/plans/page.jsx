@@ -176,6 +176,7 @@ export default async function PlansPage({ searchParams }) {
                   maxLength={120}
                   className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
                   placeholder="z.B. Kraft – Push/Pull/Legs"
+                  data-testid="plan-name"
                 />
               </div>
               
@@ -189,6 +190,7 @@ export default async function PlansPage({ searchParams }) {
                   defaultValue="strength"
                   required
                   className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
+                  data-testid="plan-type"
                 >
                   <option value="strength">Strength</option>
                   <option value="endurance">Endurance</option>
@@ -206,12 +208,14 @@ export default async function PlansPage({ searchParams }) {
                 rows={2}
                 className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
                 placeholder="z.B. 3-Tage Split für Kraftaufbau"
+                data-testid="plan-description"
               />
             </div>
             
             <button
               type="submit"
               className="bg-brand text-black px-6 py-3 rounded-lg font-medium hover:bg-brand-hover transition-colors"
+              data-testid="plan-create"
             >
               Plan erstellen
             </button>

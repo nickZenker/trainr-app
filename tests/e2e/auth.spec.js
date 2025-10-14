@@ -74,14 +74,14 @@ test.describe('Authentication Flow', () => {
     await page.goto('/auth/signup');
     
     // Wait for form to be ready
-    await page.waitForSelector('input[type="email"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="signup-email"]', { timeout: 10000 });
     
     // Fill signup form
-    await page.fill('input[type="email"]', TEST_EMAIL);
-    await page.fill('input[type="password"]', TEST_PASSWORD);
+    await page.fill('[data-testid="signup-email"]', TEST_EMAIL);
+    await page.fill('[data-testid="signup-password"]', TEST_PASSWORD);
     
     // Submit form
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="signup-submit"]');
     
     // Wait for response
     await page.waitForTimeout(2000);
@@ -91,11 +91,11 @@ test.describe('Authentication Flow', () => {
       console.log('User already exists, proceeding with login');
       
       // Fill login form
-      await page.fill('input[type="email"]', TEST_EMAIL);
-      await page.fill('input[type="password"]', TEST_PASSWORD);
+      await page.fill('[data-testid="auth-email"]', TEST_EMAIL);
+      await page.fill('[data-testid="auth-password"]', TEST_PASSWORD);
       
       // Submit login
-      await page.click('button[type="submit"]');
+      await page.click('[data-testid="auth-submit"]');
       
       // Wait for redirect
       await page.waitForTimeout(2000);
@@ -111,14 +111,14 @@ test.describe('Authentication Flow', () => {
     await expect(page.locator('nav')).toBeVisible();
   });
 
-  test('should save auth state', async ({ page, context }) => {
+  test('should save auth state', async ({ page }) => {
     // Login first
     await page.goto('/auth/login');
-    await page.waitForSelector('input[type="email"]');
+    await page.waitForSelector('[data-testid="auth-email"]');
     
-    await page.fill('input[type="email"]', TEST_EMAIL);
-    await page.fill('input[type="password"]', TEST_PASSWORD);
-    await page.click('button[type="submit"]');
+    await page.fill('[data-testid="auth-email"]', TEST_EMAIL);
+    await page.fill('[data-testid="auth-password"]', TEST_PASSWORD);
+    await page.click('[data-testid="auth-submit"]');
     
     // Wait for successful login
     await page.waitForURL(/.*\/app.*/);

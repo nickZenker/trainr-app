@@ -5,6 +5,8 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './tests/e2e',
+  /* Global setup for persistent auth */
+  // globalSetup: './tests/.auth/global.setup.js',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -25,6 +27,9 @@ export default defineConfig({
     
     /* Headless mode for CI */
     headless: true,
+    
+    /* Use persistent auth state */
+    // storageState: './tests/.auth/state.json',
   },
 
   /* Configure projects for major browsers */

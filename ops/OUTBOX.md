@@ -40,6 +40,20 @@
 - **Blocker (falls vorhanden)**: Keine - Ready for Production! 🚀
 
 ---
+### [E2E-AUTH+SELECTORS] E2E-Tests stabilisiert mit data-testid (2025-01-14 22:05)
+- **Ziel**: E2E-Tests stabil machen mit persistentem Login und data-testid Selektoren
+- **auth/plans/schedule/live/app-navigation**: 🟡 gelb - Tests laufen, aber Auth-Problem (Supabase 400-Fehler)
+- **5xx Responses total**: 0 - Keine 500er in allen Tests gefunden
+- **Console Errors**: 1 - "Failed to load resource: the server responded with a status of 400"
+- **Implementierte Verbesserungen**:
+  - ✅ UI mit data-testid versehen (login, signup, plans, sessions, live)
+  - ✅ Globales Playwright-Setup für persistentes Login erstellt
+  - ✅ Playwright-Konfig für globalSetup angepasst
+  - ✅ Tests auf data-testid umgestellt (auth, plans, schedule, live)
+  - ✅ Robuste Netzwerk-/Console-Logging-Infrastruktur
+- **Nächster Schritt**: Supabase-Environment-Variablen prüfen und Auth-Konfiguration korrigieren
+- **Blocker**: Supabase-Authentifizierung funktioniert nicht (400-Fehler bei Signup/Login)
+
 ### [CHAOS-V1] Chaos-Matrix v1 - Sporadische 500er Diagnose (2025-01-14 22:55)
 - **Ziel**: Reproduzierbare "Chaos-Matrix v1" einrichten und ausführen, um die Ursache der sporadischen 500er zu finden
 - **Lauf**: ops/LOGS/chaos-20251014-205513.md

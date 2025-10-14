@@ -148,6 +148,7 @@ async function SessionsList({ filter }) {
                       type="datetime-local" 
                       required 
                       className="w-full px-2 py-1 text-sm bg-background border border-border rounded text-foreground focus:outline-none focus:ring-1 focus:ring-brand focus:border-transparent"
+                      data-testid="session-datetime"
                     />
                   </div>
                   <div>
@@ -162,11 +163,13 @@ async function SessionsList({ filter }) {
                       step="5" 
                       placeholder="60" 
                       className="w-full px-2 py-1 text-sm bg-background border border-border rounded text-foreground focus:outline-none focus:ring-1 focus:ring-brand focus:border-transparent"
+                      data-testid="session-duration"
                     />
                   </div>
                   <button 
                     type="submit" 
                     className="bg-brand text-black px-3 py-1 text-sm font-medium rounded hover:bg-brand-hover transition-colors"
+                    data-testid="session-schedule"
                   >
                     Planen
                   </button>

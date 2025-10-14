@@ -79,12 +79,12 @@ test.describe('Plans Creation', () => {
     await expect(form).toBeVisible();
     
     // Fill strength plan form
-    await form.fill('input[name="name"]', 'E2E Kraft – PPL');
-    await form.selectOption('select[name="type"]', 'strength');
-    await form.fill('textarea[name="description"]', 'E2E Test Plan für Push/Pull/Legs');
+    await form.fill('[data-testid="plan-name"]', 'E2E Kraft – PPL');
+    await form.selectOption('[data-testid="plan-type"]', 'strength');
+    await form.fill('[data-testid="plan-description"]', 'E2E Test Plan für Push/Pull/Legs');
     
     // Submit form
-    await form.click('button[type="submit"]');
+    await form.click('[data-testid="plan-create"]');
     
     // Wait for form submission
     await page.waitForTimeout(2000);
@@ -107,12 +107,12 @@ test.describe('Plans Creation', () => {
     await expect(form).toBeVisible();
     
     // Fill endurance plan form
-    await form.fill('input[name="name"]', 'E2E Ausdauer – 10k');
-    await form.selectOption('select[name="type"]', 'endurance');
-    await form.fill('textarea[name="description"]', 'E2E Test Plan für 10k Aufbau');
+    await form.fill('[data-testid="plan-name"]', 'E2E Ausdauer – 10k');
+    await form.selectOption('[data-testid="plan-type"]', 'endurance');
+    await form.fill('[data-testid="plan-description"]', 'E2E Test Plan für 10k Aufbau');
     
     // Submit form
-    await form.click('button[type="submit"]');
+    await form.click('[data-testid="plan-create"]');
     
     // Wait for form submission
     await page.waitForTimeout(2000);

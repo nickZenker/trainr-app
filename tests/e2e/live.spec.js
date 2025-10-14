@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { attachLogging, getStatus } from '../utils/netlog';
 import { writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
@@ -84,8 +84,8 @@ test.describe('Live Training Flow', () => {
     }
     
     // Look for start/stop buttons
-    const startButton = page.locator('button').filter({ hasText: /start|Start/i }).first();
-    const stopButton = page.locator('button').filter({ hasText: /stop|Stop/i }).first();
+    const startButton = page.locator('[data-testid="live-start"]').first();
+    const stopButton = page.locator('[data-testid="live-stop"]').first();
     
     // Check session status and start if needed
     if (await startButton.isVisible()) {
@@ -110,7 +110,7 @@ test.describe('Live Training Flow', () => {
           await setForm.fill('input[name="notes"]', 'E2E Test Set');
           
           // Submit set logging
-          await setForm.click('button[type="submit"]');
+          await setForm.click('[data-testid="live-logset"]');
           await page.waitForTimeout(2000);
           
           // Check for recent sets display
@@ -175,7 +175,7 @@ test.describe('Live Training Flow', () => {
       }
       
       // Try to submit
-      const submitButton = setForm.locator('button[type="submit"]').first();
+      const submitButton = setForm.locator('[data-testid="live-logset"]').first();
       if (await submitButton.isVisible()) {
         await submitButton.click();
         await page.waitForTimeout(2000);

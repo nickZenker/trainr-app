@@ -38,6 +38,7 @@ export default function SignupPage() {
             className="w-full border rounded px-3 py-2"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            data-testid="signup-email"
             required
           />
         </label>
@@ -49,6 +50,7 @@ export default function SignupPage() {
             className="w-full border rounded px-3 py-2"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            data-testid="signup-password"
             required
           />
         </label>
@@ -56,6 +58,7 @@ export default function SignupPage() {
           type="submit"
           className="w-full bg-black text-white py-2 rounded disabled:opacity-50"
           disabled={loading}
+          data-testid="signup-submit"
         >
           {loading ? "Bitte warten..." : "Registrieren"}
         </button>
