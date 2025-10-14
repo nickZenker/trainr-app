@@ -40,4 +40,24 @@
 - **Blocker (falls vorhanden)**: Keine - Ready for Production! 🚀
 
 ---
-**Letzte Aktualisierung**: 2025-01-14 22:30
+### [CHAOS-V1] Chaos-Matrix v1 - Sporadische 500er Diagnose (2025-01-14 22:55)
+- **Ziel**: Reproduzierbare "Chaos-Matrix v1" einrichten und ausführen, um die Ursache der sporadischen 500er zu finden
+- **Lauf**: ops/LOGS/chaos-20251014-205513.md
+- **HTTP-Codes pro Route**:
+  - /api/health: 200 ✅
+  - /app: 200 ✅  
+  - /app/plans: 200 ✅ (3x wiederholt)
+  - /app/sessions: 200 ✅
+  - /app/calendar?view=month: 200 ✅
+  - /app/live/1: 200 ✅
+- **Erste Hypothesen**:
+  - **KEINE 500er reproduziert**: Alle Tests zeigen HTTP 200 - sporadische 500er sind nicht durch einfache GET-Requests reproduzierbar
+  - **Environment-Problem**: PowerShell-Script zeigt "ENV missing" aber Health-Endpoint zeigt "true" - Environment-Variablen werden korrekt geladen
+  - **Timing/Concurrency**: 500er treten möglicherweise nur bei bestimmten Server-Aktionen (POST/PUT) oder unter Last auf
+- **Nächster Schritt (Vorschlag)**: 
+  - Server Actions testen (POST-Requests mit Form-Daten)
+  - Authentifizierte Requests testen (mit Session-Cookies)
+  - Load-Testing mit mehreren parallelen Requests
+  - `/app/admin/diag` prüfen für detaillierte System-Diagnose
+
+**Letzte Aktualisierung**: 2025-01-14 22:55
