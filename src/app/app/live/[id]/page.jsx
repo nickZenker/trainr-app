@@ -3,7 +3,7 @@ import { getLiveSession, getLiveStats, getRecentSets, getSessionExercisesForLive
 import { startLive, stopLive, logSetAction, undoLastSet } from "./actions";
 
 export default async function LiveSessionPage({ params }) {
-  const { id } = params;
+  const { id } = await params;
 
   try {
     // Load real live session data from service layer
@@ -232,6 +232,51 @@ export default async function LiveSessionPage({ params }) {
     );
   } catch (error) {
     console.error('Live session error:', error);
+    
+    // If live session doesn't exist, show a page to create one
+    if (error.message.includes('live_sessions:get failed')) {
+      return (
+        <div className="min-h-screen bg-background text-foreground">
+          <header className="border-b border-border px-6 py-4">
+            <div className="flex justify-between items-center max-w-4xl mx-auto">
+              <div>
+                <h1 className="text-2xl font-bold text-brand">Live Training</h1>
+                <p className="text-text-muted">Neue Live-Session starten</p>
+              </div>
+            </div>
+          </header>
+
+          <main className="p-6 max-w-4xl mx-auto">
+            <div className="bg-surface rounded-lg p-6 border border-border mb-6">
+              <h2 className="text-xl font-semibold mb-4">Live-Session nicht gefunden</h2>
+              <p className="text-text-muted mb-4">
+                Die Live-Session mit ID "{id}" existiert noch nicht. Du kannst eine neue Live-Session starten.
+              </p>
+              
+              <form action={startLive}>
+                <input type="hidden" name="sessionId" value={id} />
+                <button 
+                  type="submit"
+                  className="bg-brand text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-hover transition-colors"
+                >
+                  Neue Live-Session starten
+                </button>
+              </form>
+            </div>
+
+            <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-blue-400 mb-2">Hinweis</h3>
+              <p className="text-blue-300 text-sm">
+                Live-Sessions werden automatisch erstellt, wenn du den "Start" Button klickst. 
+                Du kannst auch direkt zu einer bestehenden Session navigieren, falls du eine kennst.
+              </p>
+            </div>
+          </main>
+        </div>
+      );
+    }
+
+    // For other errors, show the error page
     return (
       <div className="min-h-screen bg-background text-foreground">
         <div className="p-6 max-w-4xl mx-auto">

@@ -14,7 +14,7 @@ export async function startLive(prevState, formData) {
     const result = await startLiveSession({ sessionId });
     
     // Revalidate the page to show updated status
-    revalidatePath(`/app/live/${sessionId}`);
+    revalidatePath(`/app/live/${result.id}`);
     
     return { ok: true, id: result.id };
   } catch (error) {
