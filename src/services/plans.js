@@ -1,54 +1,60 @@
-import { supabaseServer } from '../lib/supabaseServer';
-
 /**
- * Service layer for Plans operations
- * Wraps existing Server Actions for reusability
+ * Thin wrapper around Server Actions for Plans operations
+ * Provides reusable service layer for plan management
  */
 
+import { 
+  togglePlanArchive, 
+  deletePlan as deletePlanAction, 
+  createPlan as createPlanAction, 
+  getPlansStats 
+} from '../app/app/plans/actions.js';
+
 /**
- * List all plans for a user
- * @param {string} userId - User ID
- * @returns {Promise<Array>} Array of plans
+ * Archive or restore a plan
+ * @param {string} planId - Plan ID
+ * @param {boolean} archive - Archive status
+ * @returns {Promise<Object>} Result object
  */
-export async function listPlans(userId) {
-  // TODO: Implement wrapper around existing Server Action logic
-  // This should call supabaseServer() and query plans table
-  throw new Error('Not implemented - use existing Server Actions in pages');
+export async function archivePlan(planId, archive) {
+  const formData = new FormData();
+  formData.append('planId', planId);
+  formData.append('archive', archive.toString());
+  
+  return await togglePlanArchive(formData);
+}
+
+/**
+ * Delete a plan permanently
+ * @param {string} planId - Plan ID
+ * @returns {Promise<Object>} Result object
+ */
+export async function deletePlan(planId) {
+  const formData = new FormData();
+  formData.append('planId', planId);
+  
+  return await deletePlanAction(formData);
 }
 
 /**
  * Create a new plan
- * @param {Object} input - Plan data (name, goal, active)
- * @param {string} userId - User ID
- * @returns {Promise<Object>} Created plan
+ * @param {Object} input - Plan data (name, goal)
+ * @returns {Promise<Object>} Result object
  */
-export async function createPlan(input, userId) {
-  // TODO: Implement wrapper around existing Server Action logic
-  // This should call supabaseServer() and insert into plans table
-  throw new Error('Not implemented - use existing Server Actions in pages');
+export async function createPlan(input) {
+  const formData = new FormData();
+  formData.append('name', input.name);
+  if (input.goal) {
+    formData.append('goal', input.goal);
+  }
+  
+  return await createPlanAction(formData);
 }
 
 /**
- * Update an existing plan
- * @param {string} id - Plan ID
- * @param {Object} input - Updated plan data
- * @param {string} userId - User ID
- * @returns {Promise<Object>} Updated plan
+ * Get plans statistics for the current user
+ * @returns {Promise<Object>} Statistics object
  */
-export async function updatePlan(id, input, userId) {
-  // TODO: Implement wrapper around existing Server Action logic
-  // This should call supabaseServer() and update plans table
-  throw new Error('Not implemented - use existing Server Actions in pages');
-}
-
-/**
- * Delete a plan
- * @param {string} id - Plan ID
- * @param {string} userId - User ID
- * @returns {Promise<boolean>} Success status
- */
-export async function deletePlan(id, userId) {
-  // TODO: Implement wrapper around existing Server Action logic
-  // This should call supabaseServer() and delete from plans table
-  throw new Error('Not implemented - use existing Server Actions in pages');
+export async function getPlansStats() {
+  return await getPlansStats();
 }
