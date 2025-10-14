@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getLiveSession, getLiveStats } from "../../../../services/liveSessions";
+import { startLive, stopLive } from "./actions";
 
 export default async function LiveSessionPage({ params }) {
   const { id } = params;
@@ -19,12 +20,27 @@ export default async function LiveSessionPage({ params }) {
               <p className="text-text-muted">Live Training • {session.type === 'strength' ? '💪 Kraft' : '🏃 Cardio'}</p>
             </div>
             <div className="flex gap-2">
-              <button className="bg-surface text-foreground px-4 py-2 rounded-lg font-medium hover:bg-surface-hover transition-colors">
-                Pause
-              </button>
-              <button className="bg-brand text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-hover transition-colors">
-                Beenden
-              </button>
+              {stats.status !== 'active' ? (
+                <form action={startLive}>
+                  <input type="hidden" name="sessionId" value={id} />
+                  <button 
+                    type="submit"
+                    className="bg-brand text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-hover transition-colors"
+                  >
+                    Start
+                  </button>
+                </form>
+              ) : (
+                <form action={stopLive}>
+                  <input type="hidden" name="liveId" value={session.id} />
+                  <button 
+                    type="submit"
+                    className="bg-red-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-600 transition-colors"
+                  >
+                    Stop
+                  </button>
+                </form>
+              )}
             </div>
           </div>
         </header>
