@@ -126,6 +126,26 @@ Die App ist verfügbar unter `http://localhost:3001`
 
 Die Anwendung nutzt primär **Server Actions** mit direkten Supabase-Zugriffen für optimale Performance und Einfachheit. REST-APIs werden nur für externe Integrationen verwendet. Siehe [ADR-0001](docs/ADR/0001-backend-access.md) für Details zur Architekturentscheidung.
 
+## 🛡 Qualität & Guardrails
+
+### Health Checks
+- `/api/health` - Robuster Health-Endpoint mit Build-Hash und ENV-Status
+- Immer 200 Status (auch bei internen Fehlern)
+- Build-Hash aus Vercel oder Git (falls verfügbar)
+
+### Logging
+- Serverseitige Fehler mit klaren Messages (ohne Secrets)
+- Service-spezifische Log-Prefixes für bessere Debugging
+- Client-seitige console.error reduziert
+
+### Pre-commit Hooks (TODO)
+```bash
+# Optional: Lint-staged für automatische Code-Qualität
+npm install --save-dev lint-staged husky
+npx husky install
+npx husky add .husky/pre-commit "npx lint-staged"
+```
+
 ## 📁 Projektstruktur
 
 ```

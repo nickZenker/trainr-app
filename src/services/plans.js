@@ -45,7 +45,7 @@ export async function getPlansStats() {
     };
 
   } catch (error) {
-    console.error('getPlansStats error:', error);
+    console.error('Plans service - getPlansStats failed:', error.message);
     return {
       totalPlans: 0,
       activePlans: 0,
@@ -97,7 +97,7 @@ export async function listPlans(filter = 'all') {
     return plans || [];
 
   } catch (error) {
-    console.error('listPlans error:', error);
+    console.error('Plans service - listPlans failed:', error.message);
     return [];
   }
 }
@@ -148,7 +148,7 @@ export async function createPlan(input) {
     };
 
   } catch (error) {
-    console.error('createPlan error:', error);
+    console.error('Plans service - createPlan failed:', error.message);
     return {
       success: false,
       message: error.message || 'Failed to create plan'
@@ -208,7 +208,7 @@ export async function archivePlan(planId, archive) {
     };
 
   } catch (error) {
-    console.error('archivePlan error:', error);
+    console.error('Plans service - archivePlan failed:', error.message);
     return {
       success: false,
       message: error.message || 'Failed to update plan'
@@ -259,7 +259,7 @@ export async function deletePlan(planId) {
     };
 
   } catch (error) {
-    console.error('deletePlan error:', error);
+    console.error('Plans service - deletePlan failed:', error.message);
     return {
       success: false,
       message: error.message || 'Failed to delete plan'
