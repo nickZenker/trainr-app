@@ -92,4 +92,14 @@
   2. **E2E-Tests sequenziell ausführen**: Auth-Storage-Dependency durch Test-Reihenfolge lösen
   3. **UI-Texte harmonisieren**: Deutsche Tests an englische UI anpassen oder UI lokalisiert
 
-**Letzte Aktualisierung**: 2025-01-14 23:15
+### [E2E-FIX] Playwright Logging robust (2025-01-14 23:25)
+- **Specs PASS/FAIL**: auth.spec.js FAIL (Auth-Timeout), plans/schedule/live FAIL (Auth-Storage missing), app-navigation FAIL (UI-Text-Mismatch), smoke-tests PASS (32/103)
+- **5xx Responses**: **0** - Keine 500er in allen Tests gefunden
+- **Top Console Error**: "none" - Robustes Logging funktioniert, keine response.status() Fehler mehr
+- **Wichtige Erkenntnisse**: 
+  - Playwright API-Problem behoben (response.status() → getStatus())
+  - Auth-Storage-Dependency bleibt (tests/.auth/state.json fehlt)
+  - UI-Texte: Tests erwarten Deutsch, UI zeigt Englisch
+  - Server ist stabil: Keine 500er auch bei robustem Logging
+
+**Letzte Aktualisierung**: 2025-01-14 23:25

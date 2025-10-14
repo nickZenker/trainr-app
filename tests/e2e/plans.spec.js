@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { attachLogging, getStatus } from '../utils/netlog';
 import { writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
@@ -14,6 +15,11 @@ test.describe('Plans Creation', () => {
     errors = [];
     networkErrors = [];
     consoleErrors = [];
+
+    // Attach robust logging
+    attachLogging(page, (msg) => {
+      console.log(`[PLANS-TEST] ${msg}`);
+    });
 
     // Collect console errors
     page.on('console', msg => {
@@ -36,14 +42,15 @@ test.describe('Plans Creation', () => {
       });
     });
 
-    // Collect network errors
+    // Collect network errors with robust status checking
     page.on('requestfinished', request => {
       const response = request.response();
-      if (response && response.status() >= 500) {
+      const status = getStatus(response);
+      if (response && status >= 500) {
         networkErrors.push({
           type: 'network',
           url: request.url(),
-          status: response.status(),
+          status: status,
           method: request.method(),
           timestamp: new Date().toISOString()
         });

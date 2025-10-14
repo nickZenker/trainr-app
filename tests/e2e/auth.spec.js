@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
+import { attachLogging, getStatus } from '../utils/netlog';
 
 const TEST_EMAIL = 'e2e.user+local@test.dev';
 const TEST_PASSWORD = 'TestUser!23456';
@@ -15,6 +16,11 @@ test.describe('Authentication Flow', () => {
     errors = [];
     networkErrors = [];
     consoleErrors = [];
+
+    // Attach robust logging
+    attachLogging(page, (msg) => {
+      console.log(`[AUTH-TEST] ${msg}`);
+    });
 
     // Collect console errors
     page.on('console', msg => {
@@ -37,14 +43,15 @@ test.describe('Authentication Flow', () => {
       });
     });
 
-    // Collect network errors
+    // Collect network errors with robust status checking
     page.on('requestfinished', request => {
       const response = request.response();
-      if (response && response.status() >= 500) {
+      const status = getStatus(response);
+      if (response && status >= 500) {
         networkErrors.push({
           type: 'network',
           url: request.url(),
-          status: response.status(),
+          status: status,
           method: request.method(),
           timestamp: new Date().toISOString()
         });
