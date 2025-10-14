@@ -247,6 +247,39 @@ Alle Tabellen haben RLS aktiviert - User können nur ihre eigenen Daten sehen/be
 
 ### Vercel (empfohlen)
 
+**1. Vercel Setup:**
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel --prod
+```
+
+**2. Environment Variables in Vercel:**
+```bash
+# Required ENV Variables (set in Vercel Dashboard)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_KEY=your_service_role_key
+NODE_ENV=production
+NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
+NEXT_PUBLIC_APP_NAME=Trainr App
+```
+
+**3. Supabase RLS/Policies Checklist:**
+- ✅ Owner-basierte Policies aktiv
+- ✅ `auth.users` RLS aktiviert
+- ✅ Alle Tabellen haben RLS-Policies
+- ✅ Service Key nur für Server-Side Operations
+
+**4. Domain Setup:**
+- Set `NEXT_PUBLIC_APP_URL` to your production domain
+- Configure custom domain in Vercel (optional)
+- Update Supabase Auth settings with production URL
+
+### Alternative: Netlify, Railway, etc.
+
 1. Verbinde Repository mit Vercel
 2. Setze Umgebungsvariablen in Vercel Dashboard
 3. Deploy automatisch bei Git Push
