@@ -60,4 +60,17 @@
   - Load-Testing mit mehreren parallelen Requests
   - `/app/admin/diag` prüfen für detaillierte System-Diagnose
 
-**Letzte Aktualisierung**: 2025-01-14 22:55
+### [CHAOS-V2] E2E Interactions Report (2025-01-14 23:10)
+- **Specs**: auth/plans/schedule_calendar/live → **FAIL/FAIL/FAIL/FAIL** (Auth-Storage fehlt)
+- **5xx Responses**: **0** - Keine 500er in E2E-Tests reproduziert
+- **Console Errors**: **2 kritische** - `response.status is not a function` in auth.spec.js (Playwright API-Problem)
+- **Häufigster Fehlerpfad (Hypothese)**:
+  - **Auth-Storage-Dependency**: Tests scheitern an fehlendem `tests/.auth/state.json` (auth.spec.js muss zuerst laufen)
+  - **Playwright API-Problem**: `request.response().status()` ist keine Funktion in Playwright v1.56.0
+  - **UI-Text-Mismatch**: Tests erwarten deutsche Texte ("Anmelden") aber UI zeigt englische ("Login")
+- **Nächster Schritt (konkreter Fix-Vorschlag)**:
+  - Auth.spec.js Playwright API korrigieren (`response.status()` → `response.status`)
+  - Tests sequenziell ausführen (auth → plans → schedule → live) statt parallel
+  - UI-Texte auf Deutsch korrigieren oder Tests an englische Texte anpassen
+
+**Letzte Aktualisierung**: 2025-01-14 23:10

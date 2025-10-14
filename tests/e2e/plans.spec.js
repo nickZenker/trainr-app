@@ -2,13 +2,12 @@ import { test, expect } from '@playwright/test';
 import { writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
-const TEST_EMAIL = 'e2e.user+local@test.dev';
-const TEST_PASSWORD = 'TestUser!23456';
-
-test.describe('Authentication Flow', () => {
+test.describe('Plans Creation', () => {
   let errors = [];
   let networkErrors = [];
   let consoleErrors = [];
+
+  test.use({ storageState: 'tests/.auth/state.json' });
 
   test.beforeEach(async ({ page }) => {
     // Reset error collections
@@ -62,71 +61,67 @@ test.describe('Authentication Flow', () => {
     });
   });
 
-  test('should signup or login successfully', async ({ page }) => {
-    // Try signup first
-    await page.goto('/auth/signup');
+  test('should create strength plan', async ({ page }) => {
+    await page.goto('/app/plans');
     
-    // Wait for form to be ready
-    await page.waitForSelector('input[type="email"]', { timeout: 10000 });
+    // Wait for page to load
+    await page.waitForSelector('h1', { timeout: 10000 });
     
-    // Fill signup form
-    await page.fill('input[type="email"]', TEST_EMAIL);
-    await page.fill('input[type="password"]', TEST_PASSWORD);
+    // Look for plan creation form
+    const form = page.locator('form').filter({ hasText: /name.*type/i }).first();
+    await expect(form).toBeVisible();
+    
+    // Fill strength plan form
+    await form.fill('input[name="name"]', 'E2E Kraft – PPL');
+    await form.selectOption('select[name="type"]', 'strength');
+    await form.fill('textarea[name="description"]', 'E2E Test Plan für Push/Pull/Legs');
     
     // Submit form
-    await page.click('button[type="submit"]');
+    await form.click('button[type="submit"]');
     
-    // Wait for response
+    // Wait for form submission
     await page.waitForTimeout(2000);
     
-    // Check if we're redirected to login (user already exists)
-    if (page.url().includes('/auth/login')) {
-      console.log('User already exists, proceeding with login');
-      
-      // Fill login form
-      await page.fill('input[type="email"]', TEST_EMAIL);
-      await page.fill('input[type="password"]', TEST_PASSWORD);
-      
-      // Submit login
-      await page.click('button[type="submit"]');
-      
-      // Wait for redirect
-      await page.waitForTimeout(2000);
-    }
+    // Check that plan appears in list
+    await expect(page.locator('text=E2E Kraft – PPL')).toBeVisible();
     
-    // Expect to be redirected to /app
-    await expect(page).toHaveURL(/.*\/app.*/);
-    
-    // Check that we can see the main navigation
-    await expect(page.locator('h1')).toContainText('Trainr App');
-    
-    // Check for TopNavTabs
-    await expect(page.locator('nav')).toBeVisible();
+    // Check for strength badge
+    await expect(page.locator('text=Strength')).toBeVisible();
   });
 
-  test('should save auth state', async ({ page, context }) => {
-    // Login first
-    await page.goto('/auth/login');
-    await page.waitForSelector('input[type="email"]');
+  test('should create endurance plan', async ({ page }) => {
+    await page.goto('/app/plans');
     
-    await page.fill('input[type="email"]', TEST_EMAIL);
-    await page.fill('input[type="password"]', TEST_PASSWORD);
-    await page.click('button[type="submit"]');
+    // Wait for page to load
+    await page.waitForSelector('h1', { timeout: 10000 });
     
-    // Wait for successful login
-    await page.waitForURL(/.*\/app.*/);
+    // Look for plan creation form
+    const form = page.locator('form').filter({ hasText: /name.*type/i }).first();
+    await expect(form).toBeVisible();
     
-    // Save auth state
-    await page.context().storageState({ path: 'tests/.auth/state.json' });
+    // Fill endurance plan form
+    await form.fill('input[name="name"]', 'E2E Ausdauer – 10k');
+    await form.selectOption('select[name="type"]', 'endurance');
+    await form.fill('textarea[name="description"]', 'E2E Test Plan für 10k Aufbau');
     
-    console.log('Auth state saved to tests/.auth/state.json');
+    // Submit form
+    await form.click('button[type="submit"]');
+    
+    // Wait for form submission
+    await page.waitForTimeout(2000);
+    
+    // Check that plan appears in list
+    await expect(page.locator('text=E2E Ausdauer – 10k')).toBeVisible();
+    
+    // Check for endurance badge
+    await expect(page.locator('text=Endurance')).toBeVisible();
   });
 
   test.afterEach(async ({ page }) => {
     // Write error log if any errors occurred
     if (errors.length > 0 || networkErrors.length > 0 || consoleErrors.length > 0) {
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-      const logFile = join(process.cwd(), 'ops', 'LOGS', `e2e-auth-${timestamp}.md`);
+      const logFile = join(process.cwd(), 'ops', 'LOGS', `e2e-plans-${timestamp}.md`);
       
       // Ensure logs directory exists
       const logsDir = join(process.cwd(), 'ops', 'LOGS');
@@ -134,7 +129,7 @@ test.describe('Authentication Flow', () => {
         mkdirSync(logsDir, { recursive: true });
       }
       
-      const logContent = `# E2E Auth Test Errors - ${timestamp}
+      const logContent = `# E2E Plans Test Errors - ${timestamp}
 
 ## Test Results
 - URL: ${page.url()}
