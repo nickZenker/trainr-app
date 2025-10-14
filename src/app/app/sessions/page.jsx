@@ -73,107 +73,76 @@ async function SessionsStats({ filter }) {
 
 // Sessions list component
 async function SessionsList({ filter }) {
-  const supabase = await supabaseServer();
-  const { data } = await supabase.auth.getUser();
-  
-  if (!data.user) {
-    redirect("/auth/login");
-  }
+  try {
+    const { listSessions } = await import("../../../services/sessions");
+    const sessions = await listSessions(filter);
 
-  // Build query to get sessions with plan names and exercise counts
-  let query = supabase
-    .from("sessions")
-    .select(`
-      *,
-      plans!inner(
-        id,
-        name,
-        user_id
-      ),
-      session_exercises(count)
-    `)
-    .eq("plans.user_id", data.user.id);
+    if (!sessions || sessions.length === 0) {
+      return (
+        <div className="text-center py-12">
+          <p className="text-text-muted text-lg mb-4">
+            {filter === "strength" && "Keine Kraft-Sessions gefunden"}
+            {filter === "cardio" && "Keine Cardio-Sessions gefunden"}
+            {filter === "all" && "Keine Sessions gefunden"}
+          </p>
+          <Link 
+            href="/app/sessions/new"
+            className="bg-brand text-black px-6 py-3 rounded-lg font-medium hover:bg-brand-hover transition-colors"
+          >
+            Erste Session erstellen
+          </Link>
+        </div>
+      );
+    }
 
-  // Apply filter
-  if (filter === "strength") {
-    query = query.eq("type", "strength");
-  } else if (filter === "cardio") {
-    query = query.eq("type", "cardio");
-  }
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {sessions.map((session) => {
+          const exerciseCount = session.session_exercises?.length || 0;
 
-  const { data: sessions, error } = await query.order("weekday", { ascending: true });
+          return (
+            <div key={session.id} className="bg-surface rounded-lg p-6 border border-border hover:border-brand transition-colors">
+              <div className="flex items-center gap-3 mb-4">
+                <div className={`w-3 h-3 rounded-full ${getSessionTypeColor(session.type)}`}></div>
+                <span className="text-sm font-medium text-text-muted">{session.plans.name}</span>
+              </div>
+              
+              <h3 className="text-xl font-semibold mb-2">{session.name}</h3>
+              
+              <div className="space-y-2 mb-4">
+                <div className="flex justify-between text-sm">
+                  <span className="text-text-muted">Wochentag:</span>
+                  <span className="font-medium">{getWeekdayAbbr(session.weekday)}</span>
+                </div>
+                {session.time && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-text-muted">Uhrzeit:</span>
+                    <span className="font-medium">{session.time}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-sm">
+                  <span className="text-text-muted">Übungen:</span>
+                  <span className="font-medium">{exerciseCount}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-text-muted">Typ:</span>
+                  <span className="font-medium capitalize">{session.type}</span>
+                </div>
+              </div>
 
-  if (error) {
-    console.error("Error fetching sessions:", error);
+              <SessionActions session={session} />
+            </div>
+          );
+        })}
+      </div>
+    );
+  } catch (error) {
     return (
       <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">
         <p className="text-red-400">Fehler beim Laden der Sessions: {error.message}</p>
       </div>
     );
   }
-
-  if (!sessions || sessions.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-text-muted text-lg mb-4">
-          {filter === "strength" && "Keine Kraft-Sessions gefunden"}
-          {filter === "cardio" && "Keine Cardio-Sessions gefunden"}
-          {filter === "all" && "Keine Sessions gefunden"}
-        </p>
-        <Link 
-          href="/app/sessions/new"
-          className="bg-brand text-black px-6 py-3 rounded-lg font-medium hover:bg-brand-hover transition-colors"
-        >
-          Erste Session erstellen
-        </Link>
-      </div>
-    );
-  }
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {sessions.map((session) => {
-        // Get exercise count from the count query
-        const exerciseCount = Array.isArray(session.session_exercises) && session.session_exercises.length > 0 
-          ? session.session_exercises[0]?.count ?? 0 
-          : 0;
-
-        return (
-          <div key={session.id} className="bg-surface rounded-lg p-6 border border-border hover:border-brand transition-colors">
-            <div className="flex items-center gap-3 mb-4">
-              <div className={`w-3 h-3 rounded-full ${getSessionTypeColor(session.type)}`}></div>
-              <span className="text-sm font-medium text-text-muted">{session.plans.name}</span>
-            </div>
-            
-            <h3 className="text-xl font-semibold mb-2">{session.name}</h3>
-            
-            <div className="space-y-2 mb-4">
-              <div className="flex justify-between text-sm">
-                <span className="text-text-muted">Wochentag:</span>
-                <span className="font-medium">{getWeekdayAbbr(session.weekday)}</span>
-              </div>
-              {session.time && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-text-muted">Uhrzeit:</span>
-                  <span className="font-medium">{session.time}</span>
-                </div>
-              )}
-              <div className="flex justify-between text-sm">
-                <span className="text-text-muted">Übungen:</span>
-                <span className="font-medium">{exerciseCount}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-text-muted">Typ:</span>
-                <span className="font-medium capitalize">{session.type}</span>
-              </div>
-            </div>
-
-            <SessionActions session={session} />
-          </div>
-        );
-      })}
-    </div>
-  );
 }
 
 // Main page component
