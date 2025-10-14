@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import SessionActions from "./SessionActions";
 import FilterToggle from "./FilterToggle";
+import { scheduleSessionAction } from "./actions";
 
 // Helper function to get weekday abbreviation
 function getWeekdayAbbr(weekday) {
@@ -131,6 +132,49 @@ async function SessionsList({ filter }) {
               </div>
 
               <SessionActions session={session} />
+
+              {/* Session Scheduling Form */}
+              <div className="mt-4 pt-4 border-t border-border">
+                <h4 className="text-sm font-medium text-foreground mb-3">Session planen</h4>
+                <form action={scheduleSessionAction} className="grid gap-2 md:grid-cols-3 items-end">
+                  <input type="hidden" name="sessionId" value={session.id} />
+                  <div>
+                    <label htmlFor={`scheduledAt-${session.id}`} className="block text-xs text-text-muted mb-1">
+                      Start (UTC)
+                    </label>
+                    <input 
+                      id={`scheduledAt-${session.id}`}
+                      name="scheduledAtIso" 
+                      type="datetime-local" 
+                      required 
+                      className="w-full px-2 py-1 text-sm bg-background border border-border rounded text-foreground focus:outline-none focus:ring-1 focus:ring-brand focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor={`duration-${session.id}`} className="block text-xs text-text-muted mb-1">
+                      Dauer (Min)
+                    </label>
+                    <input 
+                      id={`duration-${session.id}`}
+                      name="durationMin" 
+                      type="number" 
+                      min="0" 
+                      step="5" 
+                      placeholder="60" 
+                      className="w-full px-2 py-1 text-sm bg-background border border-border rounded text-foreground focus:outline-none focus:ring-1 focus:ring-brand focus:border-transparent"
+                    />
+                  </div>
+                  <button 
+                    type="submit" 
+                    className="bg-brand text-black px-3 py-1 text-sm font-medium rounded hover:bg-brand-hover transition-colors"
+                  >
+                    Planen
+                  </button>
+                </form>
+                <p className="text-xs text-text-muted mt-2">
+                  Zeiten werden in UTC gespeichert; Anzeige lokal im Kalender.
+                </p>
+              </div>
             </div>
           );
         })}

@@ -256,3 +256,129 @@ export async function deleteSession(sessionId) {
     };
   }
 }
+
+/**
+ * Schedule a session for a specific date and time
+ * @param {string} sessionId - Session ID
+ * @param {Object} schedulingData - { scheduledAtIso, durationMin }
+ * @returns {Promise<Object>} Result object with session data
+ */
+export async function scheduleSession(sessionId, { scheduledAtIso, durationMin }) {
+  try {
+    const supabase = await supabaseServerWithCookies();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    // Validation
+    if (!scheduledAtIso || typeof scheduledAtIso !== 'string') {
+      throw new Error('Scheduled date is required and must be a valid ISO string');
+    }
+
+    if (durationMin !== null && durationMin !== undefined) {
+      if (typeof durationMin !== 'number' || durationMin < 0) {
+        throw new Error('Duration must be a non-negative number');
+      }
+    }
+
+    // Verify session belongs to user via plan
+    const { data: session, error: fetchError } = await supabase
+      .from("sessions")
+      .select(`
+        id,
+        name,
+        plans!inner(
+          user_id
+        )
+      `)
+      .eq("id", sessionId)
+      .eq("plans.user_id", user.id)
+      .single();
+
+    if (fetchError || !session) {
+      throw new Error('Session not found or access denied');
+    }
+
+    // Update session with scheduling data
+    const { data: updatedSession, error: updateError } = await supabase
+      .from("sessions")
+      .update({
+        scheduled_at: scheduledAtIso,
+        duration_min: durationMin
+      })
+      .eq("id", sessionId)
+      .select('id, scheduled_at, duration_min')
+      .single();
+
+    if (updateError) {
+      throw new Error(`Failed to schedule session: ${updateError.message}`);
+    }
+
+    return {
+      success: true,
+      message: 'Session scheduled successfully',
+      session: updatedSession
+    };
+
+  } catch (error) {
+    console.error('scheduleSession error:', error);
+    return {
+      success: false,
+      message: error.message || 'Failed to schedule session'
+    };
+  }
+}
+
+/**
+ * Get scheduled sessions within a date range
+ * @param {string} rangeStartIso - Start date in ISO format
+ * @param {string} rangeEndIso - End date in ISO format
+ * @returns {Promise<Array>} Array of scheduled sessions
+ */
+export async function listScheduledSessions(rangeStartIso, rangeEndIso) {
+  try {
+    const supabase = await supabaseServerWithCookies();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    if (!rangeStartIso || !rangeEndIso) {
+      throw new Error('Date range is required');
+    }
+
+    const { data: sessions, error } = await supabase
+      .from("sessions")
+      .select(`
+        id,
+        name,
+        scheduled_at,
+        duration_min,
+        plan_id,
+        type,
+        plans!inner(
+          name,
+          type,
+          user_id
+        )
+      `)
+      .eq("plans.user_id", user.id)
+      .gte("scheduled_at", rangeStartIso)
+      .lt("scheduled_at", rangeEndIso)
+      .not("scheduled_at", "is", null)
+      .order("scheduled_at", { ascending: true });
+
+    if (error) {
+      throw new Error(`Failed to fetch scheduled sessions: ${error.message}`);
+    }
+
+    return sessions || [];
+
+  } catch (error) {
+    console.error('listScheduledSessions error:', error);
+    return [];
+  }
+}

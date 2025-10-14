@@ -151,3 +151,40 @@ export async function getSessionsStats() {
     };
   }
 }
+
+/**
+ * Schedule a session for a specific date and time
+ * @param {Object} prevState - Previous state for form handling
+ * @param {FormData} formData - Form data containing sessionId, scheduledAtIso, durationMin
+ */
+export async function scheduleSessionAction(prevState, formData) {
+  try {
+    const { scheduleSession } = await import("../../../services/sessions");
+    
+    const sessionId = formData.get('sessionId');
+    const scheduledAtIso = formData.get('scheduledAtIso');
+    const durationMin = formData.get('durationMin') ? Number(formData.get('durationMin')) : null;
+
+    // Convert datetime-local to UTC ISO string if needed
+    let utcIsoString = scheduledAtIso;
+    if (scheduledAtIso && !scheduledAtIso.endsWith('Z')) {
+      // Convert local datetime to UTC ISO string
+      const localDate = new Date(scheduledAtIso);
+      utcIsoString = localDate.toISOString();
+    }
+
+    const result = await scheduleSession(sessionId, { 
+      scheduledAtIso: utcIsoString, 
+      durationMin 
+    });
+    
+    if (result.success) {
+      revalidatePath('/app/sessions');
+      return { ok: true };
+    } else {
+      return { ok: false, error: result.message || 'schedule failed' };
+    }
+  } catch (e) {
+    return { ok: false, error: e?.message || 'schedule failed' };
+  }
+}
