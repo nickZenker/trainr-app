@@ -1,6 +1,6 @@
 "use server";
 
-import { startLiveSession, stopLiveSession, logSet, deleteLastSet } from "../../../../services/liveSessions";
+import { startLiveSession, stopLiveSession, pauseLiveSession, resumeLiveSession, logSet, deleteLastSet } from "../../../../services/liveSessions";
 import { revalidatePath } from "next/cache";
 
 export async function startLive(formData) {
@@ -60,6 +60,46 @@ export async function logSetAction(formData) {
     return { ok: true };
   } catch (e) {
     return { ok: false, error: e?.message || "logSet failed" };
+  }
+}
+
+export async function pauseLive(formData) {
+  try {
+    const liveId = formData.get('liveId');
+    
+    if (!liveId) {
+      return { ok: false, error: "Live Session ID fehlt" };
+    }
+
+    await pauseLiveSession(liveId);
+    
+    // Revalidate the page to show updated status
+    revalidatePath(`/app/live/${liveId}`);
+    
+    return { ok: true };
+  } catch (error) {
+    console.error('Pause live session error:', error);
+    return { ok: false, error: error.message };
+  }
+}
+
+export async function resumeLive(formData) {
+  try {
+    const liveId = formData.get('liveId');
+    
+    if (!liveId) {
+      return { ok: false, error: "Live Session ID fehlt" };
+    }
+
+    await resumeLiveSession(liveId);
+    
+    // Revalidate the page to show updated status
+    revalidatePath(`/app/live/${liveId}`);
+    
+    return { ok: true };
+  } catch (error) {
+    console.error('Resume live session error:', error);
+    return { ok: false, error: error.message };
   }
 }
 

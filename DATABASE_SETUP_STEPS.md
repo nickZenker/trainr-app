@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS live_sessions (
   started_at TIMESTAMPTZ DEFAULT NOW(),
   finished_at TIMESTAMPTZ,
   duration_sec INTEGER,
-  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'completed', 'aborted'))
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'paused', 'completed', 'aborted'))
 );
 
 -- Set logs table

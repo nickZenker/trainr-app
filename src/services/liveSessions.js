@@ -71,6 +71,34 @@ export async function logSet(liveSessionId, setPayload) {
   return data; // { id }
 }
 
+/** Pause a live session */
+export async function pauseLiveSession(id) {
+  const { supabase, user } = await getClientAndUser();
+  const { data, error } = await supabase
+    .from('live_sessions')
+    .update({ status: 'paused' })
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .select('id, started_at, finished_at, status')
+    .single();
+  if (error) throw new Error('live_sessions:pause failed');
+  return data;
+}
+
+/** Resume a paused live session */
+export async function resumeLiveSession(id) {
+  const { supabase, user } = await getClientAndUser();
+  const { data, error } = await supabase
+    .from('live_sessions')
+    .update({ status: 'active' })
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .select('id, started_at, finished_at, status')
+    .single();
+  if (error) throw new Error('live_sessions:resume failed');
+  return data;
+}
+
 /** Stop (finish) a live session */
 export async function stopLiveSession(id) {
   const { supabase, user } = await getClientAndUser();

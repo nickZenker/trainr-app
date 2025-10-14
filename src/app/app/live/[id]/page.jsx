@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getLiveSession, getLiveStats, getRecentSets, getSessionExercisesForLive } from "../../../../services/liveSessions";
-import { startLive, stopLive, logSetAction, undoLastSet } from "./actions";
+import { startLive, stopLive, pauseLive, resumeLive, logSetAction, undoLastSet } from "./actions";
 
 export default async function LiveSessionPage({ params }) {
   const { id } = await params;
@@ -21,29 +21,61 @@ export default async function LiveSessionPage({ params }) {
               <h1 className="text-2xl font-bold text-brand">Live Training</h1>
               <p className="text-text-muted">Live Training • {session.type === 'strength' ? '💪 Kraft' : '🏃 Cardio'}</p>
             </div>
-            <div className="flex gap-2">
-              {stats.status !== 'active' ? (
-                <form action={startLive}>
-                  <input type="hidden" name="sessionId" value={id} />
-                  <button 
-                    type="submit"
-                    className="bg-brand text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-hover transition-colors"
-                  >
-                    Start
-                  </button>
-                </form>
-              ) : (
-                <form action={stopLive}>
-                  <input type="hidden" name="liveId" value={session.id} />
-                  <button 
-                    type="submit"
-                    className="bg-red-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-600 transition-colors"
-                  >
-                    Stop
-                  </button>
-                </form>
-              )}
-            </div>
+                   <div className="flex gap-2">
+                     {stats.status === 'active' ? (
+                       <>
+                         <form action={pauseLive}>
+                           <input type="hidden" name="liveId" value={session.id} />
+                           <button 
+                             type="submit"
+                             className="bg-yellow-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-yellow-600 transition-colors"
+                           >
+                             Pause
+                           </button>
+                         </form>
+                         <form action={stopLive}>
+                           <input type="hidden" name="liveId" value={session.id} />
+                           <button 
+                             type="submit"
+                             className="bg-red-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-600 transition-colors"
+                           >
+                             Stop
+                           </button>
+                         </form>
+                       </>
+                     ) : stats.status === 'paused' ? (
+                       <>
+                         <form action={resumeLive}>
+                           <input type="hidden" name="liveId" value={session.id} />
+                           <button 
+                             type="submit"
+                             className="bg-green-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-600 transition-colors"
+                           >
+                             Resume
+                           </button>
+                         </form>
+                         <form action={stopLive}>
+                           <input type="hidden" name="liveId" value={session.id} />
+                           <button 
+                             type="submit"
+                             className="bg-red-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-600 transition-colors"
+                           >
+                             Stop
+                           </button>
+                         </form>
+                       </>
+                     ) : (
+                       <form action={startLive}>
+                         <input type="hidden" name="sessionId" value={id} />
+                         <button 
+                           type="submit"
+                           className="bg-brand text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-hover transition-colors"
+                         >
+                           Start
+                         </button>
+                       </form>
+                     )}
+                   </div>
           </div>
         </header>
 
