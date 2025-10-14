@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { supabaseServer } from "../../../lib/supabaseServer";
-import { getPlansStats } from "./actions";
+import { getPlansStats } from "../../../services/plans";
 import Link from "next/link";
 import { Suspense } from "react";
 import PlanActions from "./PlanActions";
@@ -23,29 +23,37 @@ function StatsLoading() {
 
 // Stats component
 async function PlansStats({ filter }) {
-  const stats = await getPlansStats();
-  
-  const statsData = [
-    { label: "Gesamt", value: stats.totalPlans },
-    { label: "Aktiv", value: stats.activePlans },
-    { label: "Archiviert", value: stats.archivedPlans },
-  ];
+  try {
+    const stats = await getPlansStats();
+    
+    const statsData = [
+      { label: "Gesamt", value: stats.totalPlans },
+      { label: "Aktiv", value: stats.activePlans },
+      { label: "Archiviert", value: stats.archivedPlans },
+    ];
 
-  // Add sessions count if showing all or active plans
-  if (filter === "all" || filter === "active") {
-    statsData.push({ label: "Sessions", value: stats.totalSessions });
+    // Add sessions count if showing all or active plans
+    if (filter === "all" || filter === "active") {
+      statsData.push({ label: "Sessions", value: stats.totalSessions });
+    }
+
+    return (
+      <div className={`grid gap-6 mb-8 ${statsData.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
+        {statsData.map((stat, index) => (
+          <div key={index} className="bg-surface rounded-lg p-6 border border-border">
+            <h3 className="text-lg font-semibold mb-2">{stat.label}</h3>
+            <p className="text-3xl font-bold text-brand">{stat.value}</p>
+          </div>
+        ))}
+      </div>
+    );
+  } catch (error) {
+    return (
+      <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">
+        <p className="text-red-400">Fehler beim Laden der Statistiken: {error.message}</p>
+      </div>
+    );
   }
-
-  return (
-    <div className={`grid gap-6 mb-8 ${statsData.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
-      {statsData.map((stat, index) => (
-        <div key={index} className="bg-surface rounded-lg p-6 border border-border">
-          <h3 className="text-lg font-semibold mb-2">{stat.label}</h3>
-          <p className="text-3xl font-bold text-brand">{stat.value}</p>
-        </div>
-      ))}
-    </div>
-  );
 }
 
 // Plans list component

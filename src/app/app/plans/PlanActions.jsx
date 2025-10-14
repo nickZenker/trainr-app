@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useTransition } from "react";
-import { togglePlanArchive, deletePlan } from "./actions";
+import { togglePlanArchive, deletePlan as deletePlanAction } from "./actions";
 
 export default function PlanActions({ plan, filter }) {
   const [isPending, startTransition] = useTransition();
@@ -10,13 +10,17 @@ export default function PlanActions({ plan, filter }) {
   const handleArchive = async (e) => {
     e.preventDefault();
     startTransition(async () => {
-      const formData = new FormData();
-      formData.append("planId", plan.id);
-      formData.append("archive", plan.active ? "true" : "false");
-      
-      const result = await togglePlanArchive(formData);
-      if (!result.success) {
-        alert(`Fehler: ${result.message}`);
+      try {
+        const formData = new FormData();
+        formData.append("planId", plan.id);
+        formData.append("archive", plan.active ? "true" : "false");
+        
+        const result = await togglePlanArchive(formData);
+        if (!result.success) {
+          alert(`Fehler: ${result.message}`);
+        }
+      } catch (error) {
+        alert(`Fehler: ${error.message}`);
       }
     });
   };
@@ -29,12 +33,16 @@ export default function PlanActions({ plan, filter }) {
     }
 
     startTransition(async () => {
-      const formData = new FormData();
-      formData.append("planId", plan.id);
-      
-      const result = await deletePlan(formData);
-      if (!result.success) {
-        alert(`Fehler: ${result.message}`);
+      try {
+        const formData = new FormData();
+        formData.append("planId", plan.id);
+        
+        const result = await deletePlanAction(formData);
+        if (!result.success) {
+          alert(`Fehler: ${result.message}`);
+        }
+      } catch (error) {
+        alert(`Fehler: ${error.message}`);
       }
     });
   };

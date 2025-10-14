@@ -3,58 +3,54 @@
  * Provides reusable service layer for plan management
  */
 
-import { 
-  togglePlanArchive, 
-  deletePlan as deletePlanAction, 
-  createPlan as createPlanAction, 
-  getPlansStats 
-} from '../app/app/plans/actions.js';
-
-/**
- * Archive or restore a plan
- * @param {string} planId - Plan ID
- * @param {boolean} archive - Archive status
- * @returns {Promise<Object>} Result object
- */
-export async function archivePlan(planId, archive) {
-  const formData = new FormData();
-  formData.append('planId', planId);
-  formData.append('archive', archive.toString());
-  
-  return await togglePlanArchive(formData);
-}
-
-/**
- * Delete a plan permanently
- * @param {string} planId - Plan ID
- * @returns {Promise<Object>} Result object
- */
-export async function deletePlan(planId) {
-  const formData = new FormData();
-  formData.append('planId', planId);
-  
-  return await deletePlanAction(formData);
-}
-
-/**
- * Create a new plan
- * @param {Object} input - Plan data (name, goal)
- * @returns {Promise<Object>} Result object
- */
-export async function createPlan(input) {
-  const formData = new FormData();
-  formData.append('name', input.name);
-  if (input.goal) {
-    formData.append('goal', input.goal);
-  }
-  
-  return await createPlanAction(formData);
-}
+import { supabaseServerWithCookies } from '../lib/supabaseServer';
 
 /**
  * Get plans statistics for the current user
  * @returns {Promise<Object>} Statistics object
  */
 export async function getPlansStats() {
-  return await getPlansStats();
+  try {
+    const supabase = await supabaseServerWithCookies();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    // Get all plans with session counts
+    const { data: plans, error } = await supabase
+      .from("plans")
+      .select(`
+        id,
+        active,
+        sessions (id)
+      `)
+      .eq("user_id", user.id);
+
+    if (error) {
+      throw new Error(`Failed to fetch plans statistics: ${error.message}`);
+    }
+
+    const totalPlans = plans?.length || 0;
+    const activePlans = plans?.filter(p => p.active).length || 0;
+    const archivedPlans = totalPlans - activePlans;
+    const totalSessions = plans?.reduce((sum, plan) => sum + (plan.sessions?.length || 0), 0) || 0;
+
+    return {
+      totalPlans,
+      activePlans,
+      archivedPlans,
+      totalSessions
+    };
+
+  } catch (error) {
+    console.error('getPlansStats error:', error);
+    return {
+      totalPlans: 0,
+      activePlans: 0,
+      archivedPlans: 0,
+      totalSessions: 0
+    };
+  }
 }
