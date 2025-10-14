@@ -122,6 +122,10 @@ npm run dev
 
 Die App ist verfügbar unter `http://localhost:3001`
 
+## 🔧 Backend-Zugriff
+
+Die Anwendung nutzt primär **Server Actions** mit direkten Supabase-Zugriffen für optimale Performance und Einfachheit. REST-APIs werden nur für externe Integrationen verwendet. Siehe [ADR-0001](docs/ADR/0001-backend-access.md) für Details zur Architekturentscheidung.
+
 ## 📁 Projektstruktur
 
 ```

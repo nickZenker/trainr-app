@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 export async function middleware(request) {
+  // Whitelist health endpoint - always allow
+  if (request.nextUrl.pathname.startsWith('/api/health')) {
+    return Response.next();
+  }
+
   // Create a base response that we can mutate cookies on
   let response = NextResponse.next();
 
@@ -45,7 +50,7 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/", "/app/:path*", "/auth/:path*", "/login"],
+  matcher: ["/", "/app/:path*", "/auth/:path*", "/login", "/api/health"],
 };
 
 
