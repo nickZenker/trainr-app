@@ -73,4 +73,23 @@
   - Tests sequenziell ausführen (auth → plans → schedule → live) statt parallel
   - UI-Texte auf Deutsch korrigieren oder Tests an englische Texte anpassen
 
-**Letzte Aktualisierung**: 2025-01-14 23:10
+### [STABILITY-SUMMARY] (2025-01-14 23:15)
+- **5xx by route**: **0 total** - Keine 500er in beiden Chaos-Matrix v1 (GET-Requests) und E2E-Tests (User-Interaktionen) reproduziert
+- **Console errors (top3)**:
+  1. `response.status is not a function` (2x in auth.spec.js) - Playwright API-Problem
+  2. `Error reading storage state from tests/.auth/state.json` (4x) - Auth-Storage-Dependency
+  3. `expect(locator).toContainText(expected) failed` (4x) - UI-Text-Mismatch (deutsch vs. englisch)
+- **Network fails (top3)**:
+  1. **Keine Network-Failures** - Alle Requests erfolgreich (200/307)
+  2. **307 Redirects** zu `/auth/login` - Erwartetes Auth-Verhalten
+  3. **404 auf `/app/plans/new`** - Route existiert nicht (erwartet)
+- **Hypothesen (max 3)**:
+  - **Server ist stabil**: Sporadische 500er sind nicht reproduzierbar durch systematische Tests
+  - **Test-Setup-Probleme**: E2E-Fehler sind infrastrukturell (Playwright API, Auth-Storage, UI-Texte)
+  - **Auth-Flow funktioniert**: 307-Redirects zeigen korrekte Middleware-Funktionalität
+- **Nächste Fix-Schritte (max 3, präzise)**:
+  1. **Playwright API korrigieren**: `response.status()` → `response.status` in auth.spec.js
+  2. **E2E-Tests sequenziell ausführen**: Auth-Storage-Dependency durch Test-Reihenfolge lösen
+  3. **UI-Texte harmonisieren**: Deutsche Tests an englische UI anpassen oder UI lokalisiert
+
+**Letzte Aktualisierung**: 2025-01-14 23:15
