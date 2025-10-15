@@ -41,29 +41,31 @@ function logErrorToFile(type: string, errorData: Record<string, unknown>) {
   if (process.env.NODE_ENV !== 'development') return;
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const fs = require('fs');
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const path = require('path');
-    
-    const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
-    const logFile = path.join(process.cwd(), 'ops', 'LOGS', `dev-errors-${today}.md`);
-    const logsDir = path.dirname(logFile);
-    
-    // Ensure logs directory exists
-    if (!fs.existsSync(logsDir)) {
-      fs.mkdirSync(logsDir, { recursive: true });
-    }
-    
-    const timestamp = new Date().toISOString();
-    const envStatus = {
-      NEXT_PUBLIC_SUPABASE_URL: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-      SUPABASE_SERVICE_KEY: !!process.env.SUPABASE_SERVICE_KEY,
-      NODE_ENV: !!process.env.NODE_ENV
-    };
-    
-    const logEntry = `## ${type} - ${timestamp}
+    // Only use Node.js APIs if we're in Node.js runtime
+    if (typeof process !== 'undefined' && process.env.NEXT_RUNTIME === 'nodejs') {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const fs = require('fs');
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const path = require('path');
+      
+      const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
+      const logFile = path.join(process.cwd(), 'ops', 'LOGS', `dev-errors-${today}.md`);
+      const logsDir = path.dirname(logFile);
+      
+      // Ensure logs directory exists
+      if (!fs.existsSync(logsDir)) {
+        fs.mkdirSync(logsDir, { recursive: true });
+      }
+      
+      const timestamp = new Date().toISOString();
+      const envStatus = {
+        NEXT_PUBLIC_SUPABASE_URL: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+        SUPABASE_SERVICE_KEY: !!process.env.SUPABASE_SERVICE_KEY,
+        NODE_ENV: !!process.env.NODE_ENV
+      };
+      
+      const logEntry = `## ${type} - ${timestamp}
 
 **Error Details:**
 - Type: ${type}
@@ -81,10 +83,14 @@ ${errorData.stack || 'No stack trace'}
 ---
 
 `;
-    
-    // Append to log file
-    fs.appendFileSync(logFile, logEntry);
-    console.log(`📝 Error logged to: ${logFile}`);
+      
+      // Append to log file
+      fs.appendFileSync(logFile, logEntry);
+      console.log(`📝 Error logged to: ${logFile}`);
+    } else {
+      // In Edge Runtime, just log to console
+      console.error(`🚨 ${type}:`, errorData);
+    }
     
   } catch (logError) {
     console.error('Failed to write error log:', logError);

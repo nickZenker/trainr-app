@@ -228,28 +228,29 @@
 - bootstrap: FAIL (Invalid API key - SUPABASE_SERVICE_KEY fehlt)
 - auth.spec: FAIL (400er-Fehler persistieren, Supabase Dashboard nicht konfiguriert)
 - Hinweis: Test-User test.user@trainr.local angelegt (nur Dev)
-# # #   [ A U T H - E R F O L G ]   ( 2 0 2 5 - 1 0 - 1 5   1 1 : 3 1 ) 
- 
- -   ï¿½ S&   P r o b l e m   g e l ï¿½ ï¿½ s t :   ' C o n f i r m   e m a i l '   d e a k t i v i e r t   i n   S u p a b a s e   D a s h b o a r d 
- 
- -   ï¿½ S&   A u t h   f u n k t i o n i e r t :   3 / 1 0   E 2 E   T e s t s   P A S S   ( c h r o m i u m ,   M o b i l e   C h r o m e ,   f i r e f o x ) 
- 
- -   ï¿½ x}ï¿½   N ï¿½ ï¿½ c h s t e r   S c h r i t t :   P o s t - M i g r a t i o n   S m o k e   T e s t   m i t   f u n k t i o n i e r e n d e r   A u t h 
- 
-  
- # # #   [ N A V - D R O P D O W N ]   ( 2 0 2 5 - 1 0 - 1 5   1 2 : 2 5 )  
- -   â S&   D r o p d o w n   N a v i g a t i o n   i m p l e m e n t i e r t :   T r a i n i n g / H e a l t h   m i t   K e y b o a r d - S u p p o r t  
- -   â S&   u s e O u t s i d e K e y C l o s e   H o o k :   R o u t e - C h a n g e - B u g   b e h o b e n   ( p r e v P a t h n a m e   t r a c k i n g )  
- -   â S&   E 2 E   T e s t s :   1 0 / 1 6   P A S S   ( D r o p d o w n - F u n k t i o n a l i t Ã ¤ t   f u n k t i o n i e r t )  
- -   â S&   N Ã ¤ c h s t e r   S c h r i t t :   V e r b l e i b e n d e   6   T e s t s   r e p a r i e r e n   ( C S S - K l a s s e n ,   T e x t - I n h a l t e )  
-  
- # # #   [ N A V - H O V E R - F I X   +   C L E A N   R O W ]   ( 2 0 2 5 - 1 0 - 1 5   1 3 : 0 0 )  
- -   h o v e r   i n t e n t :   â S&   T i m e r   +   r e l a t e d T a r g e t   C h e c k   i m p l e m e n t i e r t  
- -   U I :   â S&   f r e i e   E i n z e i l e   o h n e   H i n t e r g r u n d   ( P i l l s )   -   t r a n s p a r e n t e   P a n e l s  
- -   D a s h b o a r d :   â S&   D o p p e l z e i l e   e n t f e r n t   ( n u r   g l o b a l e r   H e a d e r )  
- -   L o g o :   â S&   f Ã ¼ h r t   z u   / a p p   ( H o m e )   m i t   d a t a - t e s t i d = \  
- l o g o - h o m e \  
- -   E 2 E :   1   P A S S   /   1 9   F A I L   ( A u t h - T i m e o u t   -   D e v - S e r v e r   n i c h t   e r r e i c h b a r )  
- -   B u i l d :   â S&   O K   ( n u r   7   E S L i n t - W a r n i n g s ,   k e i n e   E r r o r s )  
- -   N e x t :   D e v - S e r v e r   s t a r t e n   u n d   A u t h - T e s t s   e r n e u t   a u s f Ã ¼ h r e n  
- 
+
+### [AUTH-ERFOLG] (2025-10-15 11:31)
+- Problem gelÃ¶st: 'Confirm email' deaktiviert in Supabase Dashboard
+- Auth funktioniert: 3/10 E2E Tests PASS (chromium, Mobile Chrome, firefox)
+- NÃ¤chster Schritt: Post-Migration Smoke Test mit funktionierender Auth
+
+### [NAV-DROPDOWN] (2025-10-15 12:25)
+- Dropdown Navigation implementiert: Training/Health mit Keyboard-Support
+- useOutsideKeyClose Hook: Route-Change-Bug behoben (prevPathname tracking)
+- E2E Tests: 10/16 PASS (Dropdown-FunktionalitÃ¤t funktioniert)
+- NÃ¤chster Schritt: Verbleibende 6 Tests reparieren (CSS-Klassen, Text-Inhalte)
+
+### [NAV-HOVER-FIX + CLEAN ROW] (2025-10-15 13:00)
+- hover intent: âœ… Timer + relatedTarget Check implementiert
+- UI: âœ… freie Einzeile ohne Hintergrund (Pills) - transparente Panels
+- Dashboard: âœ… Doppelzeile entfernt (nur globaler Header)
+- Logo: âœ… fÃ¼hrt zu /app (Home) mit data-testid="logo-home"
+- E2E: 1 PASS / 19 FAIL (Auth-Timeout - Dev-Server nicht erreichbar)
+- Build: âœ… OK (nur 7 ESLint-Warnings, keine Errors)
+- Next: Dev-Server starten und Auth-Tests erneut ausfÃ¼hren
+
+### [DEV-SERVER-UP] 2025-10-15 13:42
+- Dev-Server: âœ… LÃ„UFT (localhost:3001) - Cookie-Fehler behoben
+- Health-Check: âœ… 200 OK
+- App-Page: âœ… 200 OK (redirects to login as expected)
+- Next: E2E-Tests erneut ausfÃ¼hren

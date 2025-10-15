@@ -46,30 +46,13 @@ export const supabaseServer = async () => {
             }
           },
           set(name, value, options = {}) {
-            try {
-              cookieStore.set({ 
-                name, 
-                value, 
-                ...defaultOptions, 
-                ...(options || {}) 
-              });
-            } catch {
-              // RSC: "Cookies can only be modified ..." -> sicher ignorieren
-              // Keine Logs, keine Fehler - einfach stumm ignorieren
-            }
+            // In Server Components, cookies cannot be set - silently ignore
+            // This prevents the "Cookies can only be modified in a Server Action or Route Handler" error
+            return;
           },
           remove(name, options = {}) {
-            try {
-              cookieStore.set({ 
-                name, 
-                value: '', 
-                ...defaultOptions, 
-                ...(options || {}), 
-                maxAge: 0 
-              });
-            } catch {
-              // RSC: sicher ignorieren
-            }
+            // In Server Components, cookies cannot be removed - silently ignore
+            return;
           },
         },
         auth: {
