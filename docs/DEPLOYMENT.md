@@ -2,12 +2,18 @@
 
 ## Vercel + Supabase Deployment
 
-### 1. Vercel Projekt anlegen
+### 1. Vercel Setup (GitHub Import)
 
-1. Gehe zu [vercel.com](https://vercel.com) und melde dich an
-2. Klicke "New Project"
-3. Verbinde dein GitHub Repository: `nickZenker/trainr-app`
-4. Vercel erkennt automatisch Next.js und konfiguriert das Projekt
+1. **Importiere Repo in Vercel**: New Project → GitHub Repo `nickZenker/trainr-app`
+2. **Framework**: Next.js (Auto-erkannt)
+3. **ENV setzen** (Projekt-Einstellungen → Environment Variables) – NUR Namen:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_KEY`
+   - `NEXT_PUBLIC_SITE_URL` (https://<deine-domain> oder Vercel-Preview URL)
+   - OPTIONAL: `NEXT_PUBLIC_MAP_TILE_URL`, `NEXT_PUBLIC_ENABLE_ANALYTICS`
+4. **CORS/Redirects in Supabase**: wie in `docs/AUTH_FIX.md`
+5. **Klick "Deploy"**
 
 ### 2. Environment Variables
 
@@ -66,25 +72,19 @@ Vercel Standard-Konfiguration:
 
 Kein `vercel.json` zwingend erforderlich - Server Actions + App Router funktionieren out-of-the-box.
 
-### 7. Post-Deploy Checks
+### 7. Post-Deploy Smoke (Prod)
 
-Nach dem Deployment teste:
+**Diagnostic Endpoints:**
+- [ ] `GET /api/health` → 200
+- [ ] `GET /api/version` → buildHash sichtbar (oder "dev")
+- [ ] `GET /api/runtime` → region=…
 
-#### Authentication
-- [ ] `/app` → Redirect zu `/auth/login`
-- [ ] Registrierung funktioniert
-- [ ] Login funktioniert
-- [ ] Logout funktioniert
-
-#### Core Features
-- [ ] **Plans**: Erstellen, Anzeigen, Archivieren, Löschen
-- [ ] **Sessions**: Erstellen, Anzeigen, Löschen, Terminieren
-- [ ] **Live Training**: Start, Stop, Set-Logging, Undo
-- [ ] **Calendar**: Monats-/Wochenansicht, lokale Zeitanzeige
-
-#### Zeit & Zeitzone
-- [ ] Session-Terminierung: Lokale Zeit → UTC Konvertierung
-- [ ] Kalender: UTC → Lokale Anzeige (Europe/Berlin)
+**Core Features:**
+- [ ] `/app` → Login/Signup
+- [ ] `/app/plans` → Plan anlegen
+- [ ] `/app/sessions` → Session planen
+- [ ] `/app/calendar?view=month` → Event sichtbar, lokale Zeit + Typ-Badge
+- [ ] `/app/live/<id>` → Start/Stop + Set loggen (falls Daten vorhanden)
 
 ### 8. Troubleshooting
 
