@@ -153,4 +153,9 @@
 - **Hinweis Supabase-Dashboard gesetzt?**: nein (400er-Fehler bestehen weiterhin)
 - **Nächster Schritt**: Supabase Dashboard konfigurieren - Site URL: http://localhost:3001, Redirect URLs: http://localhost:3001/auth/callback
 
+### [ACTION REQUIRED] Supabase Dashboard konfigurieren
+- **Site URL**: http://localhost:3001
+- **Redirect URL**: http://localhost:3001/auth/callback
+- **Danach läuft der Auto-Retry und schaltet auf PASS, sobald alles korrekt ist.**
+
 **Letzte Aktualisierung**: 2025-01-15 07:25
