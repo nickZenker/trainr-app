@@ -4,6 +4,7 @@
  */
 
 import { supabaseServerWithCookies } from '../lib/supabaseServer';
+import { normalizeDbError } from '../lib/safeSupabase';
 
 /**
  * Get sessions statistics for the current user
@@ -518,30 +519,37 @@ export async function createRecurringSessions({ planId, startDate, timezone, wee
             (plan.type === 'strength' ? 'Strength Training' : 'Endurance Training');
           
           // Create session
-          const { data: newSession, error: sessionError } = await supabase
-            .from("sessions")
-            .insert({
-              plan_id: planId,
-              name: sessionName,
-              type: plan.type,
-              scheduled_at: scheduledAtIso,
-              duration_min: 60, // Default 60 minutes
-              timezone: timezone,
-              meta: {
-                source: 'plan-autogen',
-                week: week + 1,
-                weekday: patternItem.weekday,
-                time: patternItem.time,
-                notes: patternItem.notes || null
-              }
-            })
-            .select('id, name, scheduled_at, type')
-            .single();
+          try {
+            const { data: newSession, error: sessionError } = await supabase
+              .from("sessions")
+              .insert({
+                plan_id: planId,
+                name: sessionName,
+                type: plan.type,
+                scheduled_at: scheduledAtIso,
+                duration_min: 60, // Default 60 minutes
+                timezone: timezone,
+                meta: {
+                  source: 'plan-autogen',
+                  week: week + 1,
+                  weekday: patternItem.weekday,
+                  time: patternItem.time,
+                  notes: patternItem.notes || null
+                }
+              })
+              .select('id, name, scheduled_at, type')
+              .single();
 
-          if (sessionError) {
-            errors.push(`Week ${week + 1}, ${patternItem.time}: ${sessionError.message}`);
-          } else {
-            createdSessions.push(newSession);
+            if (sessionError) {
+              const normalizedError = normalizeDbError(sessionError);
+              errors.push(`Week ${week + 1}, ${patternItem.time}: ${normalizedError.message}`);
+            } else {
+              createdSessions.push(newSession);
+            }
+          } catch (insertError) {
+            const normalizedError = normalizeDbError(insertError);
+            console.warn('Session insert error:', normalizedError.message);
+            errors.push(`Week ${week + 1}, ${patternItem.time}: ${normalizedError.message}`);
           }
           
         } catch (itemError) {

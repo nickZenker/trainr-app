@@ -26,6 +26,16 @@
 - **Dokumentation**: `docs/E2E_STRATEGY.md` erstellt
 - **Status**: Feature-Entwicklung unblockiert, stabile E2E-Basis
 
+### [CRASH-GUARD ENABLED] (2024-12-19 17:45)
+- **global-error.jsx**: Fängt alle unhandled errors ab, zeigt freundliche Fehlerseite
+- **error.jsx**: Segment-Error für /app mit Reset-Button
+- **api/log**: Server-Logging schreibt automatisch in ops/OUTBOX.md
+- **safeSupabase.js**: Schema-sichere Wrapper (42703 "column does not exist" abgefangen)
+- **services**: Plans/Sessions nutzen safeInsert, Fehler normalisiert
+- **smoke results**: /app → 200, /app/plans → 200, /api/health → 200
+- **Ergebnis**: 500er werden abgefangen, freundliche Fehlerseiten, automatisches Logging
+- **Status**: App läuft stabil, Crash-Guard aktiv, Schema-sichere DB-Calls
+
 ## [2025-10-15 15:05] ZWISCHENBERICHT: Plan-Scheduling-Feature & Stabilisierung
 
 ### ✅ Abgeschlossen

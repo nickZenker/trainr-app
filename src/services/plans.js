@@ -4,6 +4,7 @@
  */
 
 import { supabaseServerWithCookies } from '../lib/supabaseServer';
+import { safeInsert, normalizeDbError, isMissingColumn } from '../lib/safeSupabase';
 
 /**
  * Get plans statistics for the current user
@@ -25,7 +26,7 @@ export async function getPlansStats() {
       .eq("user_id", user.id);
 
     if (plansError) {
-      console.warn('Failed to fetch plans count:', plansError);
+      console.warn('Failed to fetch plans count:', plansError?.message);
     }
 
     // Get active plans count (plans with at least one session)
@@ -35,7 +36,7 @@ export async function getPlansStats() {
       .eq("user_id", user.id);
 
     if (sessionsError) {
-      console.warn('Failed to fetch sessions count:', sessionsError);
+      console.warn('Failed to fetch sessions count:', sessionsError?.message);
     }
 
     return {
@@ -73,7 +74,7 @@ export async function listPlans(filter = 'all') {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.warn('Supabase listPlans error:', error);
+      console.warn('listPlans error:', error?.message);
       return [];
     }
 
@@ -116,49 +117,28 @@ export async function createPlan(input) {
     }
 
     // Create payload with only allowed fields
-    const payload = {
+    const values = {
       user_id: user.id,
       name: input.name.trim(),
       goal: input.description?.trim() || null,
-      weeks: input.weeks || null
+      weeks: input.weeks || null,
+      ...(input.type ? { type: input.type } : {})
     };
 
-    // First attempt with type column (if provided and column exists)
-    let { data: newPlan, error } = await supabase
-      .from("plans")
-      .insert(input.type ? { ...payload, type: input.type } : payload)
-      .select('id')
-      .single();
+    // Konstruiere Query-Objekt für safeInsert
+    const client = supabase;
+    const table = 'plans';
+    const q = client.from(table).insert(values).select('id').single();
+    q.__ctx = { client, table, values };
 
-    // If type column doesn't exist, retry without it
-    if (error && isColumnMissingType(error)) {
-      console.log('Type column missing, retrying without type field');
-      const retryResult = await supabase
-        .from("plans")
-        .insert(payload)
-        .select('id')
-        .single();
-      
-      newPlan = retryResult.data;
-      error = retryResult.error;
-    }
+    const { data } = await safeInsert(q, { retryWithout: ['type', 'active'] });
 
-    if (error) {
-      console.error('Supabase insert error:', error);
-      throw new Error(`createPlan failed: ${error.message}`);
-    }
-
-    if (!newPlan || !newPlan.id) {
-      console.error('No plan returned from insert');
-      throw new Error('createPlan failed: No plan data returned');
-    }
-
-    console.log('Plan created successfully:', newPlan);
+    console.log('Plan created successfully:', data);
 
     return {
       success: true,
       message: 'Plan created successfully',
-      plan: { id: newPlan.id }
+      plan: { id: data.id }
     };
 
   } catch (error) {
