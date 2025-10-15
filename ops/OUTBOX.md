@@ -1,5 +1,14 @@
 # OUTBOX – Agent → Reviewer
 
+### [PLANS-REDIRECT-STABILIZED] (2024-12-19 16:45)
+- **createPlan**: Defensive insert (type optional) + Retry-Logik bei fehlender Spalte
+- **Redirect**: router.push('/app/plans/:id/schedule') ohne setState nach push
+- **Schedule-Anchor**: data-testid=plan-schedule-page + plan-schedule-form
+- **E2E**: Console-Piping, DOM-anchored waits, Trace/Video/Screenshot on failure
+- **Ergebnis**: Build ✓, Lint ✓, E2E ❌ (Auth-Problem: 500 bei /api/auth-check)
+- **Pfade**: playwright-report/ für Trace/Video bei Fehlern
+- **Offene Punkte**: Auth-Setup reparieren (Bootstrap 500, Login-Timeout)
+
 ## [2025-10-15 15:05] ZWISCHENBERICHT: Plan-Scheduling-Feature & Stabilisierung
 
 ### ✅ Abgeschlossen

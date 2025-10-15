@@ -134,7 +134,7 @@ export default function ScheduleForm({ plan }) {
 
   return (
     <div className="bg-surface rounded-lg border border-border p-6">
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6" data-testid="plan-schedule-form">
         {/* Start Date */}
         <div>
           <label htmlFor="startDate" className="block text-sm font-medium text-foreground mb-2">

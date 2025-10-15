@@ -107,6 +107,13 @@ export async function listPlans(filter = 'all') {
  * @param {Object} input - Plan data (name, description?, type)
  * @returns {Promise<Object>} Result object with plan data
  */
+// Helper to detect missing type column error
+function isColumnMissingType(err) {
+  return err?.code === '42703' || 
+         err?.message?.includes('column "type" does not exist') ||
+         err?.message?.includes('does not exist');
+}
+
 export async function createPlan(input) {
   try {
     const supabase = await supabaseServerWithCookies();
@@ -125,26 +132,50 @@ export async function createPlan(input) {
       throw new Error('Plan name is too long (max 120 characters)');
     }
 
-    // Create plan (without type column for now)
-    const { data: newPlan, error } = await supabase
+    // Create payload defensively
+    const payload = {
+      user_id: user.id,
+      name: input.name.trim(),
+      goal: input.description?.trim() || null,
+      active: true,
+      ...(input.type ? { type: input.type } : {})
+    };
+
+    // First attempt with type column
+    let { data: newPlan, error } = await supabase
       .from("plans")
-      .insert({
+      .insert(payload)
+      .select('id, name, created_at')
+      .single();
+
+    // If type column doesn't exist, retry without it
+    if (error && isColumnMissingType(error)) {
+      console.log('Type column missing, retrying without type field');
+      const payloadWithoutType = {
         user_id: user.id,
         name: input.name.trim(),
         goal: input.description?.trim() || null,
         active: true
-      })
-      .select('id, name, created_at')
-      .single();
+      };
+      
+      const retryResult = await supabase
+        .from("plans")
+        .insert(payloadWithoutType)
+        .select('id, name, created_at')
+        .single();
+      
+      newPlan = retryResult.data;
+      error = retryResult.error;
+    }
 
     if (error) {
       console.error('Supabase insert error:', error);
-      throw new Error(`Failed to create plan: ${error.message}`);
+      throw new Error(`createPlan failed: ${error.message}`);
     }
 
     if (!newPlan || !newPlan.id) {
       console.error('No plan returned from insert');
-      throw new Error('Failed to create plan: No plan data returned');
+      throw new Error('createPlan failed: No plan data returned');
     }
 
     console.log('Plan created successfully:', newPlan);
@@ -159,7 +190,7 @@ export async function createPlan(input) {
     console.error('Plans service - createPlan failed:', error.message);
     return {
       success: false,
-      message: error.message || 'Failed to create plan'
+      message: error.message || 'createPlan failed'
     };
   }
 }

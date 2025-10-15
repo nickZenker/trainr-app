@@ -1,7 +1,13 @@
 import { test, expect } from '@playwright/test';
+import { pipePageConsole } from './helpers/consoleTap';
+import { writeFileSync, existsSync, mkdirSync } from 'fs';
+import { join } from 'path';
 
 test.describe('Plan Scheduling', () => {
   test.beforeEach(async ({ page }) => {
+    // Pipe console logs for debugging
+    await pipePageConsole(page, 'plans-scheduling');
+    
     // Navigate to plans page
     await page.goto('/app/plans');
   });
@@ -29,13 +35,13 @@ test.describe('Plan Scheduling', () => {
     // Submit plan creation
     await planCreateButton.click();
     
-    // Wait for navigation
-    await page.waitForTimeout(5000);
-    const currentUrl = page.url();
-    console.log('Current URL after form submission:', currentUrl);
+    // Wait for schedule page to load (DOM-anchored wait)
+    await Promise.all([
+      page.waitForSelector('[data-testid=plan-schedule-page]', { timeout: 15000 }),
+    ]);
     
-    // Should redirect to schedule page
-    await expect(page).toHaveURL(/\/app\/plans\/[^\/]+\/schedule/);
+    // Fallback: URL check as second safety net
+    await page.waitForURL(/\/app\/plans\/[^\/]+\/schedule/, { timeout: 15000 });
     
     // Check that default pattern is visible (should have at least 1 row)
     const patternRows = page.locator('[data-testid^="pattern-row-"]');
@@ -172,5 +178,37 @@ test.describe('Plan Scheduling', () => {
     
     // Should navigate to schedule page
     await expect(page).toHaveURL(/\/app\/plans\/[^\/]+\/schedule/);
+  });
+
+  test.afterEach(async ({ page }, testInfo) => {
+    // Write error log if test failed
+    if (testInfo.status === 'failed') {
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const logFile = join(process.cwd(), 'ops', 'LOGS', `e2e-plans-scheduling-${timestamp}.md`);
+      
+      // Ensure logs directory exists
+      const logsDir = join(process.cwd(), 'ops', 'LOGS');
+      if (!existsSync(logsDir)) {
+        mkdirSync(logsDir, { recursive: true });
+      }
+      
+      const logContent = `# E2E Plans Scheduling Test Failed - ${timestamp}
+
+## Test Results
+- Test: ${testInfo.title}
+- Status: ${testInfo.status}
+- Duration: ${testInfo.duration}ms
+- URL: ${page.url()}
+- Title: ${await page.title()}
+
+## Trace/Video Paths
+- Trace: ${testInfo.outputDir}/trace.zip
+- Video: ${testInfo.outputDir}/video.webm
+- Screenshot: ${testInfo.outputDir}/screenshot.png
+`;
+      
+      writeFileSync(logFile, logContent);
+      console.log(`Error log written to: ${logFile}`);
+    }
   });
 });
