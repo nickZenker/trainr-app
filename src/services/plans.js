@@ -117,28 +117,51 @@ export async function createPlan(input) {
     }
 
     // Create payload with only allowed fields
-    const values = {
+    const base = { 
       user_id: user.id,
       name: input.name.trim(),
-      goal: input.description?.trim() || null,
-      weeks: input.weeks || null,
-      ...(input.type ? { type: input.type } : {})
+      goal: input.goal?.trim() || null,
+      weeks: input.weeks || null
     };
 
-    // Konstruiere Query-Objekt für safeInsert
-    const client = supabase;
-    const table = 'plans';
-    const q = client.from(table).insert(values).select('id').single();
-    q.__ctx = { client, table, values };
+    // First try: include type if provided
+    let values = input?.type ? { ...base, type: input.type } : base;
+    
+    let { data: newPlan, error } = await supabase
+      .from("plans")
+      .insert(values)
+      .select('id')
+      .single();
 
-    const { data } = await safeInsert(q, { retryWithout: ['type', 'active'] });
+    // If type column doesn't exist, retry without it
+    if (error && (error.code === '42703' || error.message?.includes('column') && error.message?.includes('does not exist'))) {
+      console.log('Type column missing, retrying without type field');
+      const retryResult = await supabase
+        .from("plans")
+        .insert(base)
+        .select('id')
+        .single();
+      
+      newPlan = retryResult.data;
+      error = retryResult.error;
+    }
 
-    console.log('Plan created successfully:', data);
+    if (error) {
+      console.error('Supabase insert error:', error);
+      throw new Error(`Plan konnte nicht erstellt werden: ${error.code || error.message}`);
+    }
+
+    if (!newPlan || !newPlan.id) {
+      console.error('No plan returned from insert');
+      throw new Error('Plan konnte nicht erstellt werden: Keine Plan-Daten zurückgegeben');
+    }
+
+    console.log('Plan created successfully:', newPlan);
 
     return {
       success: true,
       message: 'Plan created successfully',
-      plan: { id: data.id }
+      plan: { id: newPlan.id }
     };
 
   } catch (error) {
@@ -276,4 +299,230 @@ export function ensurePlanId(planOrId) {
   }
   
   throw new Error('Invalid plan ID: must be a string or object with id property');
+}
+
+/**
+ * Get a single plan by ID
+ * @param {string} planId - Plan ID
+ * @returns {Promise<Object|null>} Plan object or null
+ */
+export async function getPlan(planId) {
+  try {
+    const supabase = await supabaseServerWithCookies();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    // Try with type column first
+    let { data: plan, error } = await supabase
+      .from("plans")
+      .select('id,name,goal,weeks,type,created_at')
+      .eq("id", planId)
+      .eq("user_id", user.id)
+      .single();
+
+    // If type column doesn't exist, retry without it
+    if (error && (error.code === '42703' || error.message?.includes('column') && error.message?.includes('does not exist'))) {
+      const retryResult = await supabase
+        .from("plans")
+        .select('id,name,goal,weeks,created_at')
+        .eq("id", planId)
+        .eq("user_id", user.id)
+        .single();
+      
+      plan = retryResult.data;
+      error = retryResult.error;
+    }
+
+    if (error) {
+      console.warn('getPlan error:', error?.message);
+      return null;
+    }
+
+    return plan;
+
+  } catch (error) {
+    console.warn('Plans service - getPlan failed:', error.message);
+    return null;
+  }
+}
+
+/**
+ * Update a plan
+ * @param {string} planId - Plan ID
+ * @param {Object} patch - Fields to update
+ * @returns {Promise<Object>} Result object
+ */
+export async function updatePlan(planId, patch) {
+  try {
+    const supabase = await supabaseServerWithCookies();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const base = {
+      name: patch.name?.trim(),
+      goal: patch.goal?.trim() || null,
+      weeks: patch.weeks || null
+    };
+
+    // First try: include type if provided
+    let values = patch?.type ? { ...base, type: patch.type } : base;
+    
+    let { data: updatedPlan, error } = await supabase
+      .from("plans")
+      .update(values)
+      .eq("id", planId)
+      .eq("user_id", user.id)
+      .select('id,name,goal,weeks,type')
+      .single();
+
+    // If type column doesn't exist, retry without it
+    if (error && (error.code === '42703' || error.message?.includes('column') && error.message?.includes('does not exist'))) {
+      const retryResult = await supabase
+        .from("plans")
+        .update(base)
+        .eq("id", planId)
+        .eq("user_id", user.id)
+        .select('id,name,goal,weeks')
+        .single();
+      
+      updatedPlan = retryResult.data;
+      error = retryResult.error;
+    }
+
+    if (error) {
+      console.error('Supabase update error:', error);
+      throw new Error(`Plan konnte nicht aktualisiert werden: ${error.code || error.message}`);
+    }
+
+    return {
+      success: true,
+      message: 'Plan aktualisiert',
+      plan: updatedPlan
+    };
+
+  } catch (error) {
+    console.error('Plans service - updatePlan failed:', error.message);
+    return {
+      success: false,
+      message: error.message || 'Plan konnte nicht aktualisiert werden'
+    };
+  }
+}
+
+/**
+ * Duplicate a plan
+ * @param {string} planId - Plan ID to duplicate
+ * @returns {Promise<Object>} Result object
+ */
+export async function duplicatePlan(planId) {
+  try {
+    const supabase = await supabaseServerWithCookies();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    // Get original plan
+    const originalPlan = await getPlan(planId);
+    if (!originalPlan) {
+      throw new Error('Plan nicht gefunden');
+    }
+
+    // Create duplicate
+    const duplicateData = {
+      user_id: user.id,
+      name: `${originalPlan.name} (Kopie)`,
+      goal: originalPlan.goal,
+      weeks: originalPlan.weeks,
+      ...(originalPlan.type ? { type: originalPlan.type } : {})
+    };
+
+    const { data: newPlan, error } = await supabase
+      .from("plans")
+      .insert(duplicateData)
+      .select('id')
+      .single();
+
+    if (error) {
+      console.error('Supabase duplicate error:', error);
+      throw new Error(`Plan konnte nicht dupliziert werden: ${error.code || error.message}`);
+    }
+
+    return {
+      success: true,
+      message: 'Plan dupliziert',
+      plan: { id: newPlan.id }
+    };
+
+  } catch (error) {
+    console.error('Plans service - duplicatePlan failed:', error.message);
+    return {
+      success: false,
+      message: error.message || 'Plan konnte nicht dupliziert werden'
+    };
+  }
+}
+
+/**
+ * Soft delete a plan (set deleted_at)
+ * @param {string} planId - Plan ID to delete
+ * @returns {Promise<Object>} Result object
+ */
+export async function softDeletePlan(planId) {
+  try {
+    const supabase = await supabaseServerWithCookies();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    // Try soft delete first
+    let { data: deletedPlan, error } = await supabase
+      .from("plans")
+      .update({ deleted_at: new Date().toISOString() })
+      .eq("id", planId)
+      .eq("user_id", user.id)
+      .select('id,name')
+      .single();
+
+    // If deleted_at column doesn't exist, fallback to real delete
+    if (error && (error.code === '42703' || error.message?.includes('column') && error.message?.includes('does not exist'))) {
+      const { data: realDeletedPlan, error: realDeleteError } = await supabase
+        .from("plans")
+        .delete()
+        .eq("id", planId)
+        .eq("user_id", user.id)
+        .select('id,name')
+        .single();
+      
+      deletedPlan = realDeletedPlan;
+      error = realDeleteError;
+    }
+
+    if (error) {
+      console.error('Supabase delete error:', error);
+      throw new Error(`Plan konnte nicht gelöscht werden: ${error.code || error.message}`);
+    }
+
+    return {
+      success: true,
+      message: `Plan "${deletedPlan.name}" gelöscht`,
+      plan: { id: deletedPlan.id }
+    };
+
+  } catch (error) {
+    console.error('Plans service - softDeletePlan failed:', error.message);
+    return {
+      success: false,
+      message: error.message || 'Plan konnte nicht gelöscht werden'
+    };
+  }
 }

@@ -2,22 +2,21 @@
 
 import Link from "next/link";
 import { useTransition } from "react";
-import { togglePlanArchive, deletePlan as deletePlanAction } from "./actions";
+import { duplicatePlanAction, softDeletePlanAction } from "./planActions";
 
 export default function PlanActions({ plan, filter }) {
   const [isPending, startTransition] = useTransition();
 
-  const handleArchive = async (e) => {
+  const handleDuplicate = async (e) => {
     e.preventDefault();
     startTransition(async () => {
       try {
         const formData = new FormData();
         formData.append("planId", plan.id);
-        formData.append("archive", plan.active ? "true" : "false");
         
-        const result = await togglePlanArchive(formData);
-        if (!result.success) {
-          alert(`Fehler: ${result.message}`);
+        const result = await duplicatePlanAction(null, formData);
+        if (!result.ok) {
+          alert(`Fehler: ${result.error}`);
         }
       } catch (error) {
         alert(`Fehler: ${error.message}`);
@@ -28,7 +27,7 @@ export default function PlanActions({ plan, filter }) {
   const handleDelete = async (e) => {
     e.preventDefault();
     
-    if (!confirm(`Möchtest du den Plan "${plan.name}" wirklich dauerhaft löschen?`)) {
+    if (!confirm(`Möchtest du den Plan "${plan.name}" wirklich löschen?`)) {
       return;
     }
 
@@ -37,9 +36,9 @@ export default function PlanActions({ plan, filter }) {
         const formData = new FormData();
         formData.append("planId", plan.id);
         
-        const result = await deletePlanAction(formData);
-        if (!result.success) {
-          alert(`Fehler: ${result.message}`);
+        const result = await softDeletePlanAction(null, formData);
+        if (!result.ok) {
+          alert(`Fehler: ${result.error}`);
         }
       } catch (error) {
         alert(`Fehler: ${error.message}`);
@@ -58,24 +57,27 @@ export default function PlanActions({ plan, filter }) {
       </Link>
       
       <Link 
-        href={`/app/plans/${plan.id}`}
+        href={`/app/plans/${plan.id}/edit`}
         className="bg-brand text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-hover transition-colors"
+        data-testid={`plan-edit-${plan.id}`}
       >
         Bearbeiten
       </Link>
       
       <button 
-        onClick={handleArchive}
+        onClick={handleDuplicate}
         disabled={isPending}
-        className="bg-surface-hover text-foreground px-4 py-2 rounded-lg font-medium hover:bg-border transition-colors disabled:opacity-50"
+        className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+        data-testid={`plan-duplicate-${plan.id}`}
       >
-        {isPending ? "..." : (plan.active ? "Archivieren" : "Wiederherstellen")}
+        {isPending ? "..." : "Duplizieren"}
       </button>
       
       <button 
         onClick={handleDelete}
         disabled={isPending}
         className="bg-red-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
+        data-testid={`plan-delete-${plan.id}`}
       >
         {isPending ? "..." : "Löschen"}
       </button>

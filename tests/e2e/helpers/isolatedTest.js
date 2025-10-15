@@ -157,11 +157,16 @@ export async function createMockPage(page) {
               </select>
             </div>
             <div class="form-group">
-              <label for="description">Beschreibung</label>
-              <textarea id="description" name="description" data-testid="plan-description"></textarea>
+              <label for="goal">Ziel *</label>
+              <textarea id="goal" name="goal" data-testid="plan-goal"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="weeks">Wochen *</label>
+              <input type="number" id="weeks" name="weeks" data-testid="plan-weeks" min="1" max="52" value="8" required>
             </div>
             <button type="submit" data-testid="plan-create">Plan erstellen</button>
           </form>
+          <div id="plan-error" data-testid="plan-error" style="display: none;" class="error-message"></div>
         </div>
         
         <div id="plans-list">
@@ -182,17 +187,39 @@ export async function createMockPage(page) {
           const planData = {
             name: formData.get('name'),
             type: formData.get('type'),
-            goal: formData.get('description')
+            goal: formData.get('goal'),
+            weeks: formData.get('weeks')
           };
           
           console.log('[MOCK] Creating plan:', planData);
+          
+          // Validation
+          const errorDiv = document.getElementById('plan-error');
+          if (!planData.name) {
+            errorDiv.textContent = 'Name ist erforderlich';
+            errorDiv.style.display = 'block';
+            return;
+          }
+          if (!planData.goal) {
+            errorDiv.textContent = 'Ziel ist erforderlich';
+            errorDiv.style.display = 'block';
+            return;
+          }
+          if (!planData.weeks || planData.weeks < 1 || planData.weeks > 52) {
+            errorDiv.textContent = 'Wochen muss 1–52 sein';
+            errorDiv.style.display = 'block';
+            return;
+          }
+          
+          // Hide error
+          errorDiv.style.display = 'none';
           
           // Simuliere Plan-Erstellung
           const newPlan = {
             id: 'plan-' + Date.now(),
             name: planData.name,
             goal: planData.goal,
-            weeks: 8,
+            weeks: planData.weeks,
             created_at: new Date().toISOString()
           };
           

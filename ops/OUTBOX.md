@@ -36,6 +36,16 @@
 - **Ergebnis**: 500er werden abgefangen, freundliche Fehlerseiten, automatisches Logging
 - **Status**: App läuft stabil, Crash-Guard aktiv, Schema-sichere DB-Calls
 
+### [PLANS-CREATE-FIX + CRUD] (2024-12-19 18:00)
+- **Fehler normalisiert**: `src/lib/errors.js` - keine "[object Object]" mehr, klare Strings
+- **Action gehärtet**: `createPlanAction` mit serverseitiger Validierung (name, goal, weeks)
+- **Service stabil**: Schema-sichere Inserts, Retry ohne problematische Spalten
+- **Create → Redirect**: Stabile Weiterleitung nur bei Erfolg
+- **CRUD implementiert**: Edit (`/app/plans/[id]/edit`), Duplicate, Soft Delete
+- **E2E Ergebnis**: ✅ 5 passed (4.2s) - alle Flows grün
+- **Features**: Plan bearbeiten, duplizieren, löschen mit data-testid
+- **Status**: Plan-CRUD vollständig funktional, E2E-stabil
+
 ## [2025-10-15 15:05] ZWISCHENBERICHT: Plan-Scheduling-Feature & Stabilisierung
 
 ### ✅ Abgeschlossen

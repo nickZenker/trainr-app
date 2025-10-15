@@ -229,25 +229,33 @@ export async function createPlan(formData) {
  */
 export async function createPlanAction(prevState, formData) {
   try {
-    const { createPlan } = await import("../../../services/plans");
-    
-    const input = {
-      name: (formData.get('name') || '').toString().trim(),
-      description: (formData.get('description') || '').toString().trim() || null,
-      type: (formData.get('type') || 'strength').toString()
-    };
+    const name = String(formData.get('name')||'').trim()
+    const goal = String(formData.get('goal')||'').trim()
+    const weeks = Number(formData.get('weeks')||0)
+    const type = formData.get('type') ? String(formData.get('type')) : undefined
 
-    const result = await createPlan(input);
+    if (!name) return { ok:false, error:'Name ist erforderlich' }
+    if (!goal) return { ok:false, error:'Ziel ist erforderlich' }
+    if (!Number.isFinite(weeks) || weeks < 1 || weeks > 52) return { ok:false, error:'Wochen muss 1–52 sein' }
+
+    const { createPlan } = await import("../../../services/plans");
+    const result = await createPlan({ name, goal, weeks, type })
     
     if (result.success) {
       revalidatePath('/app/plans');
-      // Return plan ID for client-side redirect
-      return { ok: true, planId: result.plan.id };
+      return { ok:true, planId: result.plan.id }
     } else {
-      return { ok: false, error: result.message || 'createPlan failed' };
+      return { ok:false, error: result.message || 'Plan konnte nicht erstellt werden' }
     }
   } catch (e) {
-    return { ok: false, error: e?.message || 'createPlan failed' };
+    // Log to OUTBOX
+    fetch('/api/log', { 
+      method:'POST', 
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ kind:'plan-action', message: e?.message || String(e) }) 
+    }).catch(() => {})
+    
+    return { ok:false, error: e?.message || String(e) || 'Plan konnte nicht erstellt werden' }
   }
 }
 
