@@ -190,3 +190,9 @@
 - Reihenfolge: A→B→C in Supabase SQL Editor ausführen
 - Nächster Schritt: Nach SQL-Ausführung /app/admin/db-check öffnen und Ergebnis notieren
 - Bei fehlenden Tabellen: Patch-Vorschläge für ALTER TABLE verfügbar
+
+### [DB-VERIFY] 2025-10-15 11:55
+- ok: 0, fail: 0
+- fehlende Nennungen (heuristisch): profiles plans sessions exercises session_exercises set_schemas live_sessions set_logs routes
+- datei: ops/LOGS/db-check-20251015-115517.html
+- next: falls fail>0 → Block C (Policies) prüfen; sonst → Features/Blocker angehen
