@@ -112,23 +112,33 @@ export const supabaseServerWithCookies = async () => {
             return cookieStore.get(name)?.value;
           },
           set(name, value, options = {}) {
-            // In Server Actions können Cookies gesetzt werden
-            cookieStore.set({ 
-              name, 
-              value, 
-              ...defaultOptions, 
-              ...(options || {}) 
-            });
+            // Safe cookie setting with try/catch to prevent errors
+            try {
+              cookieStore.set({ 
+                name, 
+                value, 
+                ...defaultOptions, 
+                ...(options || {}) 
+              });
+            } catch (error) {
+              // Silently ignore cookie setting errors in Server Components
+              console.warn('Cookie set operation failed (likely in Server Component):', error.message);
+            }
           },
           remove(name, options = {}) {
-            // In Server Actions können Cookies gelöscht werden
-            cookieStore.set({ 
-              name, 
-              value: '', 
-              ...defaultOptions, 
-              ...(options || {}), 
-              maxAge: 0 
-            });
+            // Safe cookie removal with try/catch to prevent errors
+            try {
+              cookieStore.set({ 
+                name, 
+                value: '', 
+                ...defaultOptions, 
+                ...(options || {}), 
+                maxAge: 0 
+              });
+            } catch (error) {
+              // Silently ignore cookie removal errors in Server Components
+              console.warn('Cookie remove operation failed (likely in Server Component):', error.message);
+            }
           },
         },
         auth: {

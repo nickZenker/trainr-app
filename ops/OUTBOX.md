@@ -112,6 +112,38 @@
 - **Console errors (top3)**:
   1. `response.status is not a function` (2x in auth.spec.js) - Playwright API-Problem
   2. `Error reading storage state from tests/.auth/state.json` (4x) - Auth-Storage-Dependency
+
+---
+
+## 2025-01-27 15:45 - Navigation Dropdown Positioning Fix
+
+**Status**: ✅ COMPLETED
+
+**Changes Made**:
+- **Positioning**: Dropdown panel now appears directly under the trigger button (not left-aligned)
+- **Layout**: Items are stacked vertically instead of horizontally
+- **Hover Logic**: Maintained existing hover behavior and accessibility
+- **E2E Tests**: Updated tests to verify positioning and vertical stacking
+
+**Technical Details**:
+- Added `triggerRef` prop to `MegaDropdownPanel` for precise positioning
+- Implemented `updatePanelPosition()` using `getBoundingClientRect()`
+- Added `ResizeObserver` to measure panel width for viewport clamping
+- Updated panel styling to use dynamic `style` prop instead of fixed classes
+- Changed nav layout from `flex-row` to `flex-col` for vertical stacking
+
+**E2E Test Results**:
+- ✅ "panel appears directly under trigger" - PASS
+- ✅ "items stacked vertically" - PASS
+- ✅ All existing navigation tests - PASS
+
+**Files Modified**:
+- `src/components/TopNavTabs.jsx` - Positioning and layout logic
+- `tests/e2e/app-navigation.spec.js` - New positioning tests
+
+**Commit**: `a70c2eb` - "feat(nav): position dropdown directly under trigger and stack items vertically"
+
+**Dev Server Status**: ✅ RUNNING on port 3001
   3. `expect(locator).toContainText(expected) failed` (4x) - UI-Text-Mismatch (deutsch vs. englisch)
 - **Network fails (top3)**:
   1. **Keine Network-Failures** - Alle Requests erfolgreich (200/307)

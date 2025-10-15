@@ -1,0 +1,37 @@
+/* Component-specific styles for Trainr App */
+
+/* Focus ring utility for consistent focus states */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-background;
+}
+
+/* Hide scrollbars while maintaining functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
+/* Mega dropdown specific styles */
+.mega-dropdown-panel {
+  @apply absolute left-0 right-0 top-full bg-background/95 backdrop-blur-md border border-border rounded-xl shadow-xl ring-1 ring-white/10 z-50;
+}
+
+/* Ensure proper stacking context for mega dropdown */
+.mega-dropdown-container {
+  position: relative;
+  z-index: 50;
+}
+
+/* Smooth transitions for hover states */
+.hover-transition {
+  @apply transition-colors duration-200;
+}
+
+/* Active tab indicator */
+.active-tab-indicator {
+  @apply absolute inset-x-0 bottom-0 h-0.5 bg-brand;
+}

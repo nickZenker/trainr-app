@@ -10,7 +10,10 @@ export const config = {
 
 export async function register() {
   // Only register in Node.js runtime, not Edge Runtime
-  if (process.env.NODE_ENV === 'development' && typeof process !== 'undefined' && process.env.NEXT_RUNTIME === 'nodejs') {
+  if (process.env.NODE_ENV === 'development' && 
+      typeof process !== 'undefined' && 
+      process.env.NEXT_RUNTIME === 'nodejs' &&
+      typeof require !== 'undefined') {
     // Handle unhandled promise rejections
     process.on('unhandledRejection', (reason, promise) => {
       logErrorToFile('unhandledRejection', {
@@ -42,7 +45,9 @@ function logErrorToFile(type: string, errorData: Record<string, unknown>) {
 
   try {
     // Only use Node.js APIs if we're in Node.js runtime
-    if (typeof process !== 'undefined' && process.env.NEXT_RUNTIME === 'nodejs') {
+    if (typeof process !== 'undefined' && 
+        process.env.NEXT_RUNTIME === 'nodejs' && 
+        typeof require !== 'undefined') {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const fs = require('fs');
       // eslint-disable-next-line @typescript-eslint/no-require-imports
