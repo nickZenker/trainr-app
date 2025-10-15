@@ -39,24 +39,7 @@ export default async function AppPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Header */}
-      <header className="border-b border-border px-6 py-4">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-brand">Trainings App</h1>
-          <form action={async () => {
-            "use server";
-            const supabase = await supabaseServer();
-            await supabase.auth.signOut();
-            redirect("/auth/login");
-          }}>
-            <button type="submit" className="text-sm text-text-muted hover:text-foreground px-3 py-1 rounded">
-              Abmelden
-            </button>
-          </form>
-        </div>
-      </header>
-
+    <div className="space-y-8">
       <main className="p-6 max-w-6xl mx-auto space-y-8">
         {/* Begrüßung */}
         <section>

@@ -201,6 +201,91 @@ test.describe('App Navigation Structure', () => {
     await expect(page).toHaveURL(/.*\/app\/progress/);
   });
 
+  test('hover keeps panel open and items clickable', async ({ page }) => {
+    const isDesktop = await page.evaluate(() => window.matchMedia('(pointer: fine)').matches);
+    
+    if (!isDesktop) {
+      test.skip('Skipping hover test on mobile');
+      return;
+    }
+    
+    // Hover on trigger
+    await page.hover('[data-testid="subnav-trigger-training"]');
+    await page.waitForTimeout(200);
+    
+    const panel = page.getByTestId('subnav-panel-training');
+    await expect(panel).toBeVisible();
+    
+    // Move mouse towards panel (simulate moving from trigger to panel)
+    const triggerBox = await page.locator('[data-testid="subnav-trigger-training"]').boundingBox();
+    const panelBox = await page.locator('[data-testid="subnav-panel-training"]').boundingBox();
+    
+    if (triggerBox && panelBox) {
+      // Move mouse from trigger to panel area
+      await page.mouse.move(triggerBox.x + triggerBox.width / 2, triggerBox.y + triggerBox.height + 10);
+      await page.waitForTimeout(100);
+      
+      // Panel should still be visible
+      await expect(panel).toBeVisible();
+      
+      // Click on a menu item
+      await page.getByTestId('subnav-item-plans').click();
+      await expect(page).toHaveURL(/.*\/app\/plans/);
+    }
+  });
+
+  test('panel has single-line free-floating style (no horizontal scrollbar)', async ({ page }) => {
+    const isDesktop = await page.evaluate(() => window.matchMedia('(pointer: fine)').matches);
+    
+    if (isDesktop) {
+      await page.hover('[data-testid="subnav-trigger-training"]');
+    } else {
+      await page.getByTestId('subnav-trigger-training').click();
+    }
+    
+    await page.waitForTimeout(200);
+    
+    const panel = page.getByTestId('subnav-panel-training');
+    await expect(panel).toBeVisible();
+    
+    // Check that panel doesn't have horizontal scrollbar
+    const hasHorizontalScroll = await panel.evaluate(el => el.scrollWidth > el.clientWidth);
+    expect(hasHorizontalScroll).toBeFalsy();
+    
+    // Check that panel has transparent background (no card styling)
+    const bgColor = await panel.evaluate(el => window.getComputedStyle(el).backgroundColor);
+    expect(bgColor).toBe('rgba(0, 0, 0, 0)'); // transparent
+  });
+
+  test('logo navigates to home', async ({ page }) => {
+    // Navigate to a different page first
+    await page.goto('/app/plans');
+    
+    // Click logo
+    await page.getByTestId('logo-home').click();
+    
+    // Should navigate to home
+    await expect(page).toHaveURL(/.*\/app$/);
+    
+    // Should see home content
+    await expect(page.locator('h2')).toContainText('Willkommen');
+  });
+
+  test('no duplicate header row on dashboard', async ({ page }) => {
+    await page.goto('/app');
+    
+    // Count occurrences of "Abmelden" text
+    const abmeldenElements = page.locator('text=Abmelden');
+    const count = await abmeldenElements.count();
+    
+    // Should only appear once (in the global header)
+    expect(count).toBe(1);
+    
+    // Verify it's in the header, not in the main content
+    const headerAbmelden = page.locator('header').locator('text=Abmelden');
+    await expect(headerAbmelden).toHaveCount(1);
+  });
+
   test('active states work correctly', async ({ page }) => {
     // Navigate to plans page via dropdown
     await page.getByTestId('tab-primary-training').click();

@@ -23,14 +23,22 @@ export function useOutsideKeyClose(isOpen, onClose, enableRouteClose = true) {
     prevPathname.current = pathname;
   }, [pathname, isOpen, onClose, enableRouteClose]);
 
-  // Handle outside clicks
+  // Handle outside clicks with debouncing
   useEffect(() => {
+    let debounceTimeout = null;
+
     function handleClickOutside(event) {
       if (isOpen && ref.current && !ref.current.contains(event.target)) {
         // Check if the click is on a trigger button to avoid immediate closing
-        const isTriggerClick = event.target.closest('[data-testid*="tab-primary-"]');
+        const isTriggerClick = event.target.closest('[data-testid*="subnav-trigger-"]');
         if (!isTriggerClick) {
-          onClose();
+          // Debounce outside clicks to prevent rapid open/close cycles
+          if (debounceTimeout) {
+            clearTimeout(debounceTimeout);
+          }
+          debounceTimeout = setTimeout(() => {
+            onClose();
+          }, 50);
         }
       }
     }
@@ -44,6 +52,9 @@ export function useOutsideKeyClose(isOpen, onClose, enableRouteClose = true) {
 
       return () => {
         clearTimeout(timeoutId);
+        if (debounceTimeout) {
+          clearTimeout(debounceTimeout);
+        }
         document.removeEventListener('mousedown', handleClickOutside);
         document.removeEventListener('touchstart', handleClickOutside);
       };
