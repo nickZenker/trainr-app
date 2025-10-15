@@ -50,6 +50,14 @@ export default function PlanActions({ plan, filter }) {
   return (
     <div className="flex gap-2">
       <Link 
+        href={`/app/plans/${plan.id}/schedule`}
+        className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors"
+        data-testid={`plan-schedule-link-${plan.id}`}
+      >
+        Einplanen
+      </Link>
+      
+      <Link 
         href={`/app/plans/${plan.id}`}
         className="bg-brand text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-hover transition-colors"
       >

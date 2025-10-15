@@ -241,7 +241,8 @@ export async function createPlanAction(prevState, formData) {
     
     if (result.success) {
       revalidatePath('/app/plans');
-      return { ok: true, id: result.plan?.id };
+      // Redirect to schedule page after successful creation
+      redirect(`/app/plans/${result.plan.id}/schedule`);
     } else {
       return { ok: false, error: result.message || 'createPlan failed' };
     }

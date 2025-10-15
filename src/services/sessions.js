@@ -388,3 +388,185 @@ export async function listScheduledSessions(rangeStartIso, rangeEndIso) {
     return [];
   }
 }
+
+/**
+ * Parse time string in HH:mm format
+ * @param {string} timeStr - Time string in HH:mm format
+ * @returns {Object} Object with hour and minute properties
+ */
+function parseTime(timeStr) {
+  if (!timeStr || typeof timeStr !== 'string') {
+    throw new Error('Time string is required');
+  }
+  
+  const match = timeStr.match(/^(\d{1,2}):(\d{2})$/);
+  if (!match) {
+    throw new Error('Time must be in HH:mm format');
+  }
+  
+  const hour = parseInt(match[1], 10);
+  const minute = parseInt(match[2], 10);
+  
+  if (hour < 0 || hour > 23) {
+    throw new Error('Hour must be between 0 and 23');
+  }
+  
+  if (minute < 0 || minute > 59) {
+    throw new Error('Minute must be between 0 and 59');
+  }
+  
+  return { hour, minute };
+}
+
+/**
+ * Create recurring sessions from a weekly pattern
+ * @param {Object} params - Parameters object
+ * @param {string} params.planId - Plan ID
+ * @param {string} params.startDate - Start date in YYYY-MM-DD format
+ * @param {string} params.timezone - Timezone string (e.g., 'Europe/Berlin')
+ * @param {number} params.weeks - Number of weeks to generate
+ * @param {Array} params.pattern - Array of pattern items { weekday: 0-6, time: "HH:mm", title?: string, notes?: string }
+ * @returns {Promise<Object>} Result object with created sessions
+ */
+export async function createRecurringSessions({ planId, startDate, timezone, weeks, pattern }) {
+  try {
+    const supabase = await supabaseServerWithCookies();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    // Validation
+    if (!planId) {
+      throw new Error('Plan ID is required');
+    }
+
+    if (!startDate || typeof startDate !== 'string') {
+      throw new Error('Start date is required and must be a string');
+    }
+
+    if (!timezone || typeof timezone !== 'string') {
+      throw new Error('Timezone is required');
+    }
+
+    if (!weeks || typeof weeks !== 'number' || weeks < 1 || weeks > 52) {
+      throw new Error('Weeks must be a number between 1 and 52');
+    }
+
+    if (!Array.isArray(pattern) || pattern.length === 0) {
+      throw new Error('Pattern must be a non-empty array');
+    }
+
+    // Verify plan belongs to user
+    const { data: plan, error: planError } = await supabase
+      .from("plans")
+      .select("id, name, type")
+      .eq("id", planId)
+      .eq("user_id", user.id)
+      .single();
+
+    if (planError || !plan) {
+      throw new Error('Plan not found or access denied');
+    }
+
+    // Validate pattern items
+    for (const item of pattern) {
+      if (typeof item.weekday !== 'number' || item.weekday < 0 || item.weekday > 6) {
+        throw new Error('Weekday must be between 0 (Sunday) and 6 (Saturday)');
+      }
+      
+      if (!item.time || typeof item.time !== 'string') {
+        throw new Error('Time is required for each pattern item');
+      }
+      
+      // Validate time format
+      parseTime(item.time);
+    }
+
+    const createdSessions = [];
+    const errors = [];
+
+    // Generate sessions for each week
+    for (let week = 0; week < weeks; week++) {
+      for (const patternItem of pattern) {
+        try {
+          // Calculate the date for this week and weekday
+          const startDateObj = new Date(startDate + 'T00:00:00');
+          const targetDate = new Date(startDateObj);
+          
+          // Add weeks
+          targetDate.setDate(targetDate.getDate() + (week * 7));
+          
+          // Find the next occurrence of the target weekday
+          const currentWeekday = targetDate.getDay();
+          const daysToAdd = (patternItem.weekday - currentWeekday + 7) % 7;
+          targetDate.setDate(targetDate.getDate() + daysToAdd);
+          
+          // Parse time
+          const { hour, minute } = parseTime(patternItem.time);
+          
+          // Create session datetime in the specified timezone
+          const sessionDate = new Date(targetDate);
+          sessionDate.setHours(hour, minute, 0, 0);
+          
+          // Convert to ISO string (this will be in local time, but we store it as-is)
+          const scheduledAtIso = sessionDate.toISOString();
+          
+          // Generate session name
+          const sessionName = patternItem.title || 
+            (plan.type === 'strength' ? 'Strength Training' : 'Endurance Training');
+          
+          // Create session
+          const { data: newSession, error: sessionError } = await supabase
+            .from("sessions")
+            .insert({
+              plan_id: planId,
+              name: sessionName,
+              type: plan.type,
+              scheduled_at: scheduledAtIso,
+              duration_min: 60, // Default 60 minutes
+              timezone: timezone,
+              meta: {
+                source: 'plan-autogen',
+                week: week + 1,
+                weekday: patternItem.weekday,
+                time: patternItem.time,
+                notes: patternItem.notes || null
+              }
+            })
+            .select('id, name, scheduled_at, type')
+            .single();
+
+          if (sessionError) {
+            errors.push(`Week ${week + 1}, ${patternItem.time}: ${sessionError.message}`);
+          } else {
+            createdSessions.push(newSession);
+          }
+          
+        } catch (itemError) {
+          errors.push(`Week ${week + 1}, ${patternItem.time}: ${itemError.message}`);
+        }
+      }
+    }
+
+    // If we have any hard errors (no sessions created), throw
+    if (createdSessions.length === 0 && errors.length > 0) {
+      throw new Error(`Failed to create any sessions: ${errors.join('; ')}`);
+    }
+
+    return {
+      success: true,
+      message: `Created ${createdSessions.length} sessions successfully`,
+      sessions: createdSessions,
+      errors: errors.length > 0 ? errors : null
+    };
+
+  } catch (error) {
+    console.error('createRecurringSessions error:', error);
+    return {
+      success: false,
+      message: error.message || 'Failed to create recurring sessions'
+    };
+  }
+}

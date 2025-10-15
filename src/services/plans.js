@@ -272,3 +272,20 @@ export async function deletePlan(planId) {
     };
   }
 }
+
+/**
+ * Ensure we have a plan ID from either a plan object or plan ID string
+ * @param {string|Object} planOrId - Plan ID string or plan object with id property
+ * @returns {string} Plan ID
+ */
+export function ensurePlanId(planOrId) {
+  if (typeof planOrId === 'string') {
+    return planOrId;
+  }
+  
+  if (planOrId && typeof planOrId === 'object' && planOrId.id) {
+    return planOrId.id;
+  }
+  
+  throw new Error('Invalid plan ID: must be a string or object with id property');
+}

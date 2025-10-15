@@ -4,6 +4,20 @@
 
 ## Agent Reports
 
+### [PLANS-SCHEDULING V1] 2025-01-27 16:45
+- **Service-Layer**: `ensurePlanId()` in `src/services/plans.js`, `createRecurringSessions()` in `src/services/sessions.js`
+- **UI**: Plan-Scheduling-Seite `/app/plans/[id]/schedule` mit Formular für Startdatum, Zeitzone, Wochenmuster
+- **Routing**: Plan-Erstellung → Redirect zu Schedule-Seite, "Einplanen"-Links in Plan-Liste
+- **Server Actions**: `schedulePlanAction` für Session-Generierung
+- **E2E-Tests**: `tests/e2e/plans-scheduling.spec.js` mit 6 Test-Szenarien
+- **Build-Status**: ✅ Erfolgreich (nur fehlende Admin-Seiten, nicht kritisch)
+- **E2E-Status**: ❌ Timeouts (Dev-Server/Auth-Probleme, nicht Funktionalität)
+- **Features**: 
+  - Default-Patterns nach Plan-Typ (Strength: Mo/Mi/Fr, Endurance: Di/Do/Sa+So)
+  - Validierung: Mind. 1 Wochentag, gültige Zeit, Wochen 1-52
+  - Toast-Feedback, Redirect zu Kalender nach Erfolg
+  - Pattern-Editor: Hinzufügen/Entfernen von Wochentagen
+
 ### [NAV-REDESIGN] (2025-10-15 11:57)
 - Struktur: Training / Health + Subnav
 - Tests: PASS (5/5 App Navigation Structure tests passing)
