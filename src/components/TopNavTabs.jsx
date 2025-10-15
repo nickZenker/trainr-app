@@ -107,7 +107,7 @@ export default function TopNavTabs() {
   const pathname = usePathname();
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border" data-testid="topnav-home">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex space-x-8 overflow-x-auto scrollbar-hide">
           {/* Primary Tabs - immer sichtbar */}

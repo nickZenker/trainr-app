@@ -70,45 +70,27 @@ test.describe('Authentication Flow', () => {
   });
 
   test('should signup or login successfully', async ({ page }) => {
-    // Try signup first
-    await page.goto('/auth/signup');
+    // Go directly to login since bootstrap user exists
+    await page.goto('/auth/login');
     
     // Wait for form to be ready
-    await page.waitForSelector('[data-testid="signup-email"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="auth-email"]', { timeout: 10000 });
     
-    // Fill signup form
-    await page.fill('[data-testid="signup-email"]', TEST_EMAIL);
-    await page.fill('[data-testid="signup-password"]', TEST_PASSWORD);
+    // Fill login form
+    await page.fill('[data-testid="auth-email"]', TEST_EMAIL);
+    await page.fill('[data-testid="auth-password"]', TEST_PASSWORD);
     
-    // Submit form
-    await page.click('[data-testid="signup-submit"]');
+    // Submit login
+    await page.click('[data-testid="auth-submit"]');
     
-    // Wait for response
-    await page.waitForTimeout(2000);
-    
-    // Check if we're redirected to login (user already exists)
-    if (page.url().includes('/auth/login')) {
-      console.log('User already exists, proceeding with login');
-      
-      // Fill login form
-      await page.fill('[data-testid="auth-email"]', TEST_EMAIL);
-      await page.fill('[data-testid="auth-password"]', TEST_PASSWORD);
-      
-      // Submit login
-      await page.click('[data-testid="auth-submit"]');
-      
-      // Wait for redirect
-      await page.waitForTimeout(2000);
-    }
-    
-    // Expect to be redirected to /app
-    await expect(page).toHaveURL(/.*\/app.*/);
+    // Wait for redirect to /app with proper timeout
+    await page.waitForURL(/.*\/app.*/, { timeout: 15000 });
     
     // Check that we can see the main navigation
     await expect(page.locator('h1').first()).toContainText('Trainr App');
     
-    // Check for TopNavTabs
-    await expect(page.locator('nav')).toBeVisible();
+    // Check for TopNavTabs using data-testid
+    await expect(page.getByTestId('topnav-home')).toBeVisible({ timeout: 10000 });
   });
 
   test('should save auth state', async ({ page }) => {

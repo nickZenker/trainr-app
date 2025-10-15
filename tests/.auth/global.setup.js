@@ -1,6 +1,6 @@
-const { chromium } = require('@playwright/test');
+import { chromium } from '@playwright/test';
 
-module.exports = async () => {
+export default async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage();
 
