@@ -105,7 +105,7 @@ test.describe('Authentication Flow', () => {
     await expect(page).toHaveURL(/.*\/app.*/);
     
     // Check that we can see the main navigation
-    await expect(page.locator('h1')).toContainText('Trainr App');
+    await expect(page.locator('h1').first()).toContainText('Trainr App');
     
     // Check for TopNavTabs
     await expect(page.locator('nav')).toBeVisible();

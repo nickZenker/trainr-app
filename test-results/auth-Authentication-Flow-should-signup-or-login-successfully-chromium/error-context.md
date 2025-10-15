@@ -4,7 +4,7 @@
 - generic [active] [ref=e1]:
   - generic [ref=e3]:
     - heading "Registrieren" [level=1] [ref=e4]
-    - paragraph [ref=e5]: Email address "e2e.user+local@test.dev" is invalid
+    - paragraph [ref=e5]: Diese E-Mail ist bereits registriert. Bitte loggen Sie sich ein.
     - generic [ref=e6]:
       - generic [ref=e7]: Email
       - textbox "Email" [ref=e8]: e2e.user+local@test.dev
