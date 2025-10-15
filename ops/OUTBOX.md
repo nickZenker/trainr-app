@@ -196,3 +196,10 @@
 - fehlende Nennungen (heuristisch): profiles plans sessions exercises session_exercises set_schemas live_sessions set_logs routes
 - datei: ops/LOGS/db-check-20251015-115517.html
 - next: falls fail>0 → Block C (Policies) prüfen; sonst → Features/Blocker angehen
+
+### [AUTH FAIL] 2025-10-15 12:12
+- Ergebnis: FAIL
+- Erste Fehlermeldung: "expect(page).toHaveURL(/.*\/app.*/) failed - Expected pattern: /.*\/app.*/, Received string: "http://localhost:3001/auth/signup""
+- Reminder: Supabase Dashboard → Authentication → URL Configuration
+  • Site URL: http://localhost:3001
+  • Redirect: http://localhost:3001/auth/callback
