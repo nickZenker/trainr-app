@@ -7,13 +7,32 @@ test.describe('Plan Scheduling', () => {
   });
 
   test('creates sessions from plan pattern', async ({ page }) => {
+    // Wait for page to load
+    await page.waitForTimeout(2000);
+    
+    // Check if we can find the form elements
+    const planNameInput = page.getByTestId('plan-name');
+    const planTypeSelect = page.getByTestId('plan-type');
+    const planDescriptionInput = page.getByTestId('plan-description');
+    const planCreateButton = page.getByTestId('plan-create');
+    
+    console.log('Plan name input visible:', await planNameInput.isVisible());
+    console.log('Plan type select visible:', await planTypeSelect.isVisible());
+    console.log('Plan description input visible:', await planDescriptionInput.isVisible());
+    console.log('Plan create button visible:', await planCreateButton.isVisible());
+    
     // Fill plan creation form
-    await page.getByTestId('plan-name').fill('Test Strength Plan');
-    await page.getByTestId('plan-type').selectOption('strength');
-    await page.getByTestId('plan-description').fill('Test plan for scheduling');
+    await planNameInput.fill('Test Strength Plan');
+    await planTypeSelect.selectOption('strength');
+    await planDescriptionInput.fill('Test plan for scheduling');
     
     // Submit plan creation
-    await page.getByTestId('plan-create').click();
+    await planCreateButton.click();
+    
+    // Wait for navigation
+    await page.waitForTimeout(5000);
+    const currentUrl = page.url();
+    console.log('Current URL after form submission:', currentUrl);
     
     // Should redirect to schedule page
     await expect(page).toHaveURL(/\/app\/plans\/[^\/]+\/schedule/);

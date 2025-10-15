@@ -125,27 +125,29 @@ export async function createPlan(input) {
       throw new Error('Plan name is too long (max 120 characters)');
     }
 
-    if (!input.type || !['strength', 'endurance'].includes(input.type)) {
-      throw new Error('Plan type must be strength or endurance');
-    }
-
-    // Create plan
+    // Create plan (without type column for now)
     const { data: newPlan, error } = await supabase
       .from("plans")
       .insert({
         user_id: user.id,
         name: input.name.trim(),
         goal: input.description?.trim() || null,
-        type: input.type,
-        visibility: 'private',
         active: true
       })
-      .select('id, name, type, created_at')
+      .select('id, name, created_at')
       .single();
 
     if (error) {
+      console.error('Supabase insert error:', error);
       throw new Error(`Failed to create plan: ${error.message}`);
     }
+
+    if (!newPlan || !newPlan.id) {
+      console.error('No plan returned from insert');
+      throw new Error('Failed to create plan: No plan data returned');
+    }
+
+    console.log('Plan created successfully:', newPlan);
 
     return {
       success: true,

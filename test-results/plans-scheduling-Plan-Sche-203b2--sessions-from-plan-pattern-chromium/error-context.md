@@ -1,0 +1,86 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - link "Trainr App" [ref=e7] [cursor=pointer]:
+            - /url: /app
+          - generic [ref=e8]:
+            - generic [ref=e9]: Hallo, User
+            - button "Abmelden" [ref=e11]
+        - tablist [ref=e12]:
+          - generic [ref=e13]:
+            - tab "Training" [selected] [ref=e15]: Training
+            - tab "Health" [ref=e18]
+            - tab "Progress" [ref=e20] [cursor=pointer]
+            - tab "Profile" [ref=e21] [cursor=pointer]
+    - main [ref=e22]:
+      - generic [ref=e23]:
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - heading "Trainingspläne" [level=1] [ref=e27]
+            - paragraph [ref=e28]: Verwalte deine Trainingspläne
+          - link "Neuer Plan" [ref=e29] [cursor=pointer]:
+            - /url: /app/plans/new
+        - main [ref=e30]:
+          - generic [ref=e31]:
+            - generic [ref=e32]:
+              - heading "Gesamt" [level=3] [ref=e33]
+              - paragraph [ref=e34]: "0"
+            - generic [ref=e35]:
+              - heading "Aktiv" [level=3] [ref=e36]
+              - paragraph [ref=e37]: "0"
+            - generic [ref=e38]:
+              - heading "Archiviert" [level=3] [ref=e39]
+              - paragraph [ref=e40]: "0"
+            - generic [ref=e41]:
+              - heading "Sessions" [level=3] [ref=e42]
+              - paragraph [ref=e43]: "0"
+          - generic [ref=e44]:
+            - heading "Neuen Plan erstellen" [level=2] [ref=e45]
+            - generic [ref=e46]: "Failed to create plan: Could not find the 'active' column of 'plans' in the schema cache"
+            - generic [ref=e47]:
+              - generic [ref=e48]:
+                - generic [ref=e49]:
+                  - generic [ref=e50]: Name *
+                  - textbox "Name *" [ref=e51]:
+                    - /placeholder: z.B. Kraft – Push/Pull/Legs
+                - generic [ref=e52]:
+                  - generic [ref=e53]: Typ *
+                  - combobox "Typ *" [ref=e54]:
+                    - option "Strength" [selected]
+                    - option "Endurance"
+              - generic [ref=e55]:
+                - generic [ref=e56]: Beschreibung
+                - textbox "Beschreibung" [ref=e57]:
+                  - /placeholder: z.B. 3-Tage Split für Kraftaufbau
+              - button "Plan erstellen" [ref=e58]
+          - generic [ref=e59]:
+            - link "Aktiv" [ref=e60] [cursor=pointer]:
+              - /url: /app/plans?filter=active
+            - link "Archiv" [ref=e61] [cursor=pointer]:
+              - /url: /app/plans?filter=archived
+            - link "Alle" [ref=e62] [cursor=pointer]:
+              - /url: /app/plans
+          - generic [ref=e63]:
+            - paragraph [ref=e64]: Keine aktiven Pläne gefunden
+            - link "Ersten Plan erstellen" [ref=e65] [cursor=pointer]:
+              - /url: /app/plans/new
+  - generic [ref=e70] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e71]:
+      - img [ref=e72]
+    - generic [ref=e75]:
+      - button "Open issues overlay" [ref=e76]:
+        - generic [ref=e77]:
+          - generic [ref=e78]: "2"
+          - generic [ref=e79]: "3"
+        - generic [ref=e80]:
+          - text: Issue
+          - generic [ref=e81]: s
+      - button "Collapse issues badge" [ref=e82]:
+        - img [ref=e83]
+  - alert [ref=e85]
+```
