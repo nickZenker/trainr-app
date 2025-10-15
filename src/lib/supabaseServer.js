@@ -24,61 +24,62 @@ export const supabaseServer = async () => {
     }
 
     const cookieStore = await cookies();
+    
+    // Default-Optionen für Cookies
+    const defaultOptions = {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+    };
+
     return createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        get(name) {
-          return cookieStore.get(name)?.value;
+      {
+        cookies: {
+          get(name) {
+            try {
+              return cookieStore.get(name)?.value;
+            } catch {
+              return undefined;
+            }
+          },
+          set(name, value, options = {}) {
+            try {
+              cookieStore.set({ 
+                name, 
+                value, 
+                ...defaultOptions, 
+                ...(options || {}) 
+              });
+            } catch {
+              // RSC: "Cookies can only be modified ..." -> sicher ignorieren
+              // Keine Logs, keine Fehler - einfach stumm ignorieren
+            }
+          },
+          remove(name, options = {}) {
+            try {
+              cookieStore.set({ 
+                name, 
+                value: '', 
+                ...defaultOptions, 
+                ...(options || {}), 
+                maxAge: 0 
+              });
+            } catch {
+              // RSC: sicher ignorieren
+            }
+          },
         },
-        set(name, value, options = {}) {
-          // Sichere Default-Optionen für Cookies
-          const defaultOptions = {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            path: '/',
-            maxAge: 60 * 60 * 24 * 7, // 7 Tage
-          };
-          
-          try {
-            cookieStore.set({ 
-              name, 
-              value, 
-              ...defaultOptions, 
-              ...options 
-            });
-          } catch (error) {
-            // In Server Components ist cookies().set nicht verfügbar
-            console.warn(`Cookie set failed in Server Component context: ${error.message}`);
-          }
+        auth: {
+          // Server-seitig lesen wir i. d. R. nur; Refresh im Client oder in Actions
+          autoRefreshToken: false,
+          persistSession: false,
+          flowType: 'pkce',
         },
-        remove(name, options = {}) {
-          // Sichere Default-Optionen für Cookie-Löschung
-          const defaultOptions = {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            path: '/',
-            maxAge: 0, // Sofort ablaufen
-          };
-          
-          try {
-            cookieStore.set({ 
-              name, 
-              value: "", 
-              ...defaultOptions, 
-              ...options 
-            });
-          } catch (error) {
-            // In Server Components ist cookies().set nicht verfügbar
-            console.warn(`Cookie remove failed in Server Component context: ${error.message}`);
-          }
-        },
-      },
-    }
-  );
+      }
+    );
   } catch (error) {
     if (error instanceof SupabaseInitError) {
       logError(error, { context: 'supabaseServer', operation: 'init' });
@@ -110,51 +111,51 @@ export const supabaseServerWithCookies = async () => {
     }
 
     const cookieStore = await cookies();
+    
+    // Default-Optionen für Cookies in Server Actions
+    const defaultOptions = {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+    };
+
     return createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        get(name) {
-          return cookieStore.get(name)?.value;
+      {
+        cookies: {
+          get(name) {
+            return cookieStore.get(name)?.value;
+          },
+          set(name, value, options = {}) {
+            // In Server Actions können Cookies gesetzt werden
+            cookieStore.set({ 
+              name, 
+              value, 
+              ...defaultOptions, 
+              ...(options || {}) 
+            });
+          },
+          remove(name, options = {}) {
+            // In Server Actions können Cookies gelöscht werden
+            cookieStore.set({ 
+              name, 
+              value: '', 
+              ...defaultOptions, 
+              ...(options || {}), 
+              maxAge: 0 
+            });
+          },
         },
-        set(name, value, options = {}) {
-          // Sichere Default-Optionen für Cookies in Server Actions
-          const defaultOptions = {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            path: '/',
-            maxAge: 60 * 60 * 24 * 7, // 7 Tage
-          };
-          
-          cookieStore.set({ 
-            name, 
-            value, 
-            ...defaultOptions, 
-            ...options 
-          });
+        auth: {
+          // In Server Actions können wir Cookies setzen, also aktivieren wir Refresh
+          autoRefreshToken: true,
+          persistSession: true,
+          flowType: 'pkce',
         },
-        remove(name, options = {}) {
-          // Sichere Default-Optionen für Cookie-Löschung in Server Actions
-          const defaultOptions = {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            path: '/',
-            maxAge: 0, // Sofort ablaufen
-          };
-          
-          cookieStore.set({ 
-            name, 
-            value: "", 
-            ...defaultOptions, 
-            ...options 
-          });
-        },
-      },
-    }
-  );
+      }
+    );
   } catch (error) {
     if (error instanceof SupabaseInitError) {
       logError(error, { context: 'supabaseServerWithCookies', operation: 'init' });
