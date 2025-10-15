@@ -144,6 +144,42 @@
 **Commit**: `a70c2eb` - "feat(nav): position dropdown directly under trigger and stack items vertically"
 
 **Dev Server Status**: ✅ RUNNING on port 3001
+
+---
+
+## 2025-01-27 16:05 - Internal Server Error Resolution
+
+**Status**: ✅ COMPLETED
+
+**Problem Analysis**:
+The frequent "internal server error" issues were caused by multiple critical problems:
+1. **Cookie Modification Errors**: Supabase trying to modify cookies in Server Components
+2. **Edge Runtime Issues**: instrumentation.ts using Node.js APIs in Edge Runtime
+3. **Port Conflicts**: Multiple processes using port 3001
+4. **Build Cache Corruption**: Corrupted .next build files causing ENOENT errors
+
+**Solutions Implemented**:
+- **Supabase Cookie Safety**: Added try/catch blocks around all cookie operations in `supabaseServerWithCookies()`
+- **Edge Runtime Compatibility**: Enhanced instrumentation.ts with additional runtime checks (`typeof require !== 'undefined'`)
+- **Port Management**: Killed conflicting process (PID 2724) and restarted dev server
+- **Build Cache Cleanup**: Removed corrupted `.next` directory and rebuilt from scratch
+
+**Verification Results**:
+- ✅ Health endpoint: `http://localhost:3001/api/health` - 200 OK
+- ✅ Main app page: `http://localhost:3001/app` - 200 OK (redirects to login as expected)
+- ✅ Lint check: 0 errors, 10 warnings (only minor unused variables)
+- ✅ Build test: Successful compilation in 3.8s
+- ✅ Dev server: Stable and responsive
+
+**Technical Details**:
+- Fixed cookie operations in `src/lib/supabaseServer.js` with safe error handling
+- Enhanced `instrumentation.ts` with robust runtime detection
+- Cleared build cache and restarted development server
+- All navigation dropdown functionality preserved and working
+
+**Commit**: `3a358ad` - "fix: resolve internal server errors and improve system stability"
+
+**System Status**: 🟢 STABLE - No more internal server errors expected
   3. `expect(locator).toContainText(expected) failed` (4x) - UI-Text-Mismatch (deutsch vs. englisch)
 - **Network fails (top3)**:
   1. **Keine Network-Failures** - Alle Requests erfolgreich (200/307)
