@@ -3,11 +3,22 @@ import Link from "next/link";
 import { supabaseServer } from "../../../lib/supabaseServer";
 import { listScheduledSessions } from "../../../services/sessions";
 import { isoToLocalTimeOnly } from "../../../lib/datetime";
+import { 
+  startOfWeek, 
+  endOfWeek, 
+  startOfMonth, 
+  endOfMonth, 
+  weeksInMonthGrid,
+  isToday,
+  isCurrentMonth,
+  formatMonthYear,
+  formatWeekRange
+} from "../../../lib/calendar";
 
 // Helper function to get date range for month view
 function getMonthRange(date) {
-  const start = new Date(date.getFullYear(), date.getMonth(), 1);
-  const end = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+  const start = startOfMonth(date);
+  const end = endOfMonth(date);
   return {
     start: start.toISOString(),
     end: end.toISOString()
@@ -16,31 +27,12 @@ function getMonthRange(date) {
 
 // Helper function to get date range for week view
 function getWeekRange(date) {
-  const start = new Date(date);
-  const day = start.getDay();
-  const diff = start.getDate() - day + (day === 0 ? -6 : 1); // Monday
-  start.setDate(diff);
-  start.setHours(0, 0, 0, 0);
-  
-  const end = new Date(start);
-  end.setDate(start.getDate() + 7);
-  
+  const start = startOfWeek(date);
+  const end = endOfWeek(date);
   return {
     start: start.toISOString(),
     end: end.toISOString()
   };
-}
-
-// Helper function to get month name
-function getMonthName(date) {
-  return date.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' });
-}
-
-// Helper function to get week range description
-function getWeekDescription(startDate, endDate) {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  return `${start.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })} - ${end.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })}`;
 }
 
 // Helper function to format time for display
@@ -48,40 +40,9 @@ function formatTime(isoString) {
   return isoToLocalTimeOnly(isoString);
 }
 
-// Helper function to get day of month
-function getDayOfMonth(date) {
-  return date.getDate();
-}
-
-// Helper function to check if date is today
-function isToday(date) {
-  const today = new Date();
-  return date.toDateString() === today.toDateString();
-}
-
 // Calendar grid component for month view
 function MonthGrid({ sessions, currentDate }) {
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
-  
-  // Get first day of month and number of days
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-  const daysInMonth = lastDay.getDate();
-  const startDayOfWeek = (firstDay.getDay() + 6) % 7; // Monday = 0
-  
-  // Create array of days
-  const days = [];
-  
-  // Add empty cells for days before month starts
-  for (let i = 0; i < startDayOfWeek; i++) {
-    days.push(null);
-  }
-  
-  // Add days of month
-  for (let day = 1; day <= daysInMonth; day++) {
-    days.push(new Date(year, month, day));
-  }
+  const weeks = weeksInMonthGrid(currentDate);
   
   // Group sessions by date
   const sessionsByDate = {};
@@ -103,61 +64,59 @@ function MonthGrid({ sessions, currentDate }) {
         </div>
       ))}
       
-      {/* Calendar days */}
-      {days.map((date, index) => {
-        if (!date) {
-          return <div key={index} className="p-2 h-24 bg-background border border-border"></div>;
-        }
-        
-        const dateKey = date.toISOString().split('T')[0];
-        const daySessions = sessionsByDate[dateKey] || [];
-        const isCurrentDay = isToday(date);
-        
-        return (
-          <div 
-            key={index} 
-            className={`p-2 h-24 bg-background border border-border ${
-              isCurrentDay ? 'bg-brand/10 border-brand' : ''
-            }`}
-          >
-            <div className={`text-sm font-medium mb-1 ${isCurrentDay ? 'text-brand' : 'text-foreground'}`}>
-              {getDayOfMonth(date)}
-            </div>
-            <div className="space-y-1">
-              {daySessions.slice(0, 3).map(session => (
-                <div 
-                  key={session.id}
-                  className={`text-xs p-1 rounded truncate ${
-                    session.type === 'strength' 
-                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                      : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                  }`}
-                  title={`${session.name} - ${formatTime(session.scheduled_at)}`}
-                >
-                  <div className="flex items-center gap-1">
-                    <span>{formatTime(session.scheduled_at)}</span>
-                    <span>{session.name}</span>
-                    {session.plan_type && (
-                      <span className={`inline-block rounded px-1 py-0.5 text-xs border ${
+      {/* Calendar weeks */}
+      {weeks.map((week, weekIndex) => 
+        week.map((date, dayIndex) => {
+          const dateKey = date.toISOString().split('T')[0];
+          const daySessions = sessionsByDate[dateKey] || [];
+          const isCurrentDay = isToday(date);
+          const isCurrentMonthDay = isCurrentMonth(date, currentDate);
+          
+          return (
+            <div 
+              key={`${weekIndex}-${dayIndex}`}
+              className={`p-2 h-24 bg-background border border-border ${
+                isCurrentDay ? 'bg-brand/10 border-brand ring-2 ring-brand/20' : ''
+              } ${!isCurrentMonthDay ? 'opacity-40' : ''}`}
+            >
+              <div className={`text-sm font-medium mb-1 ${
+                isCurrentDay ? 'text-brand font-bold' : 
+                isCurrentMonthDay ? 'text-foreground' : 'text-text-muted'
+              }`}>
+                {date.getDate()}
+                {isCurrentDay && <span className="ml-1 text-xs">●</span>}
+              </div>
+              <div className="space-y-1">
+                {daySessions.length > 0 ? (
+                  daySessions.slice(0, 3).map(session => (
+                    <div 
+                      key={session.id}
+                      className={`text-xs p-1 rounded truncate ${
                         session.plan_type === 'strength' 
-                          ? 'bg-blue-200 text-blue-900 border-blue-300 dark:bg-blue-800 dark:text-blue-100 dark:border-blue-600'
-                          : 'bg-green-200 text-green-900 border-green-300 dark:bg-green-800 dark:text-green-100 dark:border-green-600'
-                      }`}>
-                        {session.plan_type === 'strength' ? 'Strength' : 'Endurance'}
-                      </span>
-                    )}
+                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                          : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                      }`}
+                      title={`${session.name} - ${formatTime(session.scheduled_at)}${session.duration_min ? ` (${session.duration_min}min)` : ''}`}
+                    >
+                      <div className="flex items-center gap-1">
+                        <span className="font-medium">{formatTime(session.scheduled_at)}</span>
+                        <span className="truncate">{session.name}</span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-xs text-text-muted opacity-50">—</div>
+                )}
+                {daySessions.length > 3 && (
+                  <div className="text-xs text-text-muted">
+                    +{daySessions.length - 3} weitere
                   </div>
-                </div>
-              ))}
-              {daySessions.length > 3 && (
-                <div className="text-xs text-text-muted">
-                  +{daySessions.length - 3} weitere
-                </div>
-              )}
+                )}
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })
+      )}
     </div>
   );
 }
@@ -205,40 +164,47 @@ function WeekGrid({ sessions, currentDate }) {
           <div 
             key={index} 
             className={`p-2 min-h-32 bg-background border border-border ${
-              isCurrentDay ? 'bg-brand/10 border-brand' : ''
+              isCurrentDay ? 'bg-brand/10 border-brand ring-2 ring-brand/20' : ''
             }`}
           >
-            <div className={`text-sm font-medium mb-2 ${isCurrentDay ? 'text-brand' : 'text-foreground'}`}>
-              {getDayOfMonth(date)}
+            <div className={`text-sm font-medium mb-2 ${
+              isCurrentDay ? 'text-brand font-bold' : 'text-foreground'
+            }`}>
+              {date.getDate()}
+              {isCurrentDay && <span className="ml-1 text-xs">●</span>}
             </div>
             <div className="space-y-1">
-              {daySessions.map(session => (
-                <div 
-                  key={session.id}
-                  className={`text-xs p-2 rounded ${
-                    session.type === 'strength' 
-                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                      : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                  }`}
-                >
-                  <div className="font-medium">{formatTime(session.scheduled_at)}</div>
-                  <div className="truncate">{session.name}</div>
-                  {session.plan_type && (
-                    <div className="mt-1">
-                      <span className={`inline-block rounded px-1 py-0.5 text-xs border ${
-                        session.plan_type === 'strength' 
-                          ? 'bg-blue-200 text-blue-900 border-blue-300 dark:bg-blue-800 dark:text-blue-100 dark:border-blue-600'
-                          : 'bg-green-200 text-green-900 border-green-300 dark:bg-green-800 dark:text-green-100 dark:border-green-600'
-                      }`}>
-                        {session.plan_type === 'strength' ? 'Strength' : 'Endurance'}
-                      </span>
-                    </div>
-                  )}
-                  {session.duration_min && (
-                    <div className="text-xs opacity-75 mt-1">{session.duration_min}min</div>
-                  )}
-                </div>
-              ))}
+              {daySessions.length > 0 ? (
+                daySessions.map(session => (
+                  <div 
+                    key={session.id}
+                    className={`text-xs p-2 rounded ${
+                      session.plan_type === 'strength' 
+                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                        : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                    }`}
+                  >
+                    <div className="font-medium">{formatTime(session.scheduled_at)}</div>
+                    <div className="truncate">{session.name}</div>
+                    {session.plan_type && (
+                      <div className="mt-1">
+                        <span className={`inline-block rounded px-1 py-0.5 text-xs border ${
+                          session.plan_type === 'strength' 
+                            ? 'bg-blue-200 text-blue-900 border-blue-300 dark:bg-blue-800 dark:text-blue-100 dark:border-blue-600'
+                            : 'bg-green-200 text-green-900 border-green-300 dark:bg-green-800 dark:text-green-100 dark:border-green-600'
+                        }`}>
+                          {session.plan_type === 'strength' ? 'Strength' : 'Endurance'}
+                        </span>
+                      </div>
+                    )}
+                    {session.duration_min && (
+                      <div className="text-xs opacity-75 mt-1">({session.duration_min}min)</div>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div className="text-xs text-text-muted opacity-50">—</div>
+              )}
             </div>
           </div>
         );
@@ -304,7 +270,7 @@ export default async function CalendarPage({ searchParams }) {
           <div>
             <h1 className="text-2xl font-bold text-brand">Kalender</h1>
             <p className="text-text-muted">
-              {view === 'month' ? getMonthName(currentDate) : getWeekDescription(range.start, range.end)}
+              {view === 'month' ? formatMonthYear(currentDate) : formatWeekRange(currentDate)}
             </p>
           </div>
         </div>
@@ -318,7 +284,7 @@ export default async function CalendarPage({ searchParams }) {
               href={`/app/calendar?view=${view}&d=${prevDate.toISOString().split('T')[0]}`}
               className="bg-surface hover:bg-surface-hover text-foreground px-3 py-2 rounded border border-border transition-colors"
             >
-              ← Zurück
+              ← Prev
             </Link>
             <Link
               href={`/app/calendar?view=${view}&d=${todayParam}`}
@@ -330,7 +296,7 @@ export default async function CalendarPage({ searchParams }) {
               href={`/app/calendar?view=${view}&d=${nextDate.toISOString().split('T')[0]}`}
               className="bg-surface hover:bg-surface-hover text-foreground px-3 py-2 rounded border border-border transition-colors"
             >
-              Weiter →
+              Next →
             </Link>
           </div>
           
@@ -343,7 +309,7 @@ export default async function CalendarPage({ searchParams }) {
                   : 'bg-surface text-foreground hover:bg-surface-hover border border-border'
               }`}
             >
-              Monat
+              Month
             </Link>
             <Link
               href={`/app/calendar?view=week&d=${currentDate.toISOString().split('T')[0]}`}
@@ -353,19 +319,35 @@ export default async function CalendarPage({ searchParams }) {
                   : 'bg-surface text-foreground hover:bg-surface-hover border border-border'
               }`}
             >
-              Woche
+              Week
             </Link>
           </div>
         </div>
 
         {/* Calendar Grid */}
-        <div className="bg-surface rounded-lg border border-border overflow-hidden">
-          {view === 'month' ? (
-            <MonthGrid sessions={sessions} currentDate={currentDate} />
-          ) : (
-            <WeekGrid sessions={sessions} currentDate={currentDate} />
-          )}
-        </div>
+        {sessions.length > 0 ? (
+          <div className="bg-surface rounded-lg border border-border overflow-hidden">
+            {view === 'month' ? (
+              <MonthGrid sessions={sessions} currentDate={currentDate} />
+            ) : (
+              <WeekGrid sessions={sessions} currentDate={currentDate} />
+            )}
+          </div>
+        ) : (
+          <div className="bg-surface rounded-lg border border-border p-8 text-center">
+            <div className="text-text-muted mb-4">
+              <div className="text-4xl mb-2">📅</div>
+              <h3 className="text-lg font-medium mb-2">Keine geplanten Sessions</h3>
+              <p className="text-sm">In diesem Zeitraum sind keine Sessions geplant.</p>
+            </div>
+            <Link 
+              href="/app/sessions" 
+              className="inline-block bg-brand hover:bg-brand-hover text-black px-4 py-2 rounded font-medium transition-colors"
+            >
+              Sessions planen
+            </Link>
+          </div>
+        )}
 
         {/* Legend */}
         <div className="mt-6 flex items-center gap-4 text-sm">
@@ -375,7 +357,7 @@ export default async function CalendarPage({ searchParams }) {
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-green-100 dark:bg-green-900 rounded"></div>
-            <span className="text-text-muted">Cardio Training</span>
+            <span className="text-text-muted">Endurance Training</span>
           </div>
         </div>
 

@@ -9,6 +9,7 @@ const primaryTabs = [
   { label: 'Dashboard', href: '/app' },
   { label: 'Plans', href: '/app/plans' },
   { label: 'Sessions', href: '/app/sessions' },
+  { label: 'Calendar', href: '/app/calendar' },
   { label: 'Live', href: '/app/live' },
   { label: 'Progress', href: '/app/progress' }
 ];
