@@ -8,15 +8,7 @@ export default function LoginPage() {
   const router = useRouter();
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      auth: {
-        flowType: 'pkce',
-        autoRefreshToken: true,
-        persistSession: true,
-        detectSessionInUrl: true
-      }
-    }
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

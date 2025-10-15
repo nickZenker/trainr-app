@@ -20,3 +20,4 @@
 2025-10-15T08:26:56Z INF ICMP proxy will use 2a0a:a54a:5f72:0:35fb:6293:2dbd:a5ef in zone Ethernet as source for IPv6
 2025-10-15T08:26:56Z INF Starting metrics server on 127.0.0.1:20243/metrics
 2025-10-15T08:26:56Z INF Registered tunnel connection connIndex=0 connection=8f2e937e-9422-4ac6-bea5-1ac87c3328b9 event=0 ip=198.41.200.233 location=fra15 protocol=quic
+2025-10-15T09:47:01Z ERR Failed to refresh DNS local resolver error="lookup region1.v2.argotunnel.com: i/o timeout"

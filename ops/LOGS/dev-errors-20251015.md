@@ -1318,3 +1318,355 @@ Error: Cookies can only be modified in a Server Action or Route Handler. Read mo
 
 ---
 
+## unhandledRejection - 2025-10-15T10:10:27.480Z
+
+**Error Details:**
+- Type: unhandledRejection
+- Message: Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+- Stack: ```
+Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+    at Proxy.callable (C:\Users\nickz\.cursor\Projekte\Trainingsplan\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js:30:17100)
+    at Object.set (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\[root-of-the-server]__8b3d3ca0._.js:306:33)
+    at setAll (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:17766:43)
+    at applyServerStorage (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18041:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Object.callback (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18163:13)
+    at async C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16074:21
+    at async Promise.all (index 1)
+    at async SupabaseAuthClient._notifyAllSubscribers (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16079:13)
+    at async SupabaseAuthClient._callRefreshToken (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16034:13)
+    at async SupabaseAuthClient.__loadSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15185:46)
+    at async SupabaseAuthClient._useSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15112:28)
+    at async SupabaseAuthClient._emitInitialSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15656:16)
+```
+
+**Environment Status:**
+- NEXT_PUBLIC_SUPABASE_URL: true
+- NEXT_PUBLIC_SUPABASE_ANON_KEY: true
+- SUPABASE_SERVICE_KEY: true
+- NODE_ENV: true
+
+---
+
+## unhandledRejection - 2025-10-15T10:10:28.157Z
+
+**Error Details:**
+- Type: unhandledRejection
+- Message: Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+- Stack: ```
+Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+    at Proxy.callable (C:\Users\nickz\.cursor\Projekte\Trainingsplan\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js:30:17100)
+    at Object.set (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\[root-of-the-server]__8b3d3ca0._.js:306:33)
+    at setAll (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:17766:43)
+    at applyServerStorage (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18041:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Object.callback (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18163:13)
+    at async C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16074:21
+    at async Promise.all (index 1)
+    at async SupabaseAuthClient._notifyAllSubscribers (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16079:13)
+    at async SupabaseAuthClient._callRefreshToken (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16034:13)
+    at async SupabaseAuthClient.__loadSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15185:46)
+    at async SupabaseAuthClient._useSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15112:28)
+    at async SupabaseAuthClient._emitInitialSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15656:16)
+```
+
+**Environment Status:**
+- NEXT_PUBLIC_SUPABASE_URL: true
+- NEXT_PUBLIC_SUPABASE_ANON_KEY: true
+- SUPABASE_SERVICE_KEY: true
+- NODE_ENV: true
+
+---
+
+## unhandledRejection - 2025-10-15T10:10:29.161Z
+
+**Error Details:**
+- Type: unhandledRejection
+- Message: Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+- Stack: ```
+Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+    at Proxy.callable (C:\Users\nickz\.cursor\Projekte\Trainingsplan\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js:30:17100)
+    at Object.set (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\[root-of-the-server]__8b3d3ca0._.js:306:33)
+    at setAll (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:17766:43)
+    at applyServerStorage (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18041:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Object.callback (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18163:13)
+    at async C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16074:21
+    at async Promise.all (index 1)
+    at async SupabaseAuthClient._notifyAllSubscribers (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16079:13)
+    at async SupabaseAuthClient._callRefreshToken (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16034:13)
+    at async SupabaseAuthClient.__loadSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15185:46)
+    at async SupabaseAuthClient._useSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15112:28)
+    at async SupabaseAuthClient._emitInitialSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15656:16)
+```
+
+**Environment Status:**
+- NEXT_PUBLIC_SUPABASE_URL: true
+- NEXT_PUBLIC_SUPABASE_ANON_KEY: true
+- SUPABASE_SERVICE_KEY: true
+- NODE_ENV: true
+
+---
+
+## unhandledRejection - 2025-10-15T10:10:29.904Z
+
+**Error Details:**
+- Type: unhandledRejection
+- Message: Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+- Stack: ```
+Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+    at Proxy.callable (C:\Users\nickz\.cursor\Projekte\Trainingsplan\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js:30:17100)
+    at Object.set (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\[root-of-the-server]__8b3d3ca0._.js:306:33)
+    at setAll (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:17766:43)
+    at applyServerStorage (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18041:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Object.callback (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18163:13)
+    at async C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16074:21
+    at async Promise.all (index 1)
+    at async SupabaseAuthClient._notifyAllSubscribers (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16079:13)
+    at async SupabaseAuthClient._callRefreshToken (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16034:13)
+    at async SupabaseAuthClient.__loadSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15185:46)
+    at async SupabaseAuthClient._useSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15112:28)
+    at async SupabaseAuthClient._emitInitialSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15656:16)
+```
+
+**Environment Status:**
+- NEXT_PUBLIC_SUPABASE_URL: true
+- NEXT_PUBLIC_SUPABASE_ANON_KEY: true
+- SUPABASE_SERVICE_KEY: true
+- NODE_ENV: true
+
+---
+
+## unhandledRejection - 2025-10-15T10:49:47.418Z
+
+**Error Details:**
+- Type: unhandledRejection
+- Message: Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+- Stack: ```
+Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+    at Proxy.callable (C:\Users\nickz\.cursor\Projekte\Trainingsplan\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js:30:17100)
+    at Object.set (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\[root-of-the-server]__8b3d3ca0._.js:306:33)
+    at setAll (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:17766:43)
+    at applyServerStorage (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18041:11)
+    at async Object.callback (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18163:13)
+    at async C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16074:21
+    at async Promise.all (index 1)
+    at async SupabaseAuthClient._notifyAllSubscribers (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16079:13)
+    at async SupabaseAuthClient._callRefreshToken (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16034:13)
+    at async SupabaseAuthClient.__loadSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15185:46)
+    at async SupabaseAuthClient._useSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15112:28)
+    at async SupabaseAuthClient._emitInitialSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15656:16)
+```
+
+**Environment Status:**
+- NEXT_PUBLIC_SUPABASE_URL: true
+- NEXT_PUBLIC_SUPABASE_ANON_KEY: true
+- SUPABASE_SERVICE_KEY: true
+- NODE_ENV: true
+
+---
+
+## unhandledRejection - 2025-10-15T10:49:48.139Z
+
+**Error Details:**
+- Type: unhandledRejection
+- Message: Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+- Stack: ```
+Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+    at Proxy.callable (C:\Users\nickz\.cursor\Projekte\Trainingsplan\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js:30:17100)
+    at Object.set (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\[root-of-the-server]__8b3d3ca0._.js:306:33)
+    at setAll (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:17766:43)
+    at applyServerStorage (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18041:11)
+    at async Object.callback (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18163:13)
+    at async C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16074:21
+    at async Promise.all (index 1)
+    at async SupabaseAuthClient._notifyAllSubscribers (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16079:13)
+    at async SupabaseAuthClient._callRefreshToken (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16034:13)
+    at async SupabaseAuthClient.__loadSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15185:46)
+    at async SupabaseAuthClient._useSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15112:28)
+    at async SupabaseAuthClient._emitInitialSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15656:16)
+```
+
+**Environment Status:**
+- NEXT_PUBLIC_SUPABASE_URL: true
+- NEXT_PUBLIC_SUPABASE_ANON_KEY: true
+- SUPABASE_SERVICE_KEY: true
+- NODE_ENV: true
+
+---
+
+## unhandledRejection - 2025-10-15T10:49:48.865Z
+
+**Error Details:**
+- Type: unhandledRejection
+- Message: Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+- Stack: ```
+Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+    at Proxy.callable (C:\Users\nickz\.cursor\Projekte\Trainingsplan\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js:30:17100)
+    at Object.set (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\[root-of-the-server]__8b3d3ca0._.js:306:33)
+    at setAll (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:17766:43)
+    at applyServerStorage (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18041:11)
+    at async Object.callback (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18163:13)
+    at async C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16074:21
+    at async Promise.all (index 1)
+    at async SupabaseAuthClient._notifyAllSubscribers (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16079:13)
+    at async SupabaseAuthClient._callRefreshToken (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16034:13)
+    at async SupabaseAuthClient.__loadSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15185:46)
+    at async SupabaseAuthClient._useSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15112:28)
+    at async SupabaseAuthClient._emitInitialSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15656:16)
+```
+
+**Environment Status:**
+- NEXT_PUBLIC_SUPABASE_URL: true
+- NEXT_PUBLIC_SUPABASE_ANON_KEY: true
+- SUPABASE_SERVICE_KEY: true
+- NODE_ENV: true
+
+---
+
+## unhandledRejection - 2025-10-15T10:49:49.572Z
+
+**Error Details:**
+- Type: unhandledRejection
+- Message: Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+- Stack: ```
+Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+    at Proxy.callable (C:\Users\nickz\.cursor\Projekte\Trainingsplan\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js:30:17100)
+    at Object.set (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\[root-of-the-server]__8b3d3ca0._.js:306:33)
+    at setAll (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:17766:43)
+    at applyServerStorage (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18041:11)
+    at async Object.callback (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18163:13)
+    at async C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16074:21
+    at async Promise.all (index 1)
+    at async SupabaseAuthClient._notifyAllSubscribers (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16079:13)
+    at async SupabaseAuthClient._callRefreshToken (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16034:13)
+    at async SupabaseAuthClient.__loadSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15185:46)
+    at async SupabaseAuthClient._useSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15112:28)
+    at async SupabaseAuthClient._emitInitialSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15656:16)
+```
+
+**Environment Status:**
+- NEXT_PUBLIC_SUPABASE_URL: true
+- NEXT_PUBLIC_SUPABASE_ANON_KEY: true
+- SUPABASE_SERVICE_KEY: true
+- NODE_ENV: true
+
+---
+
+## unhandledRejection - 2025-10-15T10:49:50.740Z
+
+**Error Details:**
+- Type: unhandledRejection
+- Message: Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+- Stack: ```
+Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+    at Proxy.callable (C:\Users\nickz\.cursor\Projekte\Trainingsplan\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js:30:17100)
+    at Object.set (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\[root-of-the-server]__8b3d3ca0._.js:306:33)
+    at setAll (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:17766:43)
+    at applyServerStorage (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18041:11)
+    at async Object.callback (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18163:13)
+    at async C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16074:21
+    at async Promise.all (index 1)
+    at async SupabaseAuthClient._notifyAllSubscribers (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16079:13)
+    at async SupabaseAuthClient._callRefreshToken (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16034:13)
+    at async SupabaseAuthClient.__loadSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15185:46)
+    at async SupabaseAuthClient._useSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15112:28)
+    at async SupabaseAuthClient._emitInitialSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15656:16)
+```
+
+**Environment Status:**
+- NEXT_PUBLIC_SUPABASE_URL: true
+- NEXT_PUBLIC_SUPABASE_ANON_KEY: true
+- SUPABASE_SERVICE_KEY: true
+- NODE_ENV: true
+
+---
+
+## unhandledRejection - 2025-10-15T10:49:51.484Z
+
+**Error Details:**
+- Type: unhandledRejection
+- Message: Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+- Stack: ```
+Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+    at Proxy.callable (C:\Users\nickz\.cursor\Projekte\Trainingsplan\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js:30:17100)
+    at Object.set (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\[root-of-the-server]__8b3d3ca0._.js:306:33)
+    at setAll (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:17766:43)
+    at applyServerStorage (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18041:11)
+    at async Object.callback (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18163:13)
+    at async C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16074:21
+    at async Promise.all (index 1)
+    at async SupabaseAuthClient._notifyAllSubscribers (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16079:13)
+    at async SupabaseAuthClient._callRefreshToken (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16034:13)
+    at async SupabaseAuthClient.__loadSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15185:46)
+    at async SupabaseAuthClient._useSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15112:28)
+    at async SupabaseAuthClient._emitInitialSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15656:16)
+```
+
+**Environment Status:**
+- NEXT_PUBLIC_SUPABASE_URL: true
+- NEXT_PUBLIC_SUPABASE_ANON_KEY: true
+- SUPABASE_SERVICE_KEY: true
+- NODE_ENV: true
+
+---
+
+## unhandledRejection - 2025-10-15T10:49:52.167Z
+
+**Error Details:**
+- Type: unhandledRejection
+- Message: Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+- Stack: ```
+Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+    at Proxy.callable (C:\Users\nickz\.cursor\Projekte\Trainingsplan\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js:30:17100)
+    at Object.set (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\[root-of-the-server]__8b3d3ca0._.js:306:33)
+    at setAll (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:17766:43)
+    at applyServerStorage (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18041:11)
+    at async Object.callback (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18163:13)
+    at async C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16074:21
+    at async Promise.all (index 1)
+    at async SupabaseAuthClient._notifyAllSubscribers (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16079:13)
+    at async SupabaseAuthClient._callRefreshToken (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16034:13)
+    at async SupabaseAuthClient.__loadSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15185:46)
+    at async SupabaseAuthClient._useSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15112:28)
+    at async SupabaseAuthClient._emitInitialSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15656:16)
+```
+
+**Environment Status:**
+- NEXT_PUBLIC_SUPABASE_URL: true
+- NEXT_PUBLIC_SUPABASE_ANON_KEY: true
+- SUPABASE_SERVICE_KEY: true
+- NODE_ENV: true
+
+---
+
+## unhandledRejection - 2025-10-15T10:49:52.795Z
+
+**Error Details:**
+- Type: unhandledRejection
+- Message: Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+- Stack: ```
+Error: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options
+    at Proxy.callable (C:\Users\nickz\.cursor\Projekte\Trainingsplan\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js:30:17100)
+    at Object.set (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\[root-of-the-server]__8b3d3ca0._.js:306:33)
+    at setAll (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:17766:43)
+    at applyServerStorage (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18041:11)
+    at async Object.callback (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:18163:13)
+    at async C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16074:21
+    at async Promise.all (index 1)
+    at async SupabaseAuthClient._notifyAllSubscribers (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16079:13)
+    at async SupabaseAuthClient._callRefreshToken (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:16034:13)
+    at async SupabaseAuthClient.__loadSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15185:46)
+    at async SupabaseAuthClient._useSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15112:28)
+    at async SupabaseAuthClient._emitInitialSession (C:\Users\nickz\.cursor\Projekte\Trainingsplan\.next\server\chunks\ssr\node_modules_542a144e._.js:15656:16)
+```
+
+**Environment Status:**
+- NEXT_PUBLIC_SUPABASE_URL: true
+- NEXT_PUBLIC_SUPABASE_ANON_KEY: true
+- SUPABASE_SERVICE_KEY: true
+- NODE_ENV: true
+
+---
+

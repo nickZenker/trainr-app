@@ -1,11 +1,11 @@
-import { supabaseServerWithCookies } from '../../../../lib/supabaseServer';
+import { supabaseServer } from '../../../../lib/supabaseServer';
 import { redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
 export default async function DatabaseCheckPage() {
   // Check authentication first
-  const supabase = await supabaseServerWithCookies();
+  const supabase = await supabaseServer();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   
   if (authError || !user) {

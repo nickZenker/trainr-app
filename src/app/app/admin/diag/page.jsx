@@ -1,4 +1,4 @@
-import { supabaseServerWithCookies } from "@/lib/supabaseServer";
+import { supabaseServer } from "@/lib/supabaseServer";
 import { getRecentLogs } from "@/lib/logger";
 
 export const dynamic = 'force-dynamic';
@@ -47,7 +47,7 @@ export default async function DiagnosticPage() {
   let supabaseStatus = 'FAIL';
   let supabaseError = null;
   try {
-    const supabase = await supabaseServerWithCookies();
+    const supabase = await supabaseServer();
     const { data: { user }, error } = await supabase.auth.getUser();
     
     if (error) {
