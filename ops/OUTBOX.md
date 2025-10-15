@@ -184,3 +184,9 @@
 - Lösung: Client Components, Middleware-Whitelist, Server-Helper gehärtet
 - Status: Build OK, Health/Auth-Check OK, E2E Auth FAIL (400er von Supabase)
 - Nächster Schritt: Supabase Dashboard konfigurieren (Site URL, Redirect URLs)
+
+### [DB-ROLLOUT-GUIDE] 2025-10-15 11:25
+- SQL-Blöcke bereitgestellt: A (Tabellen), B (RLS), C (Policies), D (Seeds optional)
+- Reihenfolge: A→B→C in Supabase SQL Editor ausführen
+- Nächster Schritt: Nach SQL-Ausführung /app/admin/db-check öffnen und Ergebnis notieren
+- Bei fehlenden Tabellen: Patch-Vorschläge für ALTER TABLE verfügbar
