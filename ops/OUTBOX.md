@@ -178,3 +178,9 @@
 - Ergebnis: FAIL (10/10 Tests, 500 Internal Server Error auf /auth/login und /auth/signup)
 - Erste Fehlermeldung: "TimeoutError: page.waitForSelector: Timeout 10000ms exceeded"
 - Nächster Schritt: Supabase Dashboard prüfen (docs/AUTH_FIX.md), Auto-Retry läuft weiter
+
+### [AUTH-500-FIX-V2] 2025-10-15 11:20
+- Problem: Auth-Seiten werfen 500er, E2E Auth schlägt fehl
+- Lösung: Client Components, Middleware-Whitelist, Server-Helper gehärtet
+- Status: Build OK, Health/Auth-Check OK, E2E Auth FAIL (400er von Supabase)
+- Nächster Schritt: Supabase Dashboard konfigurieren (Site URL, Redirect URLs)

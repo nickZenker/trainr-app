@@ -46,3 +46,4 @@ echo "- RESULT: TIMEOUT ❌ (Auth weiterhin FAIL)" >> "$LOG"
   echo "  • Redirect: http://localhost:3001/auth/callback"
 } >> ops/OUTBOX.md
 echo "$LOG"
+

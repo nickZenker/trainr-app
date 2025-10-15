@@ -16,20 +16,20 @@ export async function GET() {
     const callbackUrl = `${baseUrl}/auth/callback`
 
     return NextResponse.json({
-      status: 'ok',
+      ok: true,
       env,
       callback: {
         url: callbackUrl,
         reachable: true // We assume it's reachable since this endpoint works
       },
       timestamp: new Date().toISOString(),
-      hint: 'Check docs/AUTH_FIX.md for Supabase Dashboard configuration'
+      note: 'no secrets'
     })
-  } catch (_error) {
+  } catch (e) {
     return NextResponse.json({
-      status: 'error',
-      error: 'Auth check failed',
+      ok: false,
+      error: 'auth-check failed (masked)',
       timestamp: new Date().toISOString()
-    }, { status: 500 })
+    })
   }
 }

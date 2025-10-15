@@ -145,3 +145,4 @@ export function formatWeekRange(date) {
   
   return `KW ${weekNumber} (${startStr} - ${endStr})`;
 }
+
