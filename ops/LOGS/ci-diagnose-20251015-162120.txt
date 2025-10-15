@@ -1,0 +1,86 @@
+﻿## CI Diagnose 20251015-162120
+Node: v24.10.0  NPM: 11.6.1
+
+### Lint
+
+> trainingsapp2@0.1.0 lint
+> eslint
+
+
+C:\Users\nickz\.cursor\Projekte\Trainingsplan\fix-database-simple.mjs
+  15:10  warning  'error' is defined but never used          @typescript-eslint/no-unused-vars
+  49:13  warning  'data' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\nickz\.cursor\Projekte\Trainingsplan\instrumentation.ts
+  35:0  error  Parsing error: Declaration or statement expected
+
+C:\Users\nickz\.cursor\Projekte\Trainingsplan\setup-database.js
+  41:13  warning  'data' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\nickz\.cursor\Projekte\Trainingsplan\src\app\api\auth-check\route.js
+  28:12  warning  '_e' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\nickz\.cursor\Projekte\Trainingsplan\src\app\api\dev\bootstrap\route.js
+  27:12  warning  '_e' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\nickz\.cursor\Projekte\Trainingsplan\src\app\api\ops\status\route.js
+  37:12  warning  '_e' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\nickz\.cursor\Projekte\Trainingsplan\src\lib\supabaseServer.js
+  29:11  warning  'defaultOptions' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  48:28  warning  'options' is assigned a value but never used         @typescript-eslint/no-unused-vars
+  53:24  warning  'options' is assigned a value but never used         @typescript-eslint/no-unused-vars
+
+C:\Users\nickz\.cursor\Projekte\Trainingsplan\tests\.auth\global.setup.js
+  3:1  warning  Assign arrow function to a variable before exporting as module default  import/no-anonymous-default-export
+
+Ô£û 11 problems (1 error, 10 warnings)
+
+
+### Build
+
+> trainingsapp2@0.1.0 build
+> next build --turbopack
+
+   Ôû▓ Next.js 15.5.4 (Turbopack)
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ Ô£ô Finished writing to disk in 296ms
+node.exe : 
+In Zeile:1 Zeichen:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+> Build error occurred
+Error: Turbopack build failed with 2 errors:
+./instrumentation.ts:35:1
+Parsing ecmascript source code failed
+[0m [90m 33 |[39m     })[33m;[39m
+ [90m 34 |[39m   }
+[31m[1m>[22m[39m[90m 35 |[39m }
+ [90m    |[39m [31m[1m^[22m[39m
+ [90m 36 |[39m
+ [90m 37 |[39m [90m/**[39m
+ [90m 38 |[39m [90m * Log error to file in development[39m[0m
+
+Expression expected
+
+
+./instrumentation.ts:35:1
+Parsing ecmascript source code failed
+[0m [90m 33 |[39m     })[33m;[39m
+ [90m 34 |[39m   }
+[31m[1m>[22m[39m[90m 35 |[39m }
+ [90m    |[39m [31m[1m^[22m[39m
+ [90m 36 |[39m
+ [90m 37 |[39m [90m/**[39m
+ [90m 38 |[39m [90m * Log error to file in development[39m[0m
+
+Expression expected
+
+
+    at <unknown> (./instrumentation.ts:35:1)
+    at <unknown> (./instrumentation.ts:35:1)

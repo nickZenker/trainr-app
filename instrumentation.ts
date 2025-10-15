@@ -9,32 +9,8 @@ export const config = {
 }
 
 export async function register() {
-  // Temporarily disable instrumentation to prevent Edge Runtime issues
-  if (false && process.env.NODE_ENV === 'development' && 
-      typeof process !== 'undefined' && 
-      process.env.NEXT_RUNTIME === 'nodejs' &&
-      typeof require !== 'undefined') {
-    // Handle unhandled promise rejections
-    process.on('unhandledRejection', (reason, promise) => {
-      logErrorToFile('unhandledRejection', {
-        reason: reason?.toString() || 'Unknown reason',
-        promise: promise?.toString() || 'Unknown promise',
-        stack: reason?.stack || 'No stack trace'
-      });
-    });
-
-    // Handle uncaught exceptions
-    process.on('uncaughtException', (error) => {
-      logErrorToFile('uncaughtException', {
-        name: error.name,
-        message: error.message,
-        stack: error.stack || 'No stack trace'
-      });
-      
-      // Log to console as well
-      console.error('🚨 Uncaught Exception:', error);
-    });
-  }
+  // Completely disable instrumentation to prevent Edge Runtime issues
+  return;
 }
 
 /**

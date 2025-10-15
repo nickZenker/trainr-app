@@ -358,3 +358,176 @@ The frequent "internal server error" issues were caused by multiple critical pro
 - E2E: 1 PASS / 20 FAIL (Auth-Timeout - Dev-Server nicht erreichbar)
 - Build: âœ… OK (nur 6 ESLint-Warnings, keine Errors)
 - Lint: âœ… OK (10 Warnings, keine Errors)
+### [CI-DIAGNOSE] 20251015-162120
+
+- Log: ops/LOGS/ci-diagnose-20251015-162120.txt
+
+```
+## CI Diagnose 20251015-162120
+Node: v24.10.0  NPM: 11.6.1
+
+### Lint
+
+> trainingsapp2@0.1.0 lint
+> eslint
+
+
+C:\Users\nickz\.cursor\Projekte\Trainingsplan\fix-database-simple.mjs
+  15:10  warning  'error' is defined but never used          @typescript-eslint/no-unused-vars
+  49:13  warning  'data' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\nickz\.cursor\Projekte\Trainingsplan\instrumentation.ts
+  35:0  error  Parsing error: Declaration or statement expected
+
+C:\Users\nickz\.cursor\Projekte\Trainingsplan\setup-database.js
+  41:13  warning  'data' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\nickz\.cursor\Projekte\Trainingsplan\src\app\api\auth-check\route.js
+  28:12  warning  '_e' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\nickz\.cursor\Projekte\Trainingsplan\src\app\api\dev\bootstrap\route.js
+  27:12  warning  '_e' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\nickz\.cursor\Projekte\Trainingsplan\src\app\api\ops\status\route.js
+  37:12  warning  '_e' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\nickz\.cursor\Projekte\Trainingsplan\src\lib\supabaseServer.js
+  29:11  warning  'defaultOptions' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  48:28  warning  'options' is assigned a value but never used         @typescript-eslint/no-unused-vars
+  53:24  warning  'options' is assigned a value but never used         @typescript-eslint/no-unused-vars
+
+C:\Users\nickz\.cursor\Projekte\Trainingsplan\tests\.auth\global.setup.js
+  3:1  warning  Assign arrow function to a variable before exporting as module default  import/no-anonymous-default-export
+
+Ô£û 11 problems (1 error, 10 warnings)
+
+
+### Build
+
+> trainingsapp2@0.1.0 build
+> next build --turbopack
+
+   Ôû¦ Next.js 15.5.4 (Turbopack)
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ Ô£ô Finished writing to disk in 296ms
+System.Management.Automation.RemoteException
+> Build error occurred
+Error: Turbopack build failed with 2 errors:
+./instrumentation.ts:35:1
+Parsing ecmascript source code failed
+[0m [90m 33 |[39m     })[33m;[39m
+ [90m 34 |[39m   }
+[31m[1m>[22m[39m[90m 35 |[39m }
+ [90m    |[39m [31m[1m^[22m[39m
+ [90m 36 |[39m
+ [90m 37 |[39m [90m/**[39m
+ [90m 38 |[39m [90m * Log error to file in development[39m[0m
+System.Management.Automation.RemoteException
+Expression expected
+System.Management.Automation.RemoteException
+System.Management.Automation.RemoteException
+./instrumentation.ts:35:1
+Parsing ecmascript source code failed
+[0m [90m 33 |[39m     })[33m;[39m
+ [90m 34 |[39m   }
+[31m[1m>[22m[39m[90m 35 |[39m }
+ [90m    |[39m [31m[1m^[22m[39m
+ [90m 36 |[39m
+ [90m 37 |[39m [90m/**[39m
+ [90m 38 |[39m [90m * Log error to file in development[39m[0m
+System.Management.Automation.RemoteException
+Expression expected
+System.Management.Automation.RemoteException
+System.Management.Automation.RemoteException
+    at <unknown> (./instrumentation.ts:35:1)
+    at <unknown> (./instrumentation.ts:35:1)
+```
+
+### [CI-DIAGNOSE] 20251015-162148
+
+- Log: ops/LOGS/ci-diagnose-20251015-162148.txt
+
+```
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ Ô£ô Finished writing to disk in 166ms
+ Ô£ô Compiled successfully in 4.4s
+   Linting and checking validity of types ...
+
+./src/app/api/auth-check/route.js
+28:12  Warning: '_e' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/dev/bootstrap/route.js
+27:12  Warning: '_e' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/ops/status/route.js
+37:12  Warning: '_e' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/lib/supabaseServer.js
+29:11  Warning: 'defaultOptions' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+48:28  Warning: 'options' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+53:24  Warning: 'options' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+   Collecting page data ...
+   Generating static pages (0/17) ...
+   Generating static pages (4/17) 
+   Generating static pages (8/17) 
+   Generating static pages (12/17) 
+ Ô£ô Generating static pages (17/17)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                         Size  First Load JS
+Ôöî Ôùï /                                0 B         120 kB
+Ôö£ Ôùï /_not-found                      0 B         120 kB
+Ôö£ ãÆ /api/auth-check                  0 B            0 B
+Ôö£ ãÆ /api/dev/bootstrap               0 B            0 B
+Ôö£ ãÆ /api/exercises                   0 B            0 B
+Ôö£ ãÆ /api/health                      0 B            0 B
+Ôö£ ãÆ /api/live-sessions               0 B            0 B
+Ôö£ ãÆ /api/live-sessions/[id]          0 B            0 B
+Ôö£ ãÆ /api/ops/status                  0 B            0 B
+Ôö£ ãÆ /api/plans                       0 B            0 B
+Ôö£ ãÆ /api/plans/[id]                  0 B            0 B
+Ôö£ ãÆ /api/routes                      0 B            0 B
+Ôö£ ãÆ /api/runtime                     0 B            0 B
+Ôö£ ãÆ /api/sessions                    0 B            0 B
+Ôö£ ãÆ /api/version                     0 B            0 B
+Ôö£ ãÆ /app                             0 B         126 kB
+Ôö£ ãÆ /app/admin/db-check              0 B         126 kB
+Ôö£ ãÆ /app/admin/diag                  0 B         126 kB
+Ôö£ ãÆ /app/admin/unauthorized          0 B         126 kB
+Ôö£ ãÆ /app/body                        0 B         126 kB
+Ôö£ ãÆ /app/calendar                    0 B         126 kB
+Ôö£ ãÆ /app/live/[id]                   0 B         126 kB
+Ôö£ ãÆ /app/nutrition                   0 B         126 kB
+Ôö£ ãÆ /app/plans                   1.11 kB         127 kB
+Ôö£ ãÆ /app/profile                     0 B         126 kB
+Ôö£ ãÆ /app/progress                    0 B         126 kB
+Ôö£ ãÆ /app/recovery                    0 B         126 kB
+Ôö£ ãÆ /app/routes                   2.1 kB         128 kB
+Ôö£ ãÆ /app/sessions                1.05 kB         127 kB
+Ôö£ ãÆ /app/sessions/new                0 B         126 kB
+Ôö£ ãÆ /app/sleep                       0 B         126 kB
+Ôö£ ãÆ /auth/callback                   0 B            0 B
+Ôö£ Ôùï /auth/login                  1.23 kB         169 kB
+Ôö£ Ôùï /auth/reset-password         1.02 kB         169 kB
+Ôö£ Ôùï /auth/signup                 1.25 kB         169 kB
+Ôöö Ôùï /login                           0 B         120 kB
++ First Load JS shared by all     129 kB
+  Ôö£ chunks/30cb146bc1e6f45f.js   59.2 kB
+  Ôö£ chunks/576c91ef1e67f5e8.js   17.6 kB
+  Ôö£ chunks/7ee45f2ee1949691.js   13.1 kB
+  Ôöö other shared chunks (total)  38.6 kB
+
+
+ãÆ Middleware                     80.8 kB
+
+Ôùï  (Static)   prerendered as static content
+ãÆ  (Dynamic)  server-rendered on demand
+
+```

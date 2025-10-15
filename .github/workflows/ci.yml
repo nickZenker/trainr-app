@@ -2,45 +2,42 @@ name: CI - Lint & Build Check
 
 on:
   push:
-    branches: [ main, develop ]
+    paths:
+      - "src/**"
+      - "app/**"
+      - "components/**"
+      - "packages/**"
+      - "public/**"
+      - "tests/**"
+      - "next.config.*"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "!ops/**"         # Ops-only Commits ignorieren
   pull_request:
-    branches: [ main, develop ]
+    paths-ignore:
+      - "ops/**"
 
 jobs:
-  check:
-    name: Code Quality & Build Check
+  code-quality:
     runs-on: ubuntu-latest
-    
+    timeout-minutes: 10
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
-          
-      - name: Install dependencies
-        run: npm ci
-        
-      - name: Run ESLint
-        run: npm run lint
-        
-      - name: Build application
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Lint
+        run: npm run lint || (echo "::group::lint-log" && npm run lint --silent 2>&1 | tail -n 120 && echo "::endgroup::" && exit 1)
+      - name: Build
+        env:
+          CI: "true"
+          NEXT_TELEMETRY_DISABLED: "1"
+          NODE_OPTIONS: "--max_old_space_size=4096"
+          # Dummy ENVs für Build-Time (keine Secrets nötig)
+          NEXT_PUBLIC_SUPABASE_URL: "https://stub.supabase.co"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "stub"
+          SITE_URL: "http://localhost:3000"
         run: npm run build
-        
-      # TODO: Add E2E tests when Playwright is configured
-      # - name: Run E2E tests
-      #   run: npm run test:e2e
-      #   env:
-      #     NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-      #     NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-      
-      - name: Build summary
-        run: |
-          echo "✅ Lint: PASSED"
-          echo "✅ Build: PASSED"
-          echo "📝 E2E Tests: TODO (Playwright setup required)"
-          echo "🚀 Ready for deployment!"
-

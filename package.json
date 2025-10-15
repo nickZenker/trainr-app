@@ -11,7 +11,8 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
-    "test:e2e:ci": "playwright test --reporter=list"
+    "test:e2e:ci": "playwright test --reporter=list",
+    "ci:diag": "powershell -ExecutionPolicy Bypass -File scripts/ci-diagnose.ps1"
   },
   "dependencies": {
     "@supabase/ssr": "^0.7.0",
