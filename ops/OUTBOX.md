@@ -147,4 +147,10 @@
 - **issues overlay**: 0 (keine 500er mehr, Server stabil)
 - **next**: NEXT_PUBLIC_SITE_URL setzen + Supabase Dashboard konfigurieren
 
-**Letzte Aktualisierung**: 2025-01-15 07:17
+### [AUTH-SITE-URL] NEXT_PUBLIC_SITE_URL gesetzt und Auth-Tests erneut (2025-01-15 07:25)
+- **auth-check env**: SITE_URL=true (korrekt gesetzt)
+- **auth.spec**: FAIL (10/10 Tests, 400er-Fehler bei Signup/Login)
+- **Hinweis Supabase-Dashboard gesetzt?**: nein (400er-Fehler bestehen weiterhin)
+- **Nächster Schritt**: Supabase Dashboard konfigurieren - Site URL: http://localhost:3001, Redirect URLs: http://localhost:3001/auth/callback
+
+**Letzte Aktualisierung**: 2025-01-15 07:25
