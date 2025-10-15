@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { useOutsideKeyClose } from '../hooks/useOutsideKeyClose';
 
@@ -36,7 +36,7 @@ function DropdownMenuItem({ tab, isActive, onClose }) {
       data-testid={`subnav-item-${tab.slug}`}
       onClick={onClose}
       className={`
-        text-sm md:text-base font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 rounded-full px-2 md:px-3 py-1 transition-colors duration-200
+        px-3 py-1.5 rounded-md text-sm font-medium hover:underline focus:outline-none focus-visible:ring-2 transition-colors duration-200
         ${isActive 
           ? 'text-brand' 
           : 'text-text-muted hover:text-foreground'
@@ -50,12 +50,14 @@ function DropdownMenuItem({ tab, isActive, onClose }) {
   );
 }
 
-function MegaDropdownPanel({ label, tabs, pathname, isOpen, onClose, triggerId, panelId }) {
+function MegaDropdownPanel({ label, tabs, pathname, isOpen, onClose, triggerId, panelId, triggerRef }) {
   const { ref, handleKeyDown } = useOutsideKeyClose(isOpen, onClose);
   const menuRef = useRef(null);
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const [mounted, setMounted] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [panelStyle, setPanelStyle] = useState({});
+  const [panelWidth, setPanelWidth] = useState(0);
 
   // Portal mounting
   useEffect(() => {
@@ -72,6 +74,62 @@ function MegaDropdownPanel({ label, tabs, pathname, isOpen, onClose, triggerId, 
     window.addEventListener('resize', checkPointer);
     return () => window.removeEventListener('resize', checkPointer);
   }, []);
+
+  // Position panel under trigger
+  const updatePanelPosition = useCallback(() => {
+    if (!triggerRef?.current || !ref?.current) return;
+
+    const triggerRect = triggerRef.current.getBoundingClientRect();
+    const top = triggerRect.bottom + window.scrollY;
+    const left = triggerRect.left + window.scrollX;
+    
+    // Clamp left position to viewport
+    const viewportWidth = window.innerWidth;
+    const clampedLeft = Math.min(left, window.scrollX + viewportWidth - panelWidth - 8);
+    
+    setPanelStyle({
+      position: 'absolute',
+      top: `${top}px`,
+      left: `${clampedLeft}px`,
+      minWidth: `${triggerRect.width}px`,
+      zIndex: 50
+    });
+  }, [panelWidth]);
+
+  // Update position when panel opens or window changes
+  useEffect(() => {
+    if (isOpen) {
+      updatePanelPosition();
+      
+      const handleResize = () => updatePanelPosition();
+      const handleScroll = () => updatePanelPosition();
+      
+      window.addEventListener('resize', handleResize);
+      window.addEventListener('scroll', handleScroll);
+      
+      return () => {
+        window.removeEventListener('resize', handleResize);
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, [isOpen, updatePanelPosition]);
+
+  // Measure panel width after first render
+  useEffect(() => {
+    if (isOpen && ref?.current) {
+      const resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          setPanelWidth(entry.contentRect.width);
+        }
+      });
+      
+      resizeObserver.observe(ref.current);
+      
+      return () => {
+        resizeObserver.disconnect();
+      };
+    }
+  }, [isOpen]);
 
   // Panel mouse events to prevent closing when hovering
   const handlePanelMouseEnter = () => {
@@ -174,7 +232,8 @@ function MegaDropdownPanel({ label, tabs, pathname, isOpen, onClose, triggerId, 
     <div
       ref={ref}
       data-testid={panelId}
-      className="absolute left-0 right-0 top-full z-50 p-2 md:p-3 pointer-events-auto"
+      style={panelStyle}
+      className="pointer-events-auto"
       role="menu"
       onKeyDown={handleMenuKeyDown}
       onMouseEnter={handlePanelMouseEnter}
@@ -182,7 +241,7 @@ function MegaDropdownPanel({ label, tabs, pathname, isOpen, onClose, triggerId, 
     >
       <nav 
         ref={menuRef}
-        className="flex flex-wrap items-center gap-3 md:gap-4 px-2 md:px-0"
+        className="flex flex-col gap-1 md:gap-1.5 p-1 md:p-1"
       >
         {tabs.map((tab) => {
           const isActive = pathname === tab.href || 
@@ -343,6 +402,7 @@ function PrimaryTab({ label, tabs, pathname, triggerId, panelId }) {
         onClose={closePanel}
         triggerId={triggerId}
         panelId={panelId}
+        triggerRef={triggerRef}
       />
     </div>
   );

@@ -254,3 +254,10 @@
 - Health-Check: ✅ 200 OK
 - App-Page: ✅ 200 OK (redirects to login as expected)
 - Next: E2E-Tests erneut ausführen
+
+### [NAV-DROPDOWN-POSITION] 2025-10-15 13:45
+- Panel nun exakt unter Trigger (top/left via getBoundingClientRect)
+- Vertikal gestapelte Items, kompakte Darstellung
+- E2E: 1 PASS / 20 FAIL (Auth-Timeout - Dev-Server nicht erreichbar)
+- Build: ✅ OK (nur 6 ESLint-Warnings, keine Errors)
+- Lint: ✅ OK (10 Warnings, keine Errors)

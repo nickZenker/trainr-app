@@ -19,8 +19,8 @@ test.describe('App Navigation Structure', () => {
     await expect(page.getByTestId('topnav-home')).toBeVisible();
     
     // Check primary tabs
-    await expect(page.getByTestId('tab-primary-training')).toBeVisible();
-    await expect(page.getByTestId('tab-primary-health')).toBeVisible();
+    await expect(page.getByTestId('subnav-trigger-training')).toBeVisible();
+    await expect(page.getByTestId('subnav-trigger-health')).toBeVisible();
     
     // Check secondary tabs
     await expect(page.getByTestId('tab-progress')).toBeVisible();
@@ -234,7 +234,7 @@ test.describe('App Navigation Structure', () => {
     }
   });
 
-  test('panel has single-line free-floating style (no horizontal scrollbar)', async ({ page }) => {
+  test('panel appears directly under trigger', async ({ page }) => {
     const isDesktop = await page.evaluate(() => window.matchMedia('(pointer: fine)').matches);
     
     if (isDesktop) {
@@ -248,13 +248,47 @@ test.describe('App Navigation Structure', () => {
     const panel = page.getByTestId('subnav-panel-training');
     await expect(panel).toBeVisible();
     
-    // Check that panel doesn't have horizontal scrollbar
-    const hasHorizontalScroll = await panel.evaluate(el => el.scrollWidth > el.clientWidth);
-    expect(hasHorizontalScroll).toBeFalsy();
+    // Get bounding boxes
+    const triggerBox = await page.locator('[data-testid="subnav-trigger-training"]').boundingBox();
+    const panelBox = await page.locator('[data-testid="subnav-panel-training"]').boundingBox();
     
-    // Check that panel has transparent background (no card styling)
-    const bgColor = await panel.evaluate(el => window.getComputedStyle(el).backgroundColor);
-    expect(bgColor).toBe('rgba(0, 0, 0, 0)'); // transparent
+    expect(triggerBox).toBeTruthy();
+    expect(panelBox).toBeTruthy();
+    
+    // Panel should be positioned directly under trigger
+    expect(panelBox.x).toBeGreaterThanOrEqual(triggerBox.x - 2);
+    expect(panelBox.x).toBeLessThanOrEqual(triggerBox.x + 8); // leichte Toleranz
+    expect(Math.round(panelBox.y)).toBeGreaterThanOrEqual(Math.round(triggerBox.y + triggerBox.height) - 2);
+  });
+
+  test('items stacked vertically', async ({ page }) => {
+    const isDesktop = await page.evaluate(() => window.matchMedia('(pointer: fine)').matches);
+    
+    if (isDesktop) {
+      await page.hover('[data-testid="subnav-trigger-training"]');
+    } else {
+      await page.getByTestId('subnav-trigger-training').click();
+    }
+    
+    await page.waitForTimeout(200);
+    
+    const panel = page.getByTestId('subnav-panel-training');
+    await expect(panel).toBeVisible();
+    
+    // Count items
+    const items = page.locator('[data-testid^="subnav-item-"]');
+    const itemCount = await items.count();
+    expect(itemCount).toBeGreaterThanOrEqual(2);
+    
+    // Get panel height and first item height
+    const panelBox = await panel.boundingBox();
+    const firstItemBox = await items.first().boundingBox();
+    
+    expect(panelBox).toBeTruthy();
+    expect(firstItemBox).toBeTruthy();
+    
+    // Panel height should be greater than single item height (indicating vertical stacking)
+    expect(panelBox.height).toBeGreaterThan(firstItemBox.height * (itemCount - 0.5));
   });
 
   test('logo navigates to home', async ({ page }) => {
@@ -288,11 +322,19 @@ test.describe('App Navigation Structure', () => {
 
   test('active states work correctly', async ({ page }) => {
     // Navigate to plans page via dropdown
-    await page.getByTestId('tab-primary-training').click();
+    const isDesktop = await page.evaluate(() => window.matchMedia('(pointer: fine)').matches);
+    
+    if (isDesktop) {
+      await page.hover('[data-testid="subnav-trigger-training"]');
+      await page.waitForTimeout(200);
+    } else {
+      await page.getByTestId('subnav-trigger-training').click();
+    }
+    
     await page.getByTestId('subnav-item-plans').click();
     
     // Check that Training tab is active
-    const trainingTab = page.getByTestId('tab-primary-training');
+    const trainingTab = page.getByTestId('subnav-trigger-training');
     await expect(trainingTab).toHaveAttribute('aria-selected', 'true');
   });
 });
