@@ -169,3 +169,12 @@
 ### [OPS-STATUS] 2025-10-15 10:38
 - PUBLIC_STATUS_URL=http://192.168.178.26:3001/api/ops/status
 - Live check: 10:38:06 (siehe ops/LOGS/status-snapshot-*.json)
+### [GO-LIVE PREP] 2025-10-15 10:48
+- vercel.json: OK
+- diag endpoints: /api/version, /api/runtime
+- docs/DEPLOYMENT.md aktualisiert
+- Nächster Schritt: In Vercel importieren + ENV setzen (Namen siehe Doku), dann Deploy starten.
+### [AUTH FAIL] 2025-10-15 10:50
+- Ergebnis: FAIL (10/10 Tests, 500 Internal Server Error auf /auth/login und /auth/signup)
+- Erste Fehlermeldung: "TimeoutError: page.waitForSelector: Timeout 10000ms exceeded"
+- Nächster Schritt: Supabase Dashboard prüfen (docs/AUTH_FIX.md), Auto-Retry läuft weiter
