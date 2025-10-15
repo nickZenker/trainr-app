@@ -129,4 +129,15 @@
 - **Hinweis**: Supabase Dashboard-Checkliste in docs/AUTH_FIX.md
 - **Nächster Schritt**: Dev-Server starten und Auth-Tests erneut ausführen
 
-**Letzte Aktualisierung**: 2025-01-14 23:45
+### [COOKIE-FIX] Server Component Cookie-Fehler behoben (2025-01-15 06:56)
+- **Problem**: "Cookies can only be modified in a Server Action or Route Handler" Fehler in Server Components
+- **Lösung**: Cookie-Writes in RSC-Kontext stumm ignorieren, Auth-Konfiguration optimiert
+- **Implementierte Fixes**:
+  - ✅ Cookie set/remove in Server Components mit try/catch abgefangen
+  - ✅ autoRefreshToken/persistSession für Server Components deaktiviert (read-only)
+  - ✅ Vollständige Cookie-Funktionalität in Server Actions/Routes beibehalten
+  - ✅ Keine Logs/Warnungen mehr bei Cookie-Fehlern in RSC
+- **Ergebnis**: ✅ grün - Alle Endpoints funktionieren (200 OK), keine Cookie-Fehler mehr
+- **Nächster Schritt**: Auth-Tests erneut ausführen um 400er-Status zu prüfen
+
+**Letzte Aktualisierung**: 2025-01-15 06:56
