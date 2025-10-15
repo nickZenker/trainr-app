@@ -25,7 +25,7 @@ export async function GET() {
       timestamp: new Date().toISOString(),
       note: 'no secrets'
     })
-  } catch (e) {
+  } catch (_e) {
     return NextResponse.json({
       ok: false,
       error: 'auth-check failed (masked)',

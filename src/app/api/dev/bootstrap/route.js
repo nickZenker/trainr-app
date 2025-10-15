@@ -14,7 +14,7 @@ export async function GET() {
 
     const email = 'test.user@trainr.local';
     const password = 'Trainr!123'; // nur Dev
-    const { data, error } = await admin.auth.admin.createUser({
+    const { error } = await admin.auth.admin.createUser({
       email,
       password,
       email_confirm: true, // bestätigt, um Mail-Flow zu umgehen
@@ -24,7 +24,7 @@ export async function GET() {
       return NextResponse.json({ ok:false, error: error.message }, { status: 200 });
     }
     return NextResponse.json({ ok:true, email, note:'user ensured' }, { status: 200 });
-  } catch (e) {
+  } catch (_e) {
     return NextResponse.json({ ok:false, error:'bootstrap failed' }, { status: 200 });
   }
 }

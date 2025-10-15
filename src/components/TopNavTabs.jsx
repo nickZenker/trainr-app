@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { useOutsideKeyClose } from '../hooks/useOutsideKeyClose';
 
 // Training subnav items
 const trainingTabs = [
@@ -27,29 +28,132 @@ const secondaryTabs = [
   { label: 'Profile', href: '/app/profile', slug: 'profile' }
 ];
 
-function SubNavLink({ tab, isActive }) {
+function DropdownMenuItem({ tab, isActive, onClose }) {
   return (
     <Link
       href={tab.href}
-      data-testid={`subtab-${tab.slug}`}
+      data-testid={`subnav-item-${tab.slug}`}
+      onClick={onClose}
       className={`
-        relative py-2 px-3 text-sm font-medium transition-colors duration-200 rounded-md
+        block px-4 py-3 text-sm font-medium transition-colors duration-200 rounded-lg
         focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-background
         ${isActive 
           ? 'bg-brand/10 text-brand' 
           : 'text-text-muted hover:text-foreground hover:bg-surface'
         }
-        whitespace-nowrap
       `}
-      role="tab"
-      aria-selected={isActive}
+      role="menuitem"
+      tabIndex={-1}
     >
       {tab.label}
     </Link>
   );
 }
 
-function PrimaryTab({ label, tabs, pathname, testId }) {
+function DropdownPanel({ label, tabs, pathname, isOpen, onClose, triggerId, panelId }) {
+  const { ref, handleKeyDown } = useOutsideKeyClose(isOpen, onClose);
+  const menuRef = useRef(null);
+  const [focusedIndex, setFocusedIndex] = useState(-1);
+
+  // Focus management
+  useEffect(() => {
+    if (isOpen && menuRef.current) {
+      const firstItem = menuRef.current.querySelector('[role="menuitem"]');
+      if (firstItem) {
+        firstItem.focus();
+        setFocusedIndex(0);
+      }
+    } else {
+      setFocusedIndex(-1);
+    }
+  }, [isOpen]);
+
+  // Keyboard navigation
+  const handleMenuKeyDown = (event) => {
+    if (!isOpen) return;
+
+    const items = menuRef.current?.querySelectorAll('[role="menuitem"]') || [];
+    const itemCount = items.length;
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        setFocusedIndex(prev => (prev + 1) % itemCount);
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        setFocusedIndex(prev => prev <= 0 ? itemCount - 1 : prev - 1);
+        break;
+      case 'ArrowRight':
+      case 'ArrowLeft':
+        event.preventDefault();
+        // For horizontal navigation, we can cycle through items
+        setFocusedIndex(prev => (prev + 1) % itemCount);
+        break;
+      case 'Home':
+        event.preventDefault();
+        setFocusedIndex(0);
+        break;
+      case 'End':
+        event.preventDefault();
+        setFocusedIndex(itemCount - 1);
+        break;
+      case 'Escape':
+        event.preventDefault();
+        onClose();
+        break;
+    }
+  };
+
+  // Update focus when focusedIndex changes
+  useEffect(() => {
+    if (isOpen && menuRef.current) {
+      const items = menuRef.current.querySelectorAll('[role="menuitem"]');
+      if (items[focusedIndex]) {
+        items[focusedIndex].focus();
+      }
+    }
+  }, [focusedIndex, isOpen]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div
+      ref={ref}
+      data-testid={panelId}
+      className="absolute top-full left-0 right-0 mt-1 bg-background/95 backdrop-blur-md border border-border rounded-xl shadow-lg ring-1 ring-black/5 z-50 max-h-[min(70vh,32rem)] overflow-y-auto"
+      role="menu"
+      onKeyDown={handleMenuKeyDown}
+    >
+      <div className="p-4">
+        <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">
+          {label}
+        </h3>
+        <div 
+          ref={menuRef}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1"
+        >
+          {tabs.map((tab) => {
+            const isActive = pathname === tab.href || 
+              (tab.href !== '/app' && pathname.startsWith(tab.href)) ||
+              (tab.href === '/app' && pathname === '/app');
+            
+            return (
+              <DropdownMenuItem 
+                key={tab.href} 
+                tab={tab} 
+                isActive={isActive}
+                onClose={onClose}
+              />
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PrimaryTab({ label, tabs, pathname, triggerId, panelId }) {
   const [isOpen, setIsOpen] = useState(false);
   const hasActiveTab = tabs.some(tab => 
     pathname === tab.href || 
@@ -57,11 +161,14 @@ function PrimaryTab({ label, tabs, pathname, testId }) {
     (tab.href === '/app' && pathname === '/app')
   );
 
+  const toggleOpen = () => setIsOpen(!isOpen);
+  const closePanel = () => setIsOpen(false);
+
   return (
     <div className="relative">
       <button
-        data-testid={testId}
-        onClick={() => setIsOpen(!isOpen)}
+        data-testid={`tab-primary-${label.toLowerCase()}`}
+        onClick={toggleOpen}
         className={`
           relative py-4 px-3 text-sm font-medium transition-colors duration-200
           focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-background
@@ -73,6 +180,8 @@ function PrimaryTab({ label, tabs, pathname, testId }) {
         `}
         role="tab"
         aria-selected={hasActiveTab}
+        aria-expanded={isOpen}
+        aria-controls={panelId}
       >
         {label}
         {hasActiveTab && (
@@ -80,28 +189,15 @@ function PrimaryTab({ label, tabs, pathname, testId }) {
         )}
       </button>
       
-      {/* Subnav - Desktop: below, Mobile: scrollable */}
-      <div className={`
-        ${isOpen ? 'block' : 'hidden'}
-        lg:absolute lg:top-full lg:left-0 lg:mt-1 lg:w-64 lg:bg-background lg:border lg:border-border lg:rounded-lg lg:shadow-lg lg:z-50
-        mobile:block mobile:mt-2 mobile:bg-transparent mobile:border-0 mobile:shadow-none
-      `}>
-        <div className="flex flex-wrap gap-1 lg:flex-col lg:gap-0 lg:p-2">
-          {tabs.map((tab) => {
-            const isActive = pathname === tab.href || 
-              (tab.href !== '/app' && pathname.startsWith(tab.href)) ||
-              (tab.href === '/app' && pathname === '/app');
-            
-            return (
-              <SubNavLink 
-                key={tab.href} 
-                tab={tab} 
-                isActive={isActive}
-              />
-            );
-          })}
-        </div>
-      </div>
+      <DropdownPanel
+        label={label}
+        tabs={tabs}
+        pathname={pathname}
+        isOpen={isOpen}
+        onClose={closePanel}
+        triggerId={triggerId}
+        panelId={panelId}
+      />
     </div>
   );
 }
@@ -148,7 +244,8 @@ export default function TopNavTabs() {
             label="Training" 
             tabs={trainingTabs} 
             pathname={pathname}
-            testId="tab-primary-training"
+            triggerId="subnav-trigger-training"
+            panelId="subnav-panel-training"
           />
           
           {/* Health Primary Tab */}
@@ -156,7 +253,8 @@ export default function TopNavTabs() {
             label="Health" 
             tabs={healthTabs} 
             pathname={pathname}
-            testId="tab-primary-health"
+            triggerId="subnav-trigger-health"
+            panelId="subnav-panel-health"
           />
           
           {/* Spacer to push secondary tabs to the right */}

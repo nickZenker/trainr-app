@@ -27,48 +27,99 @@ test.describe('App Navigation Structure', () => {
     await expect(page.getByTestId('tab-profile')).toBeVisible();
   });
 
-  test('training subnav is accessible', async ({ page }) => {
-    // Click on Training tab to open subnav
+  test('opens training dropdown and shows all items without scrolling', async ({ page }) => {
+    // Click on Training tab to open dropdown
     await page.getByTestId('tab-primary-training').click();
     
-    // Check training subnav items
-    await expect(page.getByTestId('subtab-dashboard')).toBeVisible();
-    await expect(page.getByTestId('subtab-plans')).toBeVisible();
-    await expect(page.getByTestId('subtab-sessions')).toBeVisible();
-    await expect(page.getByTestId('subtab-live')).toBeVisible();
-    await expect(page.getByTestId('subtab-calendar')).toBeVisible();
+    // Check that dropdown panel is visible
+    await expect(page.getByTestId('subnav-panel-training')).toBeVisible();
+    
+    // Check all training dropdown items are visible
+    await expect(page.getByTestId('subnav-item-dashboard')).toBeVisible();
+    await expect(page.getByTestId('subnav-item-plans')).toBeVisible();
+    await expect(page.getByTestId('subnav-item-sessions')).toBeVisible();
+    await expect(page.getByTestId('subnav-item-live')).toBeVisible();
+    await expect(page.getByTestId('subnav-item-calendar')).toBeVisible();
   });
 
-  test('health subnav is accessible', async ({ page }) => {
-    // Click on Health tab to open subnav
+  test('opens health dropdown and shows all items without scrolling', async ({ page }) => {
+    // Click on Health tab to open dropdown
     await page.getByTestId('tab-primary-health').click();
     
-    // Check health subnav items
-    await expect(page.getByTestId('subtab-nutrition')).toBeVisible();
-    await expect(page.getByTestId('subtab-sleep')).toBeVisible();
-    await expect(page.getByTestId('subtab-recovery')).toBeVisible();
-    await expect(page.getByTestId('subtab-body')).toBeVisible();
+    // Check that dropdown panel is visible
+    await expect(page.getByTestId('subnav-panel-health')).toBeVisible();
+    
+    // Check all health dropdown items are visible
+    await expect(page.getByTestId('subnav-item-nutrition')).toBeVisible();
+    await expect(page.getByTestId('subnav-item-sleep')).toBeVisible();
+    await expect(page.getByTestId('subnav-item-recovery')).toBeVisible();
+    await expect(page.getByTestId('subnav-item-body')).toBeVisible();
+  });
+
+  test('keyboard navigation works inside dropdown', async ({ page }) => {
+    // Open training dropdown
+    await page.getByTestId('tab-primary-training').click();
+    await expect(page.getByTestId('subnav-panel-training')).toBeVisible();
+    
+    // Test arrow key navigation
+    await page.keyboard.press('ArrowDown');
+    await expect(page.getByTestId('subnav-item-plans')).toBeFocused();
+    
+    await page.keyboard.press('ArrowDown');
+    await expect(page.getByTestId('subnav-item-sessions')).toBeFocused();
+    
+    // Test Enter key to navigate
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL(/.*\/app\/sessions/);
+  });
+
+  test('closes on escape and outside click', async ({ page }) => {
+    // Open training dropdown
+    await page.getByTestId('tab-primary-training').click();
+    await expect(page.getByTestId('subnav-panel-training')).toBeVisible();
+    
+    // Test escape key
+    await page.keyboard.press('Escape');
+    await expect(page.getByTestId('subnav-panel-training')).not.toBeVisible();
+    
+    // Reopen dropdown
+    await page.getByTestId('subnav-trigger-training').click();
+    await expect(page.getByTestId('subnav-panel-training')).toBeVisible();
+    
+    // Test outside click
+    await page.click('body', { position: { x: 10, y: 10 } });
+    await expect(page.getByTestId('subnav-panel-training')).not.toBeVisible();
+  });
+
+  test('panel closes on route change', async ({ page }) => {
+    // Open training dropdown
+    await page.getByTestId('tab-primary-training').click();
+    await expect(page.getByTestId('subnav-panel-training')).toBeVisible();
+    
+    // Click on Plans item to navigate
+    await page.getByTestId('subnav-item-plans').click();
+    await expect(page).toHaveURL(/.*\/app\/plans/);
+    
+    // Panel should be closed after navigation
+    await expect(page.getByTestId('subnav-panel-training')).not.toBeVisible();
   });
 
   test('navigation links work correctly', async ({ page }) => {
-    // Test training subnav links
-    await page.getByTestId('tab-primary-training').click();
-    await expect(page.getByTestId('subtab-plans')).toBeVisible();
-    await page.getByTestId('subtab-plans').click();
+    // Test training dropdown links
+    await page.getByTestId('subnav-trigger-training').click();
+    await page.getByTestId('subnav-item-plans').click();
     await expect(page).toHaveURL(/.*\/app\/plans/);
     
     // Navigate back to app to test sessions
     await page.goto('/app');
-    await page.getByTestId('tab-primary-training').click();
-    await expect(page.getByTestId('subtab-sessions')).toBeVisible();
-    await page.getByTestId('subtab-sessions').click();
+    await page.getByTestId('subnav-trigger-training').click();
+    await page.getByTestId('subnav-item-sessions').click();
     await expect(page).toHaveURL(/.*\/app\/sessions/);
     
-    // Test health subnav links
+    // Test health dropdown links
     await page.goto('/app');
-    await page.getByTestId('tab-primary-health').click();
-    await expect(page.getByTestId('subtab-nutrition')).toBeVisible();
-    await page.getByTestId('subtab-nutrition').click();
+    await page.getByTestId('subnav-trigger-health').click();
+    await page.getByTestId('subnav-item-nutrition').click();
     await expect(page).toHaveURL(/.*\/app\/nutrition/);
     
     // Test secondary tabs
@@ -78,17 +129,13 @@ test.describe('App Navigation Structure', () => {
   });
 
   test('active states work correctly', async ({ page }) => {
-    // Navigate to plans page
-    await page.getByTestId('tab-primary-training').click();
-    await page.getByTestId('subtab-plans').click();
+    // Navigate to plans page via dropdown
+    await page.getByTestId('subnav-trigger-training').click();
+    await page.getByTestId('subnav-item-plans').click();
     
     // Check that Training tab is active
-    const trainingTab = page.getByTestId('tab-primary-training');
+    const trainingTab = page.getByTestId('subnav-trigger-training');
     await expect(trainingTab).toHaveAttribute('aria-selected', 'true');
-    
-    // Check that plans subtab is active
-    const plansSubtab = page.getByTestId('subtab-plans');
-    await expect(plansSubtab).toHaveAttribute('aria-selected', 'true');
   });
 });
 

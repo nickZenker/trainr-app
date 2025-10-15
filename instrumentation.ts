@@ -3,6 +3,11 @@
  * Handles unhandledRejection and uncaughtException in development
  */
 
+// Ensure this only runs in Node.js runtime
+export const config = {
+  matcher: '/((?!_next/static|_next/image|favicon.ico).*)',
+}
+
 export async function register() {
   // Only register in Node.js runtime, not Edge Runtime
   if (process.env.NODE_ENV === 'development' && typeof process !== 'undefined' && process.env.NEXT_RUNTIME === 'nodejs') {

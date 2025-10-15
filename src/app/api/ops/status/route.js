@@ -34,7 +34,7 @@ export async function GET() {
       outbox_tail: outTail,
       updatedAt: new Date().toISOString()
     });
-  } catch (e) {
+  } catch (_e) {
     return NextResponse.json({
       ok: false,
       error: 'ops status read failed'
