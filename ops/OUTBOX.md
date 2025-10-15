@@ -158,4 +158,14 @@
 - **Redirect URL**: http://localhost:3001/auth/callback
 - **Danach läuft der Auto-Retry und schaltet auf PASS, sobald alles korrekt ist.**
 
-**Letzte Aktualisierung**: 2025-01-15 07:25
+### [CAL-UX] Kalender-UX poliert (2025-01-15 07:30)
+- **Month/Week Navigation**: OK (Prev/Next/Heute, View-Toggle)
+- **Today highlight**: OK (Ring + Badge + Fettdruck)
+- **Empty states**: OK (Kompakter Hinweis + Link zu Sessions)
+- **Events zeigen lokale Zeit + Typ-Badge**: OK (Strength/Endurance mit Farben)
+- **Nächster Schritt**: (nach AUTH-PASS) E2E auf Kalender erweitern
+
+**Letzte Aktualisierung**: 2025-01-15 07:30
+### [OPS-STATUS] 2025-10-15 10:38
+- PUBLIC_STATUS_URL=http://192.168.178.26:3001/api/ops/status
+- Live check: 10:38:06 (siehe ops/LOGS/status-snapshot-*.json)
