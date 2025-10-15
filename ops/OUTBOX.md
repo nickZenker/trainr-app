@@ -203,3 +203,8 @@
 - Reminder: Supabase Dashboard → Authentication → URL Configuration
   • Site URL: http://localhost:3001
   • Redirect: http://localhost:3001/auth/callback
+
+### [AUTH-ADMIN-USER] 2025-10-15 12:50
+- bootstrap: FAIL (Invalid API key - SUPABASE_SERVICE_KEY fehlt)
+- auth.spec: FAIL (400er-Fehler persistieren, Supabase Dashboard nicht konfiguriert)
+- Hinweis: Test-User test.user@trainr.local angelegt (nur Dev)
