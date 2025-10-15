@@ -9,6 +9,14 @@
 - **Pfade**: playwright-report/ für Trace/Video bei Fehlern
 - **Offene Punkte**: Auth-Setup reparieren (Bootstrap 500, Login-Timeout)
 
+### [PLANS-FIX-4ERRORS] (2024-12-19 17:15)
+- **useActionState**: Ersetzt useFormState in CreatePlanForm.jsx
+- **services**: Schema-sichere Felder (ohne active/type), nur erlaubte Spalten
+- **stats**: Counts aus plans/sessions statt plan.active-Zugriff
+- **e2e**: DOM-Anchor-Wait statt URL-Wait, Console-Piping aktiv
+- **Ergebnis**: Build ✓, Lint ✓, E2E ❌ (Auth-Problem persistiert)
+- **Offene Punkte**: Auth-Setup reparieren (Bootstrap 500, Login-Timeout)
+
 ## [2025-10-15 15:05] ZWISCHENBERICHT: Plan-Scheduling-Feature & Stabilisierung
 
 ### ✅ Abgeschlossen

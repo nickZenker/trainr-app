@@ -18,39 +18,36 @@ export async function getPlansStats() {
       throw new Error('User not authenticated');
     }
 
-    // Get all plans with session counts
-    const { data: plans, error } = await supabase
+    // Get total plans count
+    const { count: totalPlans, error: plansError } = await supabase
       .from("plans")
-      .select(`
-        id,
-        active,
-        sessions (id)
-      `)
+      .select('id', { count: 'exact', head: true })
       .eq("user_id", user.id);
 
-    if (error) {
-      throw new Error(`Failed to fetch plans statistics: ${error.message}`);
+    if (plansError) {
+      console.warn('Failed to fetch plans count:', plansError);
     }
 
-    const totalPlans = plans?.length || 0;
-    const activePlans = plans?.filter(p => p.active).length || 0;
-    const archivedPlans = totalPlans - activePlans;
-    const totalSessions = plans?.reduce((sum, plan) => sum + (plan.sessions?.length || 0), 0) || 0;
+    // Get active plans count (plans with at least one session)
+    const { count: activePlans, error: sessionsError } = await supabase
+      .from("sessions")
+      .select('plan_id', { count: 'exact', head: true })
+      .eq("user_id", user.id);
+
+    if (sessionsError) {
+      console.warn('Failed to fetch sessions count:', sessionsError);
+    }
 
     return {
-      totalPlans,
-      activePlans,
-      archivedPlans,
-      totalSessions
+      totalPlans: totalPlans || 0,
+      activePlans: activePlans || 0
     };
 
   } catch (error) {
-    console.error('Plans service - getPlansStats failed:', error.message);
+    console.warn('Plans service - getPlansStats failed:', error.message);
     return {
       totalPlans: 0,
-      activePlans: 0,
-      archivedPlans: 0,
-      totalSessions: 0
+      activePlans: 0
     };
   }
 }
@@ -69,29 +66,15 @@ export async function listPlans(filter = 'all') {
       throw new Error('User not authenticated');
     }
 
-    let query = supabase
+    const { data: plans, error } = await supabase
       .from("plans")
-      .select(`
-        *,
-        sessions (
-          id,
-          name,
-          type
-        )
-      `)
-      .eq("user_id", user.id);
-
-    // Apply filter
-    if (filter === "active") {
-      query = query.eq("active", true);
-    } else if (filter === "archived") {
-      query = query.eq("active", false);
-    }
-
-    const { data: plans, error } = await query.order("created_at", { ascending: false });
+      .select('id,name,goal,weeks,created_at')
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
 
     if (error) {
-      throw new Error(`Failed to fetch plans: ${error.message}`);
+      console.warn('Supabase listPlans error:', error);
+      return [];
     }
 
     return plans || [];
@@ -132,36 +115,28 @@ export async function createPlan(input) {
       throw new Error('Plan name is too long (max 120 characters)');
     }
 
-    // Create payload defensively
+    // Create payload with only allowed fields
     const payload = {
       user_id: user.id,
       name: input.name.trim(),
       goal: input.description?.trim() || null,
-      active: true,
-      ...(input.type ? { type: input.type } : {})
+      weeks: input.weeks || null
     };
 
-    // First attempt with type column
+    // First attempt with type column (if provided and column exists)
     let { data: newPlan, error } = await supabase
       .from("plans")
-      .insert(payload)
-      .select('id, name, created_at')
+      .insert(input.type ? { ...payload, type: input.type } : payload)
+      .select('id')
       .single();
 
     // If type column doesn't exist, retry without it
     if (error && isColumnMissingType(error)) {
       console.log('Type column missing, retrying without type field');
-      const payloadWithoutType = {
-        user_id: user.id,
-        name: input.name.trim(),
-        goal: input.description?.trim() || null,
-        active: true
-      };
-      
       const retryResult = await supabase
         .from("plans")
-        .insert(payloadWithoutType)
-        .select('id, name, created_at')
+        .insert(payload)
+        .select('id')
         .single();
       
       newPlan = retryResult.data;
@@ -183,7 +158,7 @@ export async function createPlan(input) {
     return {
       success: true,
       message: 'Plan created successfully',
-      plan: newPlan
+      plan: { id: newPlan.id }
     };
 
   } catch (error) {

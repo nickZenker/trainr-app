@@ -1,8 +1,8 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import React, { useEffect } from 'react';
+import { useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import { createPlanAction } from './actions';
 
 function SubmitButton() {
@@ -22,7 +22,7 @@ function SubmitButton() {
 
 export default function CreatePlanForm() {
   const router = useRouter();
-  const [state, formAction] = useFormState(createPlanAction, null);
+  const [state, formAction] = React.useActionState(createPlanAction, null);
 
   useEffect(() => {
     console.log('CreatePlanForm state changed:', state);

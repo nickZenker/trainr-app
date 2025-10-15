@@ -30,16 +30,10 @@ async function PlansStats({ filter }) {
     const statsData = [
       { label: "Gesamt", value: stats.totalPlans },
       { label: "Aktiv", value: stats.activePlans },
-      { label: "Archiviert", value: stats.archivedPlans },
     ];
 
-    // Add sessions count if showing all or active plans
-    if (filter === "all" || filter === "active") {
-      statsData.push({ label: "Sessions", value: stats.totalSessions });
-    }
-
     return (
-      <div className={`grid gap-6 mb-8 ${statsData.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
+      <div className="grid grid-cols-2 gap-6 mb-8">
         {statsData.map((stat, index) => (
           <div key={index} className="bg-surface rounded-lg p-6 border border-border">
             <h3 className="text-lg font-semibold mb-2">{stat.label}</h3>
@@ -49,9 +43,10 @@ async function PlansStats({ filter }) {
       </div>
     );
   } catch (error) {
+    console.warn('PlansStats error:', error.message);
     return (
       <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">
-        <p className="text-red-400">Fehler beim Laden der Statistiken: {error.message}</p>
+        <p className="text-red-400">Fehler beim Laden der Statistiken</p>
       </div>
     );
   }
@@ -89,22 +84,12 @@ async function PlansList({ filter }) {
               <div>
                 <div className="flex items-center gap-3 mb-2">
                   <h3 className="text-xl font-semibold">{plan.name}</h3>
-                  {plan.type && (
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      plan.type === 'strength' 
-                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' 
-                        : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                    }`}>
-                      {plan.type === 'strength' ? 'Strength' : 'Endurance'}
-                    </span>
-                  )}
                 </div>
                 <p className="text-text-muted mb-2">{plan.goal || "Kein Ziel definiert"}</p>
                 <div className="flex gap-4 text-sm text-text-muted">
-                  <span>{plan.sessions?.length || 0} Sessions</span>
                   <span>Erstellt: {new Date(plan.created_at).toLocaleDateString('de-DE')}</span>
-                  {plan.archived_at && (
-                    <span>Archiviert: {new Date(plan.archived_at).toLocaleDateString('de-DE')}</span>
+                  {plan.weeks && (
+                    <span>Wochen: {plan.weeks}</span>
                   )}
                 </div>
               </div>
@@ -115,9 +100,10 @@ async function PlansList({ filter }) {
       </div>
     );
   } catch (error) {
+    console.warn('PlansList error:', error.message);
     return (
       <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">
-        <p className="text-red-400">Fehler beim Laden der Pläne: {error.message}</p>
+        <p className="text-red-400">Fehler beim Laden der Pläne</p>
       </div>
     );
   }

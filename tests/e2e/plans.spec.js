@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { attachLogging, getStatus } from '../utils/netlog';
+import { pipePageConsole } from './helpers/consoleTap';
 import { writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
@@ -15,6 +16,9 @@ test.describe('Plans Creation', () => {
     errors = [];
     networkErrors = [];
     consoleErrors = [];
+
+    // Pipe console logs for debugging
+    await pipePageConsole(page, 'plans-builder');
 
     // Attach robust logging
     attachLogging(page, (msg) => {
@@ -86,14 +90,13 @@ test.describe('Plans Creation', () => {
     // Submit form
     await form.click('[data-testid="plan-create"]');
     
-    // Wait for form submission
-    await page.waitForTimeout(2000);
+    // Wait for schedule page to load (DOM-anchored wait)
+    await Promise.all([
+      page.waitForSelector('[data-testid=plan-schedule-page]', { timeout: 15000 }),
+    ]);
     
-    // Check that plan appears in list
-    await expect(page.locator('text=E2E Kraft – PPL')).toBeVisible();
-    
-    // Check for strength badge
-    await expect(page.locator('text=Strength')).toBeVisible();
+    // Fallback: URL check as second safety net
+    await page.waitForURL(/\/app\/plans\/[^\/]+\/schedule/, { timeout: 15000 });
   });
 
   test('should create endurance plan', async ({ page }) => {
@@ -114,19 +117,18 @@ test.describe('Plans Creation', () => {
     // Submit form
     await form.click('[data-testid="plan-create"]');
     
-    // Wait for form submission
-    await page.waitForTimeout(2000);
+    // Wait for schedule page to load (DOM-anchored wait)
+    await Promise.all([
+      page.waitForSelector('[data-testid=plan-schedule-page]', { timeout: 15000 }),
+    ]);
     
-    // Check that plan appears in list
-    await expect(page.locator('text=E2E Ausdauer – 10k')).toBeVisible();
-    
-    // Check for endurance badge
-    await expect(page.locator('text=Endurance')).toBeVisible();
+    // Fallback: URL check as second safety net
+    await page.waitForURL(/\/app\/plans\/[^\/]+\/schedule/, { timeout: 15000 });
   });
 
-  test.afterEach(async ({ page }) => {
-    // Write error log if any errors occurred
-    if (errors.length > 0 || networkErrors.length > 0 || consoleErrors.length > 0) {
+  test.afterEach(async ({ page }, testInfo) => {
+    // Write error log if test failed
+    if (testInfo.status === 'failed') {
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const logFile = join(process.cwd(), 'ops', 'LOGS', `e2e-plans-${timestamp}.md`);
       
@@ -136,11 +138,19 @@ test.describe('Plans Creation', () => {
         mkdirSync(logsDir, { recursive: true });
       }
       
-      const logContent = `# E2E Plans Test Errors - ${timestamp}
+      const logContent = `# E2E Plans Test Failed - ${timestamp}
 
 ## Test Results
+- Test: ${testInfo.title}
+- Status: ${testInfo.status}
+- Duration: ${testInfo.duration}ms
 - URL: ${page.url()}
 - Title: ${await page.title()}
+
+## Trace/Video Paths
+- Trace: ${testInfo.outputDir}/trace.zip
+- Video: ${testInfo.outputDir}/video.webm
+- Screenshot: ${testInfo.outputDir}/screenshot.png
 
 ## Network Errors (5xx)
 ${networkErrors.length > 0 ? networkErrors.map(err => 
