@@ -28,11 +28,20 @@ test.describe('App Navigation Structure', () => {
   });
 
   test('opens training dropdown and shows all items without scrolling', async ({ page }) => {
-    // Click on Training tab to open dropdown
-    await page.getByTestId('tab-primary-training').click();
+    // Check if we're on desktop (pointer: fine) for hover behavior
+    const isDesktop = await page.evaluate(() => window.matchMedia('(pointer: fine)').matches);
+    
+    if (isDesktop) {
+      // Hover to open dropdown on desktop
+      await page.hover('[data-testid="subnav-trigger-training"]');
+      await page.waitForTimeout(200); // Wait for hover delay
+    } else {
+      // Click to open dropdown on mobile
+      await page.getByTestId('subnav-trigger-training').click();
+    }
     
     // Check that dropdown panel is visible
-    await expect(page.getByTestId('subnav-panel-training')).toBeVisible();
+    await expect(page.getByTestId('subnav-panel-training')).toBeVisible({ timeout: 10000 });
     
     // Check all training dropdown items are visible
     await expect(page.getByTestId('subnav-item-dashboard')).toBeVisible();
@@ -40,26 +49,46 @@ test.describe('App Navigation Structure', () => {
     await expect(page.getByTestId('subnav-item-sessions')).toBeVisible();
     await expect(page.getByTestId('subnav-item-live')).toBeVisible();
     await expect(page.getByTestId('subnav-item-calendar')).toBeVisible();
+    
+    // Check no horizontal scrollbar
+    const panel = page.getByTestId('subnav-panel-training');
+    const hasHorizontalScroll = await panel.evaluate(el => el.scrollWidth > el.clientWidth);
+    expect(hasHorizontalScroll).toBeFalsy();
   });
 
   test('opens health dropdown and shows all items without scrolling', async ({ page }) => {
-    // Click on Health tab to open dropdown
-    await page.getByTestId('tab-primary-health').click();
+    // Check if we're on desktop (pointer: fine) for hover behavior
+    const isDesktop = await page.evaluate(() => window.matchMedia('(pointer: fine)').matches);
+    
+    if (isDesktop) {
+      // Hover to open dropdown on desktop
+      await page.hover('[data-testid="subnav-trigger-health"]');
+      await page.waitForTimeout(200); // Wait for hover delay
+    } else {
+      // Click to open dropdown on mobile
+      await page.getByTestId('subnav-trigger-health').click();
+    }
     
     // Check that dropdown panel is visible
-    await expect(page.getByTestId('subnav-panel-health')).toBeVisible();
+    await expect(page.getByTestId('subnav-panel-health')).toBeVisible({ timeout: 10000 });
     
     // Check all health dropdown items are visible
     await expect(page.getByTestId('subnav-item-nutrition')).toBeVisible();
     await expect(page.getByTestId('subnav-item-sleep')).toBeVisible();
     await expect(page.getByTestId('subnav-item-recovery')).toBeVisible();
     await expect(page.getByTestId('subnav-item-body')).toBeVisible();
+    
+    // Check no horizontal scrollbar
+    const panel = page.getByTestId('subnav-panel-health');
+    const hasHorizontalScroll = await panel.evaluate(el => el.scrollWidth > el.clientWidth);
+    expect(hasHorizontalScroll).toBeFalsy();
   });
 
   test('keyboard navigation works inside dropdown', async ({ page }) => {
-    // Open training dropdown
-    await page.getByTestId('tab-primary-training').click();
-    await expect(page.getByTestId('subnav-panel-training')).toBeVisible();
+    // Open training dropdown via keyboard
+    await page.getByTestId('subnav-trigger-training').focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByTestId('subnav-panel-training')).toBeVisible({ timeout: 10000 });
     
     // Test arrow key navigation
     await page.keyboard.press('ArrowDown');
@@ -75,26 +104,48 @@ test.describe('App Navigation Structure', () => {
 
   test('closes on escape and outside click', async ({ page }) => {
     // Open training dropdown
-    await page.getByTestId('tab-primary-training').click();
-    await expect(page.getByTestId('subnav-panel-training')).toBeVisible();
+    const isDesktop = await page.evaluate(() => window.matchMedia('(pointer: fine)').matches);
+    
+    if (isDesktop) {
+      await page.hover('[data-testid="subnav-trigger-training"]');
+      await page.waitForTimeout(200);
+    } else {
+      await page.getByTestId('subnav-trigger-training').click();
+    }
+    
+    await expect(page.getByTestId('subnav-panel-training')).toBeVisible({ timeout: 10000 });
     
     // Test escape key
     await page.keyboard.press('Escape');
     await expect(page.getByTestId('subnav-panel-training')).not.toBeVisible();
     
     // Reopen dropdown
-    await page.getByTestId('tab-primary-training').click();
-    await expect(page.getByTestId('subnav-panel-training')).toBeVisible();
+    if (isDesktop) {
+      await page.hover('[data-testid="subnav-trigger-training"]');
+      await page.waitForTimeout(200);
+    } else {
+      await page.getByTestId('subnav-trigger-training').click();
+    }
+    await expect(page.getByTestId('subnav-panel-training')).toBeVisible({ timeout: 10000 });
     
     // Test outside click
     await page.click('body', { position: { x: 10, y: 10 } });
+    await page.waitForTimeout(100); // Wait for debounce
     await expect(page.getByTestId('subnav-panel-training')).not.toBeVisible();
   });
 
   test('panel closes on route change', async ({ page }) => {
     // Open training dropdown
-    await page.getByTestId('tab-primary-training').click();
-    await expect(page.getByTestId('subnav-panel-training')).toBeVisible();
+    const isDesktop = await page.evaluate(() => window.matchMedia('(pointer: fine)').matches);
+    
+    if (isDesktop) {
+      await page.hover('[data-testid="subnav-trigger-training"]');
+      await page.waitForTimeout(200);
+    } else {
+      await page.getByTestId('subnav-trigger-training').click();
+    }
+    
+    await expect(page.getByTestId('subnav-panel-training')).toBeVisible({ timeout: 10000 });
     
     // Click on Plans item to navigate
     await page.getByTestId('subnav-item-plans').click();
@@ -106,19 +157,41 @@ test.describe('App Navigation Structure', () => {
 
   test('navigation links work correctly', async ({ page }) => {
     // Test training dropdown links
-    await page.getByTestId('tab-primary-training').click();
+    const isDesktop = await page.evaluate(() => window.matchMedia('(pointer: fine)').matches);
+    
+    if (isDesktop) {
+      await page.hover('[data-testid="subnav-trigger-training"]');
+      await page.waitForTimeout(200);
+    } else {
+      await page.getByTestId('subnav-trigger-training').click();
+    }
+    
     await page.getByTestId('subnav-item-plans').click();
     await expect(page).toHaveURL(/.*\/app\/plans/);
     
     // Navigate back to app to test sessions
     await page.goto('/app');
-    await page.getByTestId('subnav-trigger-training').click();
+    
+    if (isDesktop) {
+      await page.hover('[data-testid="subnav-trigger-training"]');
+      await page.waitForTimeout(200);
+    } else {
+      await page.getByTestId('subnav-trigger-training').click();
+    }
+    
     await page.getByTestId('subnav-item-sessions').click();
     await expect(page).toHaveURL(/.*\/app\/sessions/);
     
     // Test health dropdown links
     await page.goto('/app');
-    await page.getByTestId('subnav-trigger-health').click();
+    
+    if (isDesktop) {
+      await page.hover('[data-testid="subnav-trigger-health"]');
+      await page.waitForTimeout(200);
+    } else {
+      await page.getByTestId('subnav-trigger-health').click();
+    }
+    
     await page.getByTestId('subnav-item-nutrition').click();
     await expect(page).toHaveURL(/.*\/app\/nutrition/);
     
