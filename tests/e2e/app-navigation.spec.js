@@ -83,7 +83,7 @@ test.describe('App Navigation Structure', () => {
     await expect(page.getByTestId('subnav-panel-training')).not.toBeVisible();
     
     // Reopen dropdown
-    await page.getByTestId('subnav-trigger-training').click();
+    await page.getByTestId('tab-primary-training').click();
     await expect(page.getByTestId('subnav-panel-training')).toBeVisible();
     
     // Test outside click
@@ -106,7 +106,7 @@ test.describe('App Navigation Structure', () => {
 
   test('navigation links work correctly', async ({ page }) => {
     // Test training dropdown links
-    await page.getByTestId('subnav-trigger-training').click();
+    await page.getByTestId('tab-primary-training').click();
     await page.getByTestId('subnav-item-plans').click();
     await expect(page).toHaveURL(/.*\/app\/plans/);
     
@@ -130,11 +130,11 @@ test.describe('App Navigation Structure', () => {
 
   test('active states work correctly', async ({ page }) => {
     // Navigate to plans page via dropdown
-    await page.getByTestId('subnav-trigger-training').click();
+    await page.getByTestId('tab-primary-training').click();
     await page.getByTestId('subnav-item-plans').click();
     
     // Check that Training tab is active
-    const trainingTab = page.getByTestId('subnav-trigger-training');
+    const trainingTab = page.getByTestId('tab-primary-training');
     await expect(trainingTab).toHaveAttribute('aria-selected', 'true');
   });
 });

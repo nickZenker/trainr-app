@@ -1,0 +1,99 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - button "Open Next.js Dev Tools" [ref=e7] [cursor=pointer]:
+    - img [ref=e8]
+  - alert [ref=e11]
+  - generic [ref=e12]:
+    - banner [ref=e13]:
+      - generic [ref=e15]:
+        - heading "Trainr App" [level=1] [ref=e17]
+        - generic [ref=e18]:
+          - generic [ref=e19]: Hallo, e2e.user+local@test.dev
+          - button "Abmelden" [ref=e21]
+    - tablist [ref=e22]:
+      - generic [ref=e24]:
+        - tab "Training" [selected] [ref=e26]: Training
+        - tab "Health" [ref=e29]
+        - tab "Progress" [ref=e31] [cursor=pointer]
+        - tab "Profile" [ref=e32] [cursor=pointer]
+    - main [ref=e33]:
+      - generic [ref=e34]:
+        - generic [ref=e36]:
+          - heading "Trainings App" [level=1] [ref=e37]
+          - button "Abmelden" [ref=e39]
+        - main [ref=e40]:
+          - generic [ref=e41]:
+            - heading "Willkommen, e2e.user+local!" [level=2] [ref=e42]
+            - paragraph [ref=e43]: Bereit für dein Training heute?
+          - generic [ref=e44]:
+            - heading "🏋️ Heute's Session" [level=3] [ref=e45]
+            - generic [ref=e46]:
+              - generic [ref=e47]:
+                - heading "Krafttraining Oberkörper" [level=4] [ref=e48]
+                - paragraph [ref=e49]: 18:00 • 60 Min
+              - link "Training starten" [ref=e50] [cursor=pointer]:
+                - /url: /app/live/1
+          - generic [ref=e51]:
+            - heading "📅 Wochenplan" [level=3] [ref=e52]
+            - generic [ref=e53]:
+              - generic [ref=e55]:
+                - generic [ref=e56]: Mo
+                - generic [ref=e57]: 18:00
+                - generic [ref=e58]: 💪
+                - generic [ref=e59]: Kraft Oberkörper
+              - generic [ref=e61]:
+                - generic [ref=e62]: Di
+                - generic [ref=e63]: 19:00
+                - generic [ref=e64]: 🏃
+                - generic [ref=e65]: Cardio Lauf
+              - generic [ref=e67]:
+                - generic [ref=e68]: Mi
+                - generic [ref=e69]: 18:00
+                - generic [ref=e70]: 💪
+                - generic [ref=e71]: Kraft Beine
+              - generic [ref=e73]:
+                - generic [ref=e74]: Do
+                - generic [ref=e75]: "-"
+                - generic [ref=e76]: 😴
+                - generic [ref=e77]: Ruhetag
+              - generic [ref=e79]:
+                - generic [ref=e80]: Fr
+                - generic [ref=e81]: 18:00
+                - generic [ref=e82]: 💪
+                - generic [ref=e83]: Kraft Ganzkörper
+              - generic [ref=e85]:
+                - generic [ref=e86]: Sa
+                - generic [ref=e87]: 10:00
+                - generic [ref=e88]: 🏃
+                - generic [ref=e89]: Cardio Rad
+              - generic [ref=e91]:
+                - generic [ref=e92]: So
+                - generic [ref=e93]: 16:00
+                - generic [ref=e94]: 🧘
+                - generic [ref=e95]: Yoga/Stretching
+          - generic [ref=e96]:
+            - heading "🔗 Quicklinks" [level=3] [ref=e97]
+            - generic [ref=e98]:
+              - link "📋 Pläne verwalten" [ref=e99] [cursor=pointer]:
+                - /url: /app/plans
+                - generic [ref=e100]:
+                  - generic [ref=e101]: 📋
+                  - generic [ref=e102]: Pläne verwalten
+              - link "🏋️ Sessions" [ref=e103] [cursor=pointer]:
+                - /url: /app/sessions
+                - generic [ref=e104]:
+                  - generic [ref=e105]: 🏋️
+                  - generic [ref=e106]: Sessions
+              - link "👤 Profil" [ref=e107] [cursor=pointer]:
+                - /url: /app/profile
+                - generic [ref=e108]:
+                  - generic [ref=e109]: 👤
+                  - generic [ref=e110]: Profil
+              - link "📊 Fortschritt" [ref=e111] [cursor=pointer]:
+                - /url: /app/progress
+                - generic [ref=e112]:
+                  - generic [ref=e113]: 📊
+                  - generic [ref=e114]: Fortschritt
+```

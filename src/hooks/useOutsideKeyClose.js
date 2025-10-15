@@ -13,31 +13,41 @@ import { usePathname } from 'next/navigation';
 export function useOutsideKeyClose(isOpen, onClose, enableRouteClose = true) {
   const ref = useRef(null);
   const pathname = usePathname();
+  const prevPathname = useRef(pathname);
 
   // Close on route change
   useEffect(() => {
-    if (enableRouteClose && isOpen) {
+    if (enableRouteClose && isOpen && prevPathname.current !== pathname) {
       onClose();
     }
+    prevPathname.current = pathname;
   }, [pathname, isOpen, onClose, enableRouteClose]);
 
   // Handle outside clicks
   useEffect(() => {
     function handleClickOutside(event) {
       if (isOpen && ref.current && !ref.current.contains(event.target)) {
-        onClose();
+        // Check if the click is on a trigger button to avoid immediate closing
+        const isTriggerClick = event.target.closest('[data-testid*="tab-primary-"]');
+        if (!isTriggerClick) {
+          onClose();
+        }
       }
     }
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('touchstart', handleClickOutside);
-    }
+      // Add a small delay to prevent immediate closing on open
+      const timeoutId = setTimeout(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('touchstart', handleClickOutside);
+      }, 100);
 
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('touchstart', handleClickOutside);
-    };
+      return () => {
+        clearTimeout(timeoutId);
+        document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('touchstart', handleClickOutside);
+      };
+    }
   }, [isOpen, onClose]);
 
   // Handle escape key
