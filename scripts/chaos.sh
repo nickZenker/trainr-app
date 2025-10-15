@@ -46,3 +46,4 @@ hit "/app/plans"
 
 echo "Done." >> "$LOG"
 echo "$LOG"
+

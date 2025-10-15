@@ -10,3 +10,4 @@ ALTER TABLE public.sessions
 -- Add comments for documentation
 COMMENT ON COLUMN public.sessions.scheduled_at IS 'Scheduled start time in UTC for the session';
 COMMENT ON COLUMN public.sessions.duration_min IS 'Duration of the session in minutes';
+

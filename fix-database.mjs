@@ -165,3 +165,4 @@ function getDescription(sql) {
 }
 
 fixDatabase().catch(console.error);
+

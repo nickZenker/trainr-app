@@ -68,3 +68,4 @@ Test-Endpoint "/app/plans"
 "Done." | Out-File -FilePath $LOG -Append -Encoding UTF8
 Write-Host "Chaos test completed. Log saved to: $LOG"
 $LOG
+

@@ -27,3 +27,4 @@ export function attachLogging(page, logFn = console.log) {
     logFn(`[requestfailed] ${req.failure()?.errorText} :: ${req.url()}`);
   });
 }
+

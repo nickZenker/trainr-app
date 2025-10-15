@@ -185,3 +185,4 @@ Nach dem SQL-Ausführen:
 
 ## 🚨 WICHTIG
 **Ohne diese Datenbank-Einrichtung funktioniert NICHTS!** Die App braucht diese Tabellen um zu funktionieren.
+

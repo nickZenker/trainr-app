@@ -50,3 +50,4 @@ Führe `COMPLETE_DATABASE_FIX.sql` in Supabase SQL Editor aus:
 - ❌ Tabellen in DB fehlen (PGRST205 Fehler)
 - ✅ RLS Policies definiert
 - ✅ Service Layer implementiert
+

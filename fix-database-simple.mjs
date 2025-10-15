@@ -201,3 +201,4 @@ CREATE POLICY "Users can delete their own set logs" ON set_logs
 }
 
 fixDatabase().catch(console.error);
+

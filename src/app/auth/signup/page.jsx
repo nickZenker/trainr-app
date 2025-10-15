@@ -16,13 +16,35 @@ export default function SignupPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const { error } = await supabase.auth.signUp({ email, password });
-    setLoading(false);
-    if (error) {
-      setError(error.message);
-      return;
+    
+    try {
+      const { error } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'}/auth/callback`
+        }
+      });
+      
+      if (error) {
+        // Friendly error messages
+        if (error.message.includes('400') || error.message.includes('Invalid')) {
+          setError('Bitte Redirect-URL in Supabase Dashboard prüfen. Siehe docs/AUTH_FIX.md');
+        } else if (error.message.includes('already registered')) {
+          setError('Diese E-Mail ist bereits registriert. Bitte loggen Sie sich ein.');
+        } else {
+          setError(error.message);
+        }
+        return;
+      }
+      
+      // Success - redirect to app
+      router.replace("/app");
+    } catch (err) {
+      setError('Unerwarteter Fehler beim Registrieren. Bitte versuchen Sie es erneut.');
+    } finally {
+      setLoading(false);
     }
-    router.replace("/app");
   };
 
   return (

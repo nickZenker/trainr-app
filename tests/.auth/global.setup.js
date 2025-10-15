@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 async function globalSetup() {
   console.log('🚀 Starting global setup for persistent auth...');
@@ -18,42 +18,42 @@ async function globalSetup() {
   }
   
   // Launch browser for auth setup
-  const { chromium } = require('playwright');
+  const { chromium } = await import('playwright');
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext();
   const page = await context.newPage();
   
   try {
-    // Try signup first
-    console.log('📝 Attempting signup...');
-    await page.goto(`${baseURL}/auth/signup`);
+    // Try login first (more reliable for E2E)
+    console.log('🔐 Attempting login...');
+    await page.goto(`${baseURL}/auth/login`);
     
     // Wait for form to load
-    await page.waitForSelector('[data-testid="signup-email"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="auth-email"]', { timeout: 10000 });
     
-    // Fill signup form
-    await page.fill('[data-testid="signup-email"]', email);
-    await page.fill('[data-testid="signup-password"]', password);
-    await page.click('[data-testid="signup-submit"]');
+    // Fill login form
+    await page.fill('[data-testid="auth-email"]', email);
+    await page.fill('[data-testid="auth-password"]', password);
+    await page.click('[data-testid="auth-submit"]');
     
     // Wait for redirect or error
     try {
-      await page.waitForURL('**/app**', { timeout: 5000 });
-      console.log('✅ Signup successful, redirected to /app');
+      await page.waitForURL('**/app**', { timeout: 10000 });
+      console.log('✅ Login successful, redirected to /app');
     } catch {
-      console.log('⚠️ Signup failed or user already exists, trying login...');
+      console.log('⚠️ Login failed, trying signup...');
       
-      // Try login instead
-      await page.goto(`${baseURL}/auth/login`);
-      await page.waitForSelector('[data-testid="auth-email"]', { timeout: 10000 });
+      // Try signup as fallback
+      await page.goto(`${baseURL}/auth/signup`);
+      await page.waitForSelector('[data-testid="signup-email"]', { timeout: 10000 });
       
-      await page.fill('[data-testid="auth-email"]', email);
-      await page.fill('[data-testid="auth-password"]', password);
-      await page.click('[data-testid="auth-submit"]');
+      await page.fill('[data-testid="signup-email"]', email);
+      await page.fill('[data-testid="signup-password"]', password);
+      await page.click('[data-testid="signup-submit"]');
       
       // Wait for redirect to /app
       await page.waitForURL('**/app**', { timeout: 10000 });
-      console.log('✅ Login successful, redirected to /app');
+      console.log('✅ Signup successful, redirected to /app');
     }
     
     // Verify we're logged in by checking for app content

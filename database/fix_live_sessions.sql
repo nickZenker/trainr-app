@@ -81,3 +81,4 @@ CREATE POLICY "Users can delete their own set logs" ON set_logs
       AND live_sessions.user_id = auth.uid()
     )
   );
+

@@ -140,3 +140,4 @@ NEXT_PUBLIC_ENABLE_DEBUG_LOGS=true
 ```
 
 **Wichtig:** Ersetze `dein_anon_key_hier` und `dein_service_key_hier` mit den echten Werten aus deinem Supabase Dashboard.
+

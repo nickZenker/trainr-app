@@ -16,13 +16,29 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) {
-      setError(error.message);
-      return;
+    
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      
+      if (error) {
+        // Friendly error messages
+        if (error.message.includes('Invalid login credentials')) {
+          setError('Ungültige Anmeldedaten. Bitte prüfen Sie E-Mail und Passwort.');
+        } else if (error.message.includes('400')) {
+          setError('Authentifizierungsfehler. Bitte Supabase-Konfiguration prüfen.');
+        } else {
+          setError(error.message);
+        }
+        return;
+      }
+      
+      // Success - redirect to app
+      router.replace("/app");
+    } catch (err) {
+      setError('Unerwarteter Fehler beim Anmelden. Bitte versuchen Sie es erneut.');
+    } finally {
+      setLoading(false);
     }
-    router.replace("/app");
   };
 
   return (

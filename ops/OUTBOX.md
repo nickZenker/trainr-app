@@ -116,4 +116,17 @@
   - UI-Texte: Tests erwarten Deutsch, UI zeigt Englisch
   - Server ist stabil: Keine 500er auch bei robustem Logging
 
-**Letzte Aktualisierung**: 2025-01-14 23:25
+### [AUTH-FIX] Supabase Auth 400-Fehler behoben (2025-01-14 23:45)
+- **auth.spec**: FAIL (Dev-Server nicht gestartet - ERR_CONNECTION_REFUSED)
+- **400er bei Signup/Login noch vorhanden?**: Unbekannt - Tests konnten nicht ausgeführt werden
+- **Implementierte Auth-Fixes**:
+  - ✅ Supabase Dashboard-Checkliste in docs/AUTH_FIX.md erstellt
+  - ✅ PKCE Callback-Route /auth/callback hinzugefügt
+  - ✅ Supabase Browser-Client gehärtet (PKCE, autoRefreshToken, persistSession)
+  - ✅ Login/Signup-Forms gehärtet (freundliche Fehlermeldungen, emailRedirectTo)
+  - ✅ Diagnose-Endpoint /api/auth-check erstellt
+  - ✅ E2E-Global-Setup auf Login-first umgestellt
+- **Hinweis**: Supabase Dashboard-Checkliste in docs/AUTH_FIX.md
+- **Nächster Schritt**: Dev-Server starten und Auth-Tests erneut ausführen
+
+**Letzte Aktualisierung**: 2025-01-14 23:45

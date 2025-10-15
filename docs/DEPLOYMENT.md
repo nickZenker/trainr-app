@@ -156,3 +156,4 @@ curl https://your-domain.vercel.app/api/health
 - [ ] Zeit-Zeitzone korrekt
 
 **Ready for Production! 🚀**
+

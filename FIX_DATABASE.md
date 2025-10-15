@@ -111,3 +111,4 @@ Nach dem Ausführen sollte der "Neue Live-Session starten" Button funktionieren!
 - ✅ Aktiviert Row Level Security (RLS)
 - ✅ Setzt Sicherheitsrichtlinien
 - ✅ Live-Training funktioniert wieder
+

@@ -33,3 +33,4 @@ Die Anwendung benötigt Backend-Zugriff für CRUD-Operationen auf Plans, Session
 - Server Actions in Page-Komponenten
 - Dünne Service-Schicht für Wiederverwendbarkeit
 - Health-Endpoint für Monitoring
+
