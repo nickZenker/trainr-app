@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 export async function middleware(request) {
-  // Whitelist health endpoint - always allow
-  if (request.nextUrl.pathname.startsWith('/api/health')) {
+  // Whitelist health and ops endpoints - always allow
+  if (request.nextUrl.pathname.startsWith('/api/health') || 
+      request.nextUrl.pathname.startsWith('/api/ops/status')) {
     return Response.next();
   }
 
@@ -50,7 +51,7 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/", "/app/:path*", "/auth/:path*", "/login", "/api/health", "/app/admin/:path*"],
+  matcher: ["/", "/app/:path*", "/auth/:path*", "/login", "/api/health", "/api/ops/status", "/app/admin/:path*"],
 };
 
 
