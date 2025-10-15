@@ -142,9 +142,9 @@ export const supabaseServerWithCookies = async () => {
           },
         },
         auth: {
-          // In Server Actions können wir Cookies setzen, also aktivieren wir Refresh
-          autoRefreshToken: true,
-          persistSession: true,
+          // Deaktiviere Auto-Refresh und Session-Persistierung um Cookie-Fehler zu vermeiden
+          autoRefreshToken: false,
+          persistSession: false,
           flowType: 'pkce',
         },
       }

@@ -9,8 +9,8 @@ export const config = {
 }
 
 export async function register() {
-  // Only register in Node.js runtime, not Edge Runtime
-  if (process.env.NODE_ENV === 'development' && 
+  // Temporarily disable instrumentation to prevent Edge Runtime issues
+  if (false && process.env.NODE_ENV === 'development' && 
       typeof process !== 'undefined' && 
       process.env.NEXT_RUNTIME === 'nodejs' &&
       typeof require !== 'undefined') {
