@@ -4,6 +4,12 @@
 
 ## Agent Reports
 
+### [NAV-REDESIGN] (2025-10-15 11:57)
+- Struktur: Training / Health + Subnav
+- Tests: PASS (5/5 App Navigation Structure tests passing)
+- Keine Routenänderungen, nur UI
+- Next: Navigation ist responsive und teststabil
+
 ### [AUTH-E2E-FIX] (2025-10-15 11:46)
 - failing test: "should signup or login successfully"
 - cause: Race condition in signup/login flow, inconsistent bootstrap user usage

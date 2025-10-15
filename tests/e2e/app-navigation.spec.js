@@ -1,52 +1,94 @@
 import { test, expect } from '@playwright/test';
 
+const TEST_EMAIL = 'e2e.user+local@test.dev';
+const TEST_PASSWORD = 'TestUser!23456';
+
 test.describe('App Navigation Structure', () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate to login page before each test
+    // Login first
     await page.goto('/auth/login');
+    await page.waitForSelector('[data-testid="auth-email"]', { timeout: 10000 });
+    await page.fill('[data-testid="auth-email"]', TEST_EMAIL);
+    await page.fill('[data-testid="auth-password"]', TEST_PASSWORD);
+    await page.click('[data-testid="auth-submit"]');
+    await page.waitForURL(/.*\/app.*/, { timeout: 15000 });
   });
 
-  test('login page has correct structure', async ({ page }) => {
-    // Check page title and main elements
-    await expect(page.locator('h1')).toContainText('Anmelden');
+  test('top navigation has correct structure', async ({ page }) => {
+    // Check main navigation container
+    await expect(page.getByTestId('topnav-home')).toBeVisible();
     
-    // Check form elements
-    await expect(page.locator('input[type="email"]')).toBeVisible();
-    await expect(page.locator('input[type="password"]')).toBeVisible();
-    await expect(page.locator('button[type="submit"]')).toContainText('Anmelden');
+    // Check primary tabs
+    await expect(page.getByTestId('tab-primary-training')).toBeVisible();
+    await expect(page.getByTestId('tab-primary-health')).toBeVisible();
     
-    // Check navigation links
-    await expect(page.locator('a[href="/auth/signup"]')).toBeVisible();
-    await expect(page.locator('a[href="/auth/reset-password"]')).toBeVisible();
+    // Check secondary tabs
+    await expect(page.getByTestId('tab-progress')).toBeVisible();
+    await expect(page.getByTestId('tab-profile')).toBeVisible();
   });
 
-  test('signup page has correct structure', async ({ page }) => {
-    await page.goto('/auth/signup');
+  test('training subnav is accessible', async ({ page }) => {
+    // Click on Training tab to open subnav
+    await page.getByTestId('tab-primary-training').click();
     
-    // Check page title and main elements
-    await expect(page.locator('h1')).toContainText('Registrieren');
-    
-    // Check form elements
-    await expect(page.locator('input[type="email"]')).toBeVisible();
-    await expect(page.locator('input[type="password"]')).toBeVisible();
-    await expect(page.locator('button[type="submit"]')).toContainText('Registrieren');
-    
-    // Check navigation links
-    await expect(page.locator('a[href="/auth/login"]')).toBeVisible();
+    // Check training subnav items
+    await expect(page.getByTestId('subtab-dashboard')).toBeVisible();
+    await expect(page.getByTestId('subtab-plans')).toBeVisible();
+    await expect(page.getByTestId('subtab-sessions')).toBeVisible();
+    await expect(page.getByTestId('subtab-live')).toBeVisible();
+    await expect(page.getByTestId('subtab-calendar')).toBeVisible();
   });
 
-  test('reset password page has correct structure', async ({ page }) => {
-    await page.goto('/auth/reset-password');
+  test('health subnav is accessible', async ({ page }) => {
+    // Click on Health tab to open subnav
+    await page.getByTestId('tab-primary-health').click();
     
-    // Check page title and main elements
-    await expect(page.locator('h1')).toContainText('Passwort zurücksetzen');
+    // Check health subnav items
+    await expect(page.getByTestId('subtab-nutrition')).toBeVisible();
+    await expect(page.getByTestId('subtab-sleep')).toBeVisible();
+    await expect(page.getByTestId('subtab-recovery')).toBeVisible();
+    await expect(page.getByTestId('subtab-body')).toBeVisible();
+  });
+
+  test('navigation links work correctly', async ({ page }) => {
+    // Test training subnav links
+    await page.getByTestId('tab-primary-training').click();
+    await expect(page.getByTestId('subtab-plans')).toBeVisible();
+    await page.getByTestId('subtab-plans').click();
+    await expect(page).toHaveURL(/.*\/app\/plans/);
     
-    // Check form elements
-    await expect(page.locator('input[type="email"]')).toBeVisible();
-    await expect(page.locator('button[type="submit"]')).toContainText('Reset-Link senden');
+    // Navigate back to app to test sessions
+    await page.goto('/app');
+    await page.getByTestId('tab-primary-training').click();
+    await expect(page.getByTestId('subtab-sessions')).toBeVisible();
+    await page.getByTestId('subtab-sessions').click();
+    await expect(page).toHaveURL(/.*\/app\/sessions/);
     
-    // Check navigation links
-    await expect(page.locator('a[href="/auth/login"]')).toBeVisible();
+    // Test health subnav links
+    await page.goto('/app');
+    await page.getByTestId('tab-primary-health').click();
+    await expect(page.getByTestId('subtab-nutrition')).toBeVisible();
+    await page.getByTestId('subtab-nutrition').click();
+    await expect(page).toHaveURL(/.*\/app\/nutrition/);
+    
+    // Test secondary tabs
+    await page.goto('/app');
+    await page.getByTestId('tab-progress').click();
+    await expect(page).toHaveURL(/.*\/app\/progress/);
+  });
+
+  test('active states work correctly', async ({ page }) => {
+    // Navigate to plans page
+    await page.getByTestId('tab-primary-training').click();
+    await page.getByTestId('subtab-plans').click();
+    
+    // Check that Training tab is active
+    const trainingTab = page.getByTestId('tab-primary-training');
+    await expect(trainingTab).toHaveAttribute('aria-selected', 'true');
+    
+    // Check that plans subtab is active
+    const plansSubtab = page.getByTestId('subtab-plans');
+    await expect(plansSubtab).toHaveAttribute('aria-selected', 'true');
   });
 });
 
