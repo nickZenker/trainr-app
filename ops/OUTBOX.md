@@ -140,4 +140,11 @@
 - **Ergebnis**: ✅ grün - Alle Endpoints funktionieren (200 OK), keine Cookie-Fehler mehr
 - **Nächster Schritt**: Auth-Tests erneut ausführen um 400er-Status zu prüfen
 
-**Letzte Aktualisierung**: 2025-01-15 06:56
+### [DEV-CLEAN] Sauberer Neuaufbau und Auth-Prüfung (2025-01-15 07:17)
+- **build**: OK (erfolgreich, 1 Edge Runtime Warning)
+- **health/auth-check**: ok (200 OK, NEXT_PUBLIC_SITE_URL fehlt)
+- **auth.spec**: FAIL (10/10 Tests, 400er-Fehler bei Signup/Login)
+- **issues overlay**: 0 (keine 500er mehr, Server stabil)
+- **next**: NEXT_PUBLIC_SITE_URL setzen + Supabase Dashboard konfigurieren
+
+**Letzte Aktualisierung**: 2025-01-15 07:17
