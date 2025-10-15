@@ -1,118 +1,36 @@
-'use client';
+'use client'
+import React from 'react'
+import { useRouter } from 'next/navigation'
+import { createPlanAction } from './actions'
 
-import React, { useEffect } from 'react';
-import { useFormStatus } from 'react-dom';
-import { useRouter } from 'next/navigation';
-import { createPlanAction } from './actions';
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="bg-brand text-black px-6 py-3 rounded-lg font-medium hover:bg-brand-hover transition-colors disabled:opacity-50"
-      data-testid="plan-create"
-    >
-      {pending ? 'Erstelle...' : 'Plan erstellen'}
-    </button>
-  );
-}
+const initial = { ok: null, error: null, planId: null }
 
 export default function CreatePlanForm() {
-  const router = useRouter();
-  const [state, formAction] = React.useActionState(createPlanAction, null);
+  const router = useRouter()
+  const [state, formAction, isPending] = React.useActionState(createPlanAction, initial)
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (state?.ok && state?.planId) {
-      // Redirect to schedule page on success
-      router.push(`/app/plans/${state.planId}/schedule`);
+      router.push(`/app/plans/${state.planId}/schedule`)
     }
-  }, [state, router]);
+  }, [state, router])
 
   return (
-    <div className="bg-surface rounded-lg p-6 border border-border mb-6">
-      <h2 className="text-xl font-semibold mb-4">Neuen Plan erstellen</h2>
-      
-      {state?.ok === false && (
-        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm" data-testid="plan-error">
-          {state.error}
-        </div>
+    <form action={formAction} data-testid="plan-create-form" className="grid gap-4 max-w-lg">
+      <input name="name" data-testid="plan-name-input" placeholder="Planname" required className="input"/>
+      <select name="type" data-testid="plan-type-select" defaultValue="">
+        <option value="" disabled>Typ wählen</option>
+        <option value="strength">Strength</option>
+        <option value="endurance">Endurance</option>
+      </select>
+      <textarea name="goal" data-testid="plan-goal-input" placeholder="Ziel" required className="textarea"/>
+      <input type="number" name="weeks" data-testid="plan-weeks-input" min="1" max="52" defaultValue="8" className="input"/>
+      <button type="submit" data-testid="plan-submit" disabled={isPending} className="btn">Plan anlegen</button>
+
+      {!state?.ok && typeof state?.error === 'string' && (
+        <p data-testid="plan-error" className="text-red-500 text-sm">{state.error}</p>
       )}
-      
-      <form action={formAction} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
-              Name *
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              required
-              minLength={1}
-              maxLength={120}
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
-              placeholder="z.B. Kraft – Push/Pull/Legs"
-              data-testid="plan-name"
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="type" className="block text-sm font-medium text-foreground mb-2">
-              Typ *
-            </label>
-            <select
-              id="type"
-              name="type"
-              defaultValue="strength"
-              required
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
-              data-testid="plan-type"
-            >
-              <option value="strength">Strength</option>
-              <option value="endurance">Endurance</option>
-            </select>
-          </div>
-        </div>
-        
-        <div>
-          <label htmlFor="goal" className="block text-sm font-medium text-foreground mb-2">
-            Ziel *
-          </label>
-          <textarea
-            id="goal"
-            name="goal"
-            rows={2}
-            required
-            className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
-            placeholder="z.B. 3-Tage Split für Kraftaufbau"
-            data-testid="plan-goal"
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="weeks" className="block text-sm font-medium text-foreground mb-2">
-            Wochen *
-          </label>
-          <input
-            type="number"
-            id="weeks"
-            name="weeks"
-            min="1"
-            max="52"
-            defaultValue="8"
-            required
-            className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
-            data-testid="plan-weeks"
-          />
-        </div>
-        
-        <SubmitButton />
-      </form>
-    </div>
-  );
+    </form>
+  )
 }
 

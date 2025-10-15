@@ -46,6 +46,17 @@
 - **Features**: Plan bearbeiten, duplizieren, löschen mit data-testid
 - **Status**: Plan-CRUD vollständig funktional, E2E-stabil
 
+### [PLANS-CREATE-FIX + SCHEDULE-EXERCISES] (2024-12-19 18:30)
+- **Ursache "unexpected response"**: falsche Action-Bindung → gefixt (useActionState + form action)
+- **searchParams.filter**: await searchParams implementiert, Next.js 15-kompatibel
+- **Schema-sichere Services**: PGRST204/42703 Fehler abgefangen, Retry ohne goal/type
+- **Übungen je Tag**: Auswahl + Speicherung in session.meta.exercises
+- **Exercise Library**: `src/lib/exerciseLibrary.js` mit Strength/Endurance Defaults
+- **Schedule UI**: Checkbox-Auswahl pro Wochentag mit data-testid
+- **Live-Anzeige**: Übungen sofort sichtbar in `[data-testid="live-exercises-list"]`
+- **E2E Ergebnis**: ✅ 2 passed (3.8s) - Plan-Erstellung + Übungs-Zuweisung
+- **Status**: Plan-Scheduling mit Übungen vollständig funktional
+
 ## [2025-10-15 15:05] ZWISCHENBERICHT: Plan-Scheduling-Feature & Stabilisierung
 
 ### ✅ Abgeschlossen

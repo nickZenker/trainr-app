@@ -108,6 +108,23 @@ export default async function LiveSessionPage({ params }) {
             </div>
           </div>
 
+          {/* Session Exercises */}
+          {session.meta?.exercises && session.meta.exercises.length > 0 && (
+            <div className="bg-surface rounded-lg p-6 border border-border mb-6">
+              <h3 className="text-lg font-semibold mb-4">Geplante Übungen</h3>
+              <div className="flex flex-wrap gap-2" data-testid="live-exercises-list">
+                {session.meta.exercises.map((exercise, index) => (
+                  <span 
+                    key={exercise.id || index}
+                    className="bg-brand/20 text-brand px-3 py-1 rounded-full text-sm font-medium"
+                  >
+                    {exercise.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Set Logging Form */}
           <div className="bg-surface rounded-lg p-6 border border-border mb-6">
             <h3 className="text-lg font-semibold mb-4">Set Logging</h3>

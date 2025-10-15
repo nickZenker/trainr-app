@@ -144,27 +144,24 @@ export async function createMockPage(page) {
         
         <div class="form">
           <h2>Neuen Plan erstellen</h2>
-          <form id="create-plan-form">
+          <form id="create-plan-form" data-testid="plan-create-form">
             <div class="form-group">
-              <label for="name">Name *</label>
-              <input type="text" id="name" name="name" data-testid="plan-name" required>
+              <input type="text" name="name" data-testid="plan-name-input" placeholder="Planname" required>
             </div>
             <div class="form-group">
-              <label for="type">Typ *</label>
-              <select id="type" name="type" data-testid="plan-type" required>
+              <select name="type" data-testid="plan-type-select">
+                <option value="" disabled>Typ wählen</option>
                 <option value="strength">Strength</option>
                 <option value="endurance">Endurance</option>
               </select>
             </div>
             <div class="form-group">
-              <label for="goal">Ziel *</label>
-              <textarea id="goal" name="goal" data-testid="plan-goal"></textarea>
+              <textarea name="goal" data-testid="plan-goal-input" placeholder="Ziel" required></textarea>
             </div>
             <div class="form-group">
-              <label for="weeks">Wochen *</label>
-              <input type="number" id="weeks" name="weeks" data-testid="plan-weeks" min="1" max="52" value="8" required>
+              <input type="number" name="weeks" data-testid="plan-weeks-input" min="1" max="52" value="8">
             </div>
-            <button type="submit" data-testid="plan-create">Plan erstellen</button>
+            <button type="submit" data-testid="plan-submit">Plan anlegen</button>
           </form>
           <div id="plan-error" data-testid="plan-error" style="display: none;" class="error-message"></div>
         </div>

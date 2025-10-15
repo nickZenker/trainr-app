@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { schedulePlanAction } from './actions';
+import { DEFAULT_LIBRARY } from '@/lib/exerciseLibrary';
 
 const WEEKDAYS = [
   { value: 0, label: 'Sonntag' },
@@ -71,6 +72,26 @@ export default function ScheduleForm({ plan }) {
       pattern: prev.pattern.map((item, i) => 
         i === index ? { ...item, [field]: value } : item
       )
+    }));
+  };
+
+  const updatePatternExercises = (index, exerciseId, checked) => {
+    setFormData(prev => ({
+      ...prev,
+      pattern: prev.pattern.map((item, i) => {
+        if (i === index) {
+          const exercises = item.exercises || [];
+          if (checked) {
+            const exercise = DEFAULT_LIBRARY[plan.type]?.find(ex => ex.id === exerciseId);
+            if (exercise && !exercises.find(ex => ex.id === exerciseId)) {
+              return { ...item, exercises: [...exercises, exercise] };
+            }
+          } else {
+            return { ...item, exercises: exercises.filter(ex => ex.id !== exerciseId) };
+          }
+        }
+        return item;
+      })
     }));
   };
 
@@ -207,43 +228,64 @@ export default function ScheduleForm({ plan }) {
 
           <div className="space-y-3">
             {formData.pattern.map((item, index) => (
-              <div key={index} data-testid={`pattern-row-${index}`} className="flex gap-3 items-center">
-                <select
-                  value={item.weekday}
-                  onChange={(e) => updatePatternRow(index, 'weekday', parseInt(e.target.value))}
-                  className="px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-brand"
-                >
-                  {WEEKDAYS.map(day => (
-                    <option key={day.value} value={day.value}>
-                      {day.label}
-                    </option>
-                  ))}
-                </select>
+              <div key={index} className="space-y-2">
+                <div data-testid={`pattern-row-${index}`} className="flex gap-3 items-center">
+                  <select
+                    value={item.weekday}
+                    onChange={(e) => updatePatternRow(index, 'weekday', parseInt(e.target.value))}
+                    className="px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-brand"
+                  >
+                    {WEEKDAYS.map(day => (
+                      <option key={day.value} value={day.value}>
+                        {day.label}
+                      </option>
+                    ))}
+                  </select>
 
-                <input
-                  type="time"
-                  value={item.time}
-                  onChange={(e) => updatePatternRow(index, 'time', e.target.value)}
-                  className="px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-brand"
-                  required
-                />
+                  <input
+                    type="time"
+                    value={item.time}
+                    onChange={(e) => updatePatternRow(index, 'time', e.target.value)}
+                    className="px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-brand"
+                    required
+                  />
 
-                <input
-                  type="text"
-                  placeholder="Titel (optional)"
-                  value={item.title}
-                  onChange={(e) => updatePatternRow(index, 'title', e.target.value)}
-                  className="flex-1 px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-brand"
-                />
+                  <input
+                    type="text"
+                    placeholder="Titel (optional)"
+                    value={item.title}
+                    onChange={(e) => updatePatternRow(index, 'title', e.target.value)}
+                    className="flex-1 px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-brand"
+                  />
 
-                <button
-                  type="button"
-                  data-testid={`pattern-remove-${index}`}
-                  onClick={() => removePatternRow(index)}
-                  className="px-3 py-2 text-sm text-red-600 hover:text-red-800 transition-colors"
-                >
-                  Entfernen
-                </button>
+                  <button
+                    type="button"
+                    data-testid={`pattern-remove-${index}`}
+                    onClick={() => removePatternRow(index)}
+                    className="px-3 py-2 text-sm text-red-600 hover:text-red-800 transition-colors"
+                  >
+                    Entfernen
+                  </button>
+                </div>
+                
+                <div className="ml-4 mt-2" data-testid={`pattern-exercises-${index}`}>
+                  <label className="block text-xs font-medium text-foreground mb-1">
+                    Übungen:
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {(DEFAULT_LIBRARY[plan.type] || DEFAULT_LIBRARY.strength).map(exercise => (
+                      <label key={exercise.id} className="flex items-center text-xs">
+                        <input
+                          type="checkbox"
+                          checked={(item.exercises || []).some(ex => ex.id === exercise.id)}
+                          onChange={(e) => updatePatternExercises(index, exercise.id, e.target.checked)}
+                          className="mr-1"
+                        />
+                        {exercise.name}
+                      </label>
+                    ))}
+                  </div>
+                </div>
               </div>
             ))}
           </div>

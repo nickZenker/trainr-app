@@ -120,12 +120,15 @@ export async function createPlan(input) {
     const base = { 
       user_id: user.id,
       name: input.name.trim(),
-      goal: input.goal?.trim() || null,
       weeks: input.weeks || null
     };
 
-    // First try: include type if provided
-    let values = input?.type ? { ...base, type: input.type } : base;
+    // First try: include goal and type if provided
+    let values = { 
+      ...base,
+      ...(input.goal && { goal: input.goal.trim() }),
+      ...(input.type && { type: input.type })
+    };
     
     let { data: newPlan, error } = await supabase
       .from("plans")
@@ -133,9 +136,9 @@ export async function createPlan(input) {
       .select('id')
       .single();
 
-    // If type column doesn't exist, retry without it
-    if (error && (error.code === '42703' || error.message?.includes('column') && error.message?.includes('does not exist'))) {
-      console.log('Type column missing, retrying without type field');
+    // If goal or type column doesn't exist, retry without them
+    if (error && (error.code === '42703' || error.code === 'PGRST204' || error.message?.includes('column') && error.message?.includes('does not exist'))) {
+      console.log('Column missing, retrying without goal/type fields');
       const retryResult = await supabase
         .from("plans")
         .insert(base)
@@ -315,7 +318,7 @@ export async function getPlan(planId) {
       throw new Error('User not authenticated');
     }
 
-    // Try with type column first
+    // Try with all columns first
     let { data: plan, error } = await supabase
       .from("plans")
       .select('id,name,goal,weeks,type,created_at')
@@ -323,11 +326,11 @@ export async function getPlan(planId) {
       .eq("user_id", user.id)
       .single();
 
-    // If type column doesn't exist, retry without it
-    if (error && (error.code === '42703' || error.message?.includes('column') && error.message?.includes('does not exist'))) {
+    // If columns don't exist, retry with basic fields only
+    if (error && (error.code === '42703' || error.code === 'PGRST204' || error.message?.includes('column') && error.message?.includes('does not exist'))) {
       const retryResult = await supabase
         .from("plans")
-        .select('id,name,goal,weeks,created_at')
+        .select('id,name,weeks,created_at')
         .eq("id", planId)
         .eq("user_id", user.id)
         .single();
@@ -366,12 +369,15 @@ export async function updatePlan(planId, patch) {
 
     const base = {
       name: patch.name?.trim(),
-      goal: patch.goal?.trim() || null,
       weeks: patch.weeks || null
     };
 
-    // First try: include type if provided
-    let values = patch?.type ? { ...base, type: patch.type } : base;
+    // First try: include goal and type if provided
+    let values = { 
+      ...base,
+      ...(patch.goal && { goal: patch.goal.trim() }),
+      ...(patch.type && { type: patch.type })
+    };
     
     let { data: updatedPlan, error } = await supabase
       .from("plans")
@@ -381,14 +387,14 @@ export async function updatePlan(planId, patch) {
       .select('id,name,goal,weeks,type')
       .single();
 
-    // If type column doesn't exist, retry without it
-    if (error && (error.code === '42703' || error.message?.includes('column') && error.message?.includes('does not exist'))) {
+    // If goal or type column doesn't exist, retry without them
+    if (error && (error.code === '42703' || error.code === 'PGRST204' || error.message?.includes('column') && error.message?.includes('does not exist'))) {
       const retryResult = await supabase
         .from("plans")
         .update(base)
         .eq("id", planId)
         .eq("user_id", user.id)
-        .select('id,name,goal,weeks')
+        .select('id,name,weeks')
         .single();
       
       updatedPlan = retryResult.data;

@@ -534,7 +534,8 @@ export async function createRecurringSessions({ planId, startDate, timezone, wee
                   week: week + 1,
                   weekday: patternItem.weekday,
                   time: patternItem.time,
-                  notes: patternItem.notes || null
+                  notes: patternItem.notes || null,
+                  ...(patternItem.exercises && { exercises: patternItem.exercises })
                 }
               })
               .select('id, name, scheduled_at, type')

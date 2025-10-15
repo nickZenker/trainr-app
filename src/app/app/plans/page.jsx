@@ -118,7 +118,8 @@ export default async function PlansPage({ searchParams }) {
     redirect("/auth/login");
   }
 
-  const filter = searchParams?.filter || "active";
+  const resolvedSearchParams = await searchParams;
+  const filter = resolvedSearchParams?.filter || "active";
 
   return (
     <div className="min-h-screen bg-background text-foreground">
